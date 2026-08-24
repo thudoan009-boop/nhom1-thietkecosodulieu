@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Minimalist LaTeX Template for Academic Books
 
 This repository contains a [LaTeX](https://github.com/latex3/latex2e) template to create an academic book. The template follows typographical best practices and has a minimalist design. It is well suited for research monographs, textbooks, and lecture notes. It is designed so books are comfortable to read and easy to scan, both in print and on screen.
@@ -46,3 +47,14 @@ This repository is licensed under the [MIT License](LICENSE.md).
 - [latex-presentation](https://github.com/pmichaillat/latex-presentation) – This LaTeX template produces academic presentations that follow the same typographic principles as the book template.
 - [latex-math](https://github.com/pmichaillat/latex-math) – These LaTeX commands simplify writing mathematical expressions. They can be used in combination with this book template.
 - [matlab-figures](https://github.com/pmichaillat/matlab-figures) - This MATLAB template produces minimalist scientific figures that can be inserted into your book.
+=======
+## Thành viên nhóm
+
+| STT | Họ và tên | MSSV |
+|:---:|-----------|:----:|
+| 1 | Nguyễn Bảo Đại | 052206015018 |
+| 2 | Đoàn Anh thư | 072306008525 |
+| 3 | Huỳnh Kiến Hưng | 079206005377 |
+| 4 | Trần Chí Nguyên | 083206008312 |
+| 5 | Rcom Chiến | 064205002320 |
+>>>>>>> be7e960b960d306af6908a15e0aaf497806100d7
