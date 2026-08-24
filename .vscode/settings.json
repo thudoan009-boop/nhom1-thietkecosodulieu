@@ -1,0 +1,13 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/c:\\Users\\ANH THƯ\\Downloads\\latex-book-main\\latex-book-main\\book.aux": true,
+        "**/c:\\Users\\ANH THƯ\\Downloads\\latex-book-main\\latex-book-main\\book.log": true,
+        "**/c:\\Users\\ANH THƯ\\Downloads\\latex-book-main\\latex-book-main\\book.gz": true,
+        "**/c:\\Users\\ANH THƯ\\Downloads\\latex-book-main\\latex-book-main\\book.out": true
+    }
+}
