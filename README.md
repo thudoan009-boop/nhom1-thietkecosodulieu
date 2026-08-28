@@ -1,53 +1,6 @@
-<<<<<<< HEAD
-# Minimalist LaTeX Template for Academic Books
 
-This repository contains a [LaTeX](https://github.com/latex3/latex2e) template to create an academic book. The template follows typographical best practices and has a minimalist design. It is well suited for research monographs, textbooks, and lecture notes. It is designed so books are comfortable to read and easy to scan, both in print and on screen.
 
-## Documentation
 
-The template is documented at https://pascalmichaillat.org/g/.
-
-## Illustration
-
-+ The book produced by the template can be viewed at https://pascalmichaillat.org/g.pdf.
-
-## Usage
-
-+ Clone the repository to your local machine.
-+ Edit the main file `book.tex` to set the title, subtitle, author, and date, and to add or remove parts and chapters.
-+ Edit the chapter files (`chapter1.tex`, `chapter2.tex`, and so on), appendix files (`appendixA.tex`, `appendixB.tex`, and so on), `preface.tex`, and `acknowledgements.tex` to replace the boilerplate with your content.
-+ Replace the figures in the PDF file `figures.pdf` with the figures to be included in your book (one figure per page).
-+ Replace the references in the BibTeX file `book.bib` with the references to be included in your book.
-+ Compile `book.tex` with pdfTeX. This will generate a PDF file of your book named `book.pdf`.
-+ To build the index, run `makeindex` after the first pdfTeX run, then run pdfTeX again.
-
-A few files in the repository are required to use the book template but do not need to be modified. These files must remain in the same folder as `book.tex`:
-
-+ The LaTeX style file `book.sty` formats the book.
-+ The BibTeX style file `book.bst` formats the bibliography.
-
-The file `book.pdf` illustrates the output of the template. It will be overwritten when `book.tex` is compiled. It is not required to use the book template.
-
-## Software
-
-+ The template is currently operational with TeX Live 2025 on macOS.
-+ Other LaTeX distributions and operating systems may require minor adjustments. Please [report any issues](https://github.com/pmichaillat/latex-book/issues) to help improve compatibility.
-
-## License
-
-This repository is licensed under the [MIT License](LICENSE.md).
-
-## Real-world implementation
-
-- [A Theory of Economic Slack](https://pascalmichaillat.org/18.pdf) (by P. Michaillat)
-
-## Related resources
-
-- [latex-paper](https://github.com/pmichaillat/latex-paper) – This LaTeX template produces academic papers that follow the same typographic principles as the book template.
-- [latex-presentation](https://github.com/pmichaillat/latex-presentation) – This LaTeX template produces academic presentations that follow the same typographic principles as the book template.
-- [latex-math](https://github.com/pmichaillat/latex-math) – These LaTeX commands simplify writing mathematical expressions. They can be used in combination with this book template.
-- [matlab-figures](https://github.com/pmichaillat/matlab-figures) - This MATLAB template produces minimalist scientific figures that can be inserted into your book.
-=======
 ## Thành viên nhóm
 
 | STT | Họ và tên | MSSV |
@@ -57,4 +10,25 @@ This repository is licensed under the [MIT License](LICENSE.md).
 | 3 | Huỳnh Kiến Hưng | 079206005377 |
 | 4 | Trần Chí Nguyên | 083206008312 |
 | 5 | Rcom Chiến | 064205002320 |
->>>>>>> be7e960b960d306af6908a15e0aaf497806100d7
+
+## Phân công công việc
+
+Mỗi thành viên checkout vào branch tương ứng với task  của mình, sau đó làm việc trong thư mục `chapter1/thietkequanniem/`.
+
+| Branch           | Task   |
+| ---------------- | ------ |
+| `chapter1-task1` | Task 1 |
+| `chapter1-task2` | Task 2 |
+| `chapter1-task3` | Task 3 |
+| `chapter1-task4` | Task 4 |
+| `chapter1-task5` | Task 5 |
+
+### Quy trình làm việc
+
+1. Chuyển vào branch được phân công.
+2. Vào thư mục `chapter1/thietkequanniem/`.
+3. Tạo/chỉnh sửa file tương ứng với task của mình.
+4. Commit và push lên branch cá nhân.
+5. Tạo Pull Request từ branch cá nhân → `chapter1-thietkequanniem`.
+
+
