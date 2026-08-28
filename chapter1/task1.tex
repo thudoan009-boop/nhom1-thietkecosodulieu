@@ -1,0 +1,743 @@
+\section{Khoanh vùng phạm vi lưu trữ (Scope Boundaries)}\label{s:pham_vi_luu_tru}
+
+Cần lưu
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|p{0.35\textwidth}|p{0.55\textwidth}|}
+\hline
+\textbf{Nhóm} & \textbf{Lý do phải lưu} \\
+\hline
+
+User, Role, Permission, Workspace
+&
+Dữ liệu định danh, RBAC -- cốt lõi hệ thống \\
+\hline
+
+Repository, GitHubConnection, Webhook
+&
+Cấu hình kết nối, cần cho mọi lần sync \\
+\hline
+
+Commit, PullRequest
+&
+Là ``mốc'' để truy vết mọi drift/document version
+(metadata: sha, number, branch, status) \\
+\hline
+
+CodeEntity
+&
+Snapshot tại 1 commit: class/method/param.
+Căn cứ đối chiếu ngữ nghĩa, không thể tính lại nếu code đã đổi \\
+\hline
+
+Document, DocumentVersion
+&
+Đối tượng nghiệp vụ trung tâm \\
+\hline
+
+GroundingEvidence
+&
+Source File + Code Entity + Commit Hash.
+Bắt buộc -- chống hallucination, phải truy vết được \\
+\hline
+
+DriftEvent
+&
+Loại drift, severity.
+Đầu ra nghiệp vụ chính, cần cho dashboard \& báo cáo \\
+\hline
+
+ReviewComment
+&
+Bằng chứng review 2 cấp (Staff $\rightarrow$ Manager) \\
+\hline
+
+ChangeLog
+&
+Actor + Timestamp + Trigger.
+Yêu cầu NFR: mọi thay đổi phải audit/rollback được \\
+\hline
+
+Template, TemplateSection/placeholder mapping
+&
+Tái sử dụng nhiều lần, không tính lại \\
+\hline
+
+AIJob
+&
+Metadata: loại job, trạng thái, liên kết version.
+Cần để trigger AI $\rightarrow$ Staff $\rightarrow$ Manager \\
+\hline
+
+TicketReference
+&
+Gắn liền vòng đời DocumentVersion \\
+\hline
+
+AuditLog
+&
+Thao tác admin. Yêu cầu bảo mật NFR \\
+\hline
+
+\end{tabular}
+\caption{Các nhóm dữ liệu cần lưu}
+\label{tab:data-storage}
+\end{table}
+Không lưu
+\begin{itemize}
+
+    \item \textbf{Toàn bộ source code:}
+    chỉ lưu path + commit hash + embedding vector
+    (vào vector store riêng), không copy nguyên file vào DB nghiệp vụ.
+
+    \item \textbf{Prompt/response thô của LLM:}
+    chỉ giữ lại grounding evidence (đã trích) + confidence score;
+    log đầy đủ (nếu cần) đưa vào cold storage/log store riêng,
+    có TTL, không nằm trong schema domain.
+
+    \item \textbf{Access token/refresh token OAuth:}
+    lưu ở kho secret riêng (mã hóa), không phải là một
+    ``thực thể nghiệp vụ'' trong data dictionary.
+
+    \item \textbf{Số liệu dashboard/health metrics tính realtime:}
+    tính từ dữ liệu gốc lúc query hoặc cache Redis,
+    không phải nguồn sự thật (không cần bảng riêng).
+
+    \item \textbf{Kafka event payload:}
+    là log hạ tầng (event sourcing ngắn hạn), không thuộc schema domain,
+    có retention riêng.
+
+    \item \textbf{Trạng thái UI tạm thời:}
+    tab đang mở, cursor phân trang, \ldots{} không lưu.
+
+    \item \textbf{System health/infra metrics:}
+    đẩy sang hệ thống monitoring, không vào DB nghiệp vụ.
+
+\end{itemize}
+
+
+
+\section{Từ điển nghiệp vụ (Data Dictionary) -- chuẩn hóa tên gọi}
+\label{sec:data-dictionary}
+
+\begin{longtable}{|p{0.22\textwidth}|p{0.22\textwidth}|p{0.46\textwidth}|}
+
+\hline
+\textbf{Tên chuẩn hóa (ENG)}
+&
+\textbf{Tên nghiệp vụ (VN)}
+&
+\textbf{Mô tả nghiệp vụ}
+\\
+\hline
+\endfirsthead
+
+\hline
+\textbf{Tên chuẩn hóa (ENG)}
+&
+\textbf{Tên nghiệp vụ (VN)}
+&
+\textbf{Mô tả nghiệp vụ}
+\\
+\hline
+\endhead
+
+User
+&
+Người dùng
+&
+Tài khoản cá nhân dùng chung cho mọi vai trò hệ thống.
+\\
+\hline
+
+Role
+&
+Vai trò
+&
+Nhóm quyền hạn (Developer, Staff, Manager, Tech Lead, Admin).
+\\
+\hline
+
+Permission
+&
+Quyền hạn
+&
+Chi tiết thao tác được phép thực hiện (VD: DOC\_APPROVE, TEMPLATE\_EDIT).
+\\
+\hline
+
+Workspace
+&
+Không gian làm việc
+&
+Môi trường quản lý tập hợp nhiều kho mã nguồn của một đội ngũ/dự án.
+\\
+\hline
+
+WorkspaceMember
+&
+Thành viên Workspace
+&
+Ghi nhận sự tham gia của User vào Workspace và gán Role tương ứng tại Workspace đó.
+\\
+\hline
+
+GithubConnection
+&
+Kết nối GitHub
+&
+Thông tin xác thực OAuth, cấp quyền scope và trạng thái đồng bộ tài khoản GitHub.
+\\
+\hline
+
+Integration
+&
+Cấu hình tích hợp
+&
+Thông tin kết nối các công cụ bên ngoài (GitLab, Jira, Slack, Azure DevOps).
+\\
+\hline
+
+Repository
+&
+Kho mã nguồn
+&
+Kho lưu trữ code GitHub/GitLab được đồng bộ vào hệ thống.
+\\
+\hline
+
+Branch
+&
+Nhánh mã nguồn
+&
+Nhánh phát triển cụ thể trong Repository (VD: main, feature/x).
+\\
+\hline
+
+Commit
+&
+Bản ghi Commit
+&
+Một mốc thay đổi mã nguồn gắn liền với commit hash.
+\\
+\hline
+
+PullRequest
+&
+Yêu cầu hợp nhất (PR)
+&
+Đơn vị thay đổi code dùng để kích hoạt tiến trình phân tích drift và tự động cập nhật tài liệu.
+\\
+\hline
+
+CodeDiff
+&
+Chi tiết thay đổi code
+&
+Chi tiết các dòng code thêm/xóa/sửa trong một Commit hoặc PR.
+\\
+\hline
+
+File
+&
+Tập tin mã nguồn
+&
+Cấu trúc tệp tin code trong kho chứa.
+\\
+\hline
+
+CodeEntity
+&
+Thực thể mã nguồn
+&
+Cấu trúc code thu được từ phân tích AST (Class, Method, Endpoint, Parameter, Return value).
+\\
+\hline
+
+Dependency
+&
+Quan hệ phụ thuộc
+&
+Mối liên kết phụ thuộc giữa các CodeEntity với nhau.
+\\
+\hline
+
+Document
+&
+Tài liệu gốc
+&
+Thực thể quản lý chung cho một tài liệu (README, API Reference, Module Guide, ADR, \ldots).
+\\
+\hline
+
+DocumentVersion
+&
+Phiên bản tài liệu
+&
+Bản ghi nội dung tài liệu theo thời gian, quản lý vòng đời (Draft $\rightarrow$ In Review $\rightarrow$ Approved $\rightarrow$ Published).
+\\
+\hline
+
+DocumentAsset
+&
+File đa phương tiện
+&
+Hình ảnh, sơ đồ kiến trúc đính kèm trong tài liệu.
+\\
+\hline
+
+Template
+&
+Mẫu tài liệu
+&
+Khung cấu trúc chuẩn dùng để AI hoặc User sinh tài liệu.
+\\
+\hline
+
+TemplateSection
+&
+Mục tài liệu mẫu
+&
+Chi tiết từng tiêu đề/mục con nằm trong Template.
+\\
+\hline
+
+PlaceHolder
+&
+Vị trí chèn dữ liệu
+&
+Điểm biến số trong Section dành để chèn thông tin trích xuất từ mã nguồn.
+\\
+\hline
+
+TemplateMapping
+&
+Ánh xạ dữ liệu
+&
+Mối liên kết giữa Placeholder và CodeEntity giúp AI điền đúng thông tin.
+\\
+\hline
+
+GroundingEvidence
+&
+Minh chứng căn cứ
+&
+Liên kết dữ liệu gốc (File + CodeEntity + Commit) giúp đối soát nội dung do AI sinh, chống hallucination.
+\\
+\hline
+
+Drift
+&
+Hiện tượng lệch tài liệu
+&
+Sự cố tài liệu bị sai lệch/lỗi thời so với mã nguồn thực tế.
+\\
+\hline
+
+DriftAlert
+&
+Cảnh báo lệch tài liệu
+&
+Cảnh báo phát sinh từ PR/Commit khi phát hiện tài liệu bị lỗi thời so với code mới.
+\\
+\hline
+
+Review
+&
+Tiến trình kiểm duyệt
+&
+Phiên đánh giá kỹ thuật do Staff thực hiện trên một document\_version.
+\\
+\hline
+
+ReviewComment
+&
+Bình luận review
+&
+Góp ý, phản hồi chi tiết của Staff trong quá trình kiểm duyệt.
+\\
+\hline
+
+TicketReference
+&
+Liên kết Ticket
+&
+Mã tham chiếu đến các công cụ quản lý công việc bên ngoài (Jira ticket ID).
+\\
+\hline
+
+Notification
+&
+Thông báo
+&
+Cảnh báo/tin nhắn gửi tới User (khi có PR chờ duyệt, kết nối Token/Webhook bị hỏng, Drift Alert, \ldots).
+\\
+\hline
+
+Webhook
+&
+Webhook
+&
+Cơ chế nhận phản hồi sự kiện thời gian thực từ GitHub/GitLab/Slack.
+\\
+\hline
+
+AuditLog
+&
+Nhật ký kiểm toán
+&
+Vết ghi lại toàn bộ các thao tác quản trị hạ tầng của Administrator và các hành vi nhạy cảm.
+\\
+\hline
+
+ApprovalDelegation
+&
+Ủy quyền phê duyệt
+&
+Bản ghi ủy quyền hạn duyệt bài từ Manager này sang Manager khác trong khoảng thời gian xác định.
+\\
+\hline
+
+ChangeLog
+&
+Nhật ký thay đổi
+&
+Lịch sử vết thay đổi tài liệu chi tiết giữa các phiên bản, ghi rõ Actor + Timestamp + Trigger.
+\\
+\hline
+
+Report
+&
+Báo cáo sức khỏe
+&
+Dữ liệu tổng hợp chỉ số chất lượng tài liệu, độ phủ coverage và tình trạng drift do Tech Lead quản lý.
+\\
+\hline
+
+\caption{Từ điển nghiệp vụ của hệ thống}
+\label{tab:business-entities}
+
+\end{longtable}
+
+
+
+\section{Phân loại Tác nhân \& Phạm vi Nghiệp vụ (Actor Classification \& Business Scope)}
+\label{sec:actor-classification}
+
+\subsection{Danh mục Tác nhân Hệ thống (System Actors)}
+\label{sec:system-actors}
+
+Trong mô hình thiết kế quan niệm, hệ thống ghi nhận 5 nhóm
+\textbf{Tác nhân (Actors)}. Tất cả các tác nhân con người đều thuộc thực
+thể trung tâm User, tác động lên dữ liệu thông qua mô hình phân định vai trò
+(Role) có phạm vi (Scoped) gắn liền với thực thể Workspace. Một User có thể nắm
+giữ các vai trò khác nhau trên từng Workspace khác nhau.
+
+\subsubsection{Developer}
+
+\textbf{Mục tiêu:} người tạo code và là đối tượng chính tiêu thụ +
+khởi tạo tài liệu.
+
+\textbf{Quyền hạn chính:}
+
+\begin{itemize}
+    \item Quản lý tài khoản: đăng ký/đăng nhập/đăng xuất
+    (email hoặc GitHub OAuth), profile, notification preferences.
+
+    \item Kết nối/ngắt kết nối GitHub, cấp quyền OAuth, chọn repo vào
+    workspace, trigger sync thủ công.
+
+    \item Yêu cầu AI sinh tài liệu (theo file/module/repo), chọn template,
+    xem coverage gap, preview/chỉnh sửa tài liệu AI, xem grounding evidence,
+    submit vào review.
+
+    \item Bật/tắt auto-update tài liệu; xem diff, so sánh version,
+    accept/edit/dismiss/regenerate/rollback.
+
+    \item Xem drift events liên quan đến PR của mình
+    (loại drift, severity, evidence).
+
+    \item Dùng Knowledge Base: tìm doc/code entity, xem liên kết
+    Doc $\leftrightarrow$ Code.
+\end{itemize}
+
+\textbf{Phạm vi dữ liệu:} chỉ trong workspace/repo mình được cấp quyền;
+\textbf{không} có quyền approve/publish -- chỉ submit và chờ Staff/Manager.
+
+\textbf{Đặc điểm quan trọng:} đây là actor duy nhất
+\textbf{khởi tạo} vòng đời tài liệu (bước đầu tiên trong chuỗi
+AI $\rightarrow$ Staff $\rightarrow$ Manager).
+
+
+\subsubsection{Staff}
+
+\textbf{Mục tiêu:} review cấp 1 -- kiểm tra tính đúng đắn nội dung AI
+sinh ra trước khi lên Manager.
+
+\textbf{Quyền hạn chính:}
+
+\begin{itemize}
+    \item Xem hàng đợi tài liệu chờ review (queue), filter theo
+    repository / template / severity / submission date.
+
+    \item Mở tài liệu kèm grounding evidence, source file, code entity,
+    commit, diff, ticket, change log.
+
+    \item So sánh AI version với approved version; kiểm tra khớp template
+    và khớp source code.
+
+    \item Comment, yêu cầu chỉnh sửa, sửa lỗi nhỏ trực tiếp.
+
+    \item Approve (đẩy lên Manager) / Reject / trả lại Developer.
+\end{itemize}
+
+\textbf{Phạm vi dữ liệu:} đọc toàn bộ context kỹ thuật
+(code, diff, commit) của tài liệu đang review, nhưng không có quyền
+publish/commit cuối cùng -- đó là quyền của Manager.
+
+\textbf{Đặc điểm quan trọng:} là ``cổng lọc kỹ thuật'' -- chặn các tài liệu
+sai trước khi tốn thời gian Manager.
+
+
+\subsubsection{Manager}
+
+\textbf{Mục tiêu:} phê duyệt cuối cùng, chịu trách nhiệm publish/commit
+vào repository.
+
+\textbf{Quyền hạn chính:}
+
+\begin{itemize}
+    \item Xem tài liệu đã qua Staff review, xem staff comments,
+    grounding evidence, audit trail.
+
+    \item \textbf{Approve để publish/commit}, \textbf{Reject},
+    \textbf{Rollback}.
+
+    \item Cấu hình: loại tài liệu nào bắt buộc cần Manager approval,
+    merge policy, kiểm soát publish/commit.
+
+    \item Xem lịch sử approval; \textbf{delegate quyền approval}
+    cho người khác.
+\end{itemize}
+
+\textbf{Phạm vi dữ liệu:} toàn bộ audit trail + kết quả review của Staff,
+không cần xem lại chi tiết code diff (đã được Staff xử lý), tập trung vào
+quyết định go/no-go.
+
+\textbf{Đặc điểm quan trọng:} là actor \textbf{duy nhất} có quyền
+publish/commit tài liệu vào repository thật -- đúng nguyên tắc
+``AI không tự ý thay đổi tài liệu mà không kiểm soát''.
+
+
+\subsubsection{Technical Lead}
+
+\textbf{Mục tiêu:} quản trị (governance) toàn bộ hệ thống tài liệu ở tầm
+chiến lược, không tham gia review từng tài liệu đơn lẻ.
+
+\textbf{Quyền hạn chính:}
+
+\begin{itemize}
+    \item Quản lý documentation collection, phân quyền ownership.
+
+    \item Cấu hình \textbf{drift detection policy} và \textbf{threshold}.
+
+    \item Xem documentation health dashboard, dependency graph,
+    quality metrics, theo dõi unresolved drift, xuất báo cáo.
+
+    \item Cấu hình auto-update (repo nào, module nào, loại tài liệu nào),
+    xem version history/change log, rollback ở cấp hệ thống.
+
+    \item Quản lý Template: tạo/sửa/clone/xóa, định nghĩa section/heading/
+    placeholder, mapping placeholder $\leftrightarrow$ code entity.
+\end{itemize}
+
+\textbf{Phạm vi dữ liệu:} toàn bộ workspace/repo thuộc phạm vi quản lý --
+nhìn theo \textbf{chỉ số tổng hợp} (dashboard, metrics) hơn là từng tài liệu.
+
+\textbf{Đặc điểm quan trọng:} khác biệt với Manager ở chỗ Manager phê duyệt
+\textbf{từng tài liệu}, còn Tech Lead cấu hình \textbf{chính sách/threshold
+áp dụng cho toàn hệ thống} (drift policy, template chuẩn).
+
+
+\subsubsection{Administrator}
+
+\textbf{Mục tiêu:} vận hành hạ tầng \& tích hợp toàn hệ thống.
+
+\textbf{Quyền hạn chính:} quản lý user, role, permission, workspace,
+repository; cấu hình GitHub App/OAuth/GitHub Actions/webhook; tích hợp
+GitLab/Jira/Slack; cấu hình supported programming languages; cấu hình AI
+settings (LLM, embedding model, confidence threshold, token budget,
+indexing, retrieval); notification; theo dõi system health, AI processing
+jobs, event pipeline, audit log, system analytics.
+
+\textbf{Phạm vi dữ liệu:} toàn hệ thống, cấp hạ tầng/kỹ thuật --
+\textbf{không} liên quan trực tiếp đến nội dung nghiệp vụ tài liệu
+(không review/approve tài liệu).
+
+\textbf{Đặc điểm quan trọng:} là actor duy nhất chạm vào
+\textbf{cấu hình AI model} (LLM, embedding, threshold) -- tách biệt
+hoàn toàn khỏi luồng nghiệp vụ review/approval.
+
+
+\subsection{Chi tiết các Thực thể Dữ liệu Cốt lõi (Core Data Entities)}
+\label{sec:core-data-entities}
+
+
+\subsubsection{Nhóm Quản trị \& Kết nối}
+
+\begin{itemize}
+
+    \item \textbf{User (Thực thể mạnh):}
+    Người dùng cuối trong hệ thống (Developer, Staff, Manager,
+    Tech Lead, Admin).
+
+    \item \textbf{Workspace (Thực thể mạnh):}
+    Không gian làm việc chứa repository và tài liệu của một nhóm/dự án.
+
+    \item \textbf{Role (Thực thể mạnh):}
+    Vai trò của người dùng (scoped theo Workspace).
+
+    \item \textbf{Permission (Thực thể mạnh):}
+    Quyền hạn chi tiết trên hệ thống
+    (VD: DOC\_APPROVE, TEMPLATE\_EDIT).
+
+    \item \textbf{WorkspaceMember (Thực thể mối kết hợp):}
+    Ghi nhận sự tham gia của User trong Workspace và vai trò (Role)
+    tương ứng.
+
+    \item \textbf{GitHubConnection (Thực thể phụ thuộc):}
+    Lưu thông tin xác thực OAuth của User với GitHub.
+
+    \item \textbf{Integration (Thực thể mạnh):}
+    Cấu hình kết nối với công cụ bên ngoài
+    (GitLab, Jira, Slack, Azure DevOps).
+
+    \item \textbf{Webhook (Thực thể phụ thuộc):}
+    Cơ chế nhận/gửi sự kiện thời gian thực từ các nền tảng tích hợp.
+
+    \item \textbf{ApprovalDelegation (Thực thể phụ thuộc):}
+    Bản ghi ủy quyền phê duyệt giữa các Manager trong khoảng thời gian
+    xác định.
+
+\end{itemize}
+
+
+\subsubsection{Nhóm Mã nguồn \& Cấu trúc Code}
+
+\begin{itemize}
+
+    \item \textbf{Repository (Thực thể mạnh):}
+    Kho chứa mã nguồn được đồng bộ vào hệ thống.
+
+    \item \textbf{Branch (Thực thể yếu -- phụ thuộc Repository):}
+    Nhánh phát triển trong repository.
+
+    \item \textbf{Commit (Thực thể yếu -- phụ thuộc Branch/Repo):}
+    Bản ghi một lần commit mã nguồn.
+
+    \item \textbf{PullRequest (Thực thể yếu -- phụ thuộc Repository):}
+    Yêu cầu hợp nhất nhánh (PR) từ GitHub.
+
+    \item \textbf{CodeDiff (Thực thể yếu -- phụ thuộc Commit/PR):}
+    Chi tiết thay đổi mã nguồn trong commit hoặc PR.
+
+    \item \textbf{File (Thực thể yếu -- phụ thuộc Repository):}
+    Cấu trúc tập tin mã nguồn trong kho chứa.
+
+    \item \textbf{CodeEntity (Thực thể yếu -- phụ thuộc File):}
+    Đơn vị mã nguồn cụ thể thu được từ AST
+    (Class, Method, Function, \ldots).
+
+    \item \textbf{Dependency (Thực thể mối kết hợp):}
+    Mối quan hệ phụ thuộc giữa các CodeEntity.
+
+\end{itemize}
+
+
+\subsubsection{Nhóm Khuôn mẫu Tài liệu (Template Engine Domain)}
+
+\begin{itemize}
+
+    \item \textbf{Template (Thực thể mạnh):}
+    Khuôn mẫu chuẩn để AI/User sinh tài liệu.
+
+    \item \textbf{TemplateSection (Thực thể yếu -- phụ thuộc Template):}
+    Mục con/heading trong cấu trúc dàn ý của Template.
+
+    \item \textbf{Placeholder (Thực thể yếu -- phụ thuộc TemplateSection):}
+    Biến/điểm chèn trong Section, làm nhiệm vụ nhận dữ liệu từ code.
+
+    \item \textbf{TemplateMapping (Thực thể mối kết hợp):}
+    Ánh xạ trực tiếp giữa Placeholder và CodeEntity để AI trích xuất thông tin.
+
+\end{itemize}
+
+
+\subsubsection{Nhóm Tài liệu \& Vòng đời Dữ liệu (Documentation Domain)}
+
+\begin{itemize}
+
+    \item \textbf{Document (Thực thể mạnh):}
+    Tài liệu gốc (README, API Reference, Architecture Guide, ADR, \ldots).
+
+    \item \textbf{DocumentVersion (Thực thể yếu -- phụ thuộc Documentation):}
+    Bản ghi nội dung tài liệu theo từng mốc thời gian và trạng thái
+    (Draft, In Review, Approved, Published).
+
+    \item \textbf{ChangeLog (Thực thể yếu -- phụ thuộc DocumentVersion):}
+    Lịch sử vết thay đổi chi tiết giữa các phiên bản tài liệu.
+
+    \item \textbf{DocumentAsset (Thực thể yếu -- phụ thuộc DocumentVersion):}
+    Tài nguyên đa phương tiện (hình ảnh, sơ đồ) gắn kèm tài liệu.
+
+    \item \textbf{TicketReference (Thực thể phụ thuộc):}
+    Mã tham chiếu liên kết đến các công cụ quản lý công việc bên ngoài
+    (Jira Ticket ID, GitHub Issue).
+
+\end{itemize}
+
+
+\subsubsection{Nhóm Kiểm duyệt \& Phê duyệt (Review \& Governance Domain)}
+
+\begin{itemize}
+
+    \item \textbf{Review (Thực thể mối kết hợp/Sự kiện):}
+    Tiến trình Staff thực hiện đánh giá kỹ thuật trên một DocumentVersion.
+
+    \item \textbf{ReviewComment (Thực thể yếu -- phụ thuộc Review):}
+    Phản hồi, góp ý chi tiết trong quá trình kiểm duyệt.
+
+    \item \textbf{Approval (Thực thể mối kết hợp/Sự kiện):}
+    Quyết định phê duyệt xuất bản/commit tài liệu chính thức từ Manager.
+
+\end{itemize}
+
+
+\subsubsection{Nhóm AI Evidence, Giám sát \& Kiểm toán
+(AI Evidence \& Observability Domain)}
+
+\begin{itemize}
+
+    \item \textbf{GroundingEvidence (Thực thể yếu -- phụ thuộc DocumentVersion):}
+    Bảng minh chứng chứa liên kết nguồn gốc
+    (File, CodeEntity, Commit) AI dùng để tạo nội dung,
+    phục vụ chống hallucination.
+
+    \item \textbf{DriftAlert (Thực thể sự kiện):}
+    Cảnh báo phát hiện tài liệu bị lệch ngữ nghĩa/lỗi thời so với code mới.
+
+    \item \textbf{Report (Thực thể nghiệp vụ):}
+    Dữ liệu báo cáo tổng quan về chất lượng tài liệu,
+    tình trạng drift và chỉ số hệ thống.
+
+    \item \textbf{AuditLog (Thực thể nhật ký):}
+    Lưu vết kiểm toán toàn bộ hành vi quản trị và thay đổi quan trọng
+    trong hệ thống.
+
+    \item \textbf{AIJob (Thực thể tác vụ/tiến trình):}
+    Tiến trình xử lý ngầm của AI (generate, update, detect drift,
+    indexing, RAG).
+
+\end{itemize}
+```
