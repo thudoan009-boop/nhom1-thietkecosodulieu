@@ -14,7 +14,7 @@ User, Role, Permission, Workspace
 Dữ liệu định danh, RBAC -- cốt lõi hệ thống \\
 \hline
 
-Repository, GitHubConnection, Webhook
+Repository, GitHubConnection
 &
 Cấu hình kết nối, cần cho mọi lần sync \\
 \hline
@@ -191,14 +191,6 @@ Thông tin xác thực OAuth, cấp quyền scope và trạng thái đồng bộ
 \\
 \hline
 
-Integration
-&
-Cấu hình tích hợp
-&
-Thông tin kết nối các công cụ bên ngoài (GitLab, Jira, Slack, Azure DevOps).
-\\
-\hline
-
 Repository
 &
 Kho mã nguồn
@@ -371,15 +363,7 @@ Notification
 &
 Thông báo
 &
-Cảnh báo/tin nhắn gửi tới User (khi có PR chờ duyệt, kết nối Token/Webhook bị hỏng, Drift Alert, \ldots).
-\\
-\hline
-
-Webhook
-&
-Webhook
-&
-Cơ chế nhận phản hồi sự kiện thời gian thực từ GitHub/GitLab/Slack.
+Cảnh báo/tin nhắn gửi tới User (khi có PR chờ duyệt, kết nối Token bị hỏng, Drift Alert, \ldots).
 \\
 \hline
 
@@ -565,7 +549,7 @@ nhìn theo \textbf{chỉ số tổng hợp} (dashboard, metrics) hơn là từng
 \textbf{Mục tiêu:} vận hành hạ tầng \& tích hợp toàn hệ thống.
 
 \textbf{Quyền hạn chính:} quản lý user, role, permission, workspace,
-repository; cấu hình GitHub App/OAuth/GitHub Actions/webhook; tích hợp
+repository; cấu hình GitHub App/OAuth/GitHub Actions; tích hợp
 GitLab/Jira/Slack; cấu hình supported programming languages; cấu hình AI
 settings (LLM, embedding model, confidence threshold, token budget,
 indexing, retrieval); notification; theo dõi system health, AI processing
@@ -608,13 +592,6 @@ hoàn toàn khỏi luồng nghiệp vụ review/approval.
 
     \item \textbf{GitHubConnection (Thực thể phụ thuộc):}
     Lưu thông tin xác thực OAuth của User với GitHub.
-
-    \item \textbf{Integration (Thực thể mạnh):}
-    Cấu hình kết nối với công cụ bên ngoài
-    (GitLab, Jira, Slack, Azure DevOps).
-
-    \item \textbf{Webhook (Thực thể phụ thuộc):}
-    Cơ chế nhận/gửi sự kiện thời gian thực từ các nền tảng tích hợp.
 
     \item \textbf{ApprovalDelegation (Thực thể phụ thuộc):}
     Bản ghi ủy quyền phê duyệt giữa các Manager trong khoảng thời gian
