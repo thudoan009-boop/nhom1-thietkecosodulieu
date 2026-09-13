@@ -1,5 +1,9 @@
 \documentclass[letterpaper,11pt,leqno]{book}
 \usepackage{book}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+% Disable font expansion for bitmap Vietnamese fonts used by pdfTeX.
+\microtypesetup{expansion=false}
 \bibliographystyle{book}
 
 % Enter book title to populate PDF metadata:
@@ -50,19 +54,17 @@
 
 \input{chapter2}
 
-\chapter{Math}\label{c:math}
+
+
+\part{Thiết kế logic}\label{p:second}
+
+\chapter{thuật toán 2.2 maping ER}\label{c:figures}
 
 \input{chapter3}
 
-\part{Second half of the book}\label{p:second}
-
-\chapter{Lists, figures, and tables}\label{c:figures}
-
-\input{chapter4}
-
 \chapter{Cross-references and quotes}\label{c:conclusion}
 
-\input{chapter5}
+\input{chapter4}
 
 \chapter{Further results}\label{c:further}
 
