@@ -152,8 +152,7 @@ Quyền hạn
 Chi tiết thao tác được phép thực hiện (VD: DOC\_APPROVE, TEMPLATE\_EDIT).
 \\
 \hline
-RolePermission & Quyền của vai trò & Nối Role\_Permission. \\
-\hline
+
 Workspace
 &
 Không gian làm việc
@@ -162,13 +161,7 @@ Môi trường quản lý tập hợp nhiều kho mã nguồn của một đội
 \\
 \hline
 
-WorkspaceMember
-&
-Thành viên Workspace
-&
-Ghi nhận sự tham gia của User vào Workspace và gán Role tương ứng tại Workspace đó.
-\\
-\hline
+
 
 GithubConnection
 &
@@ -234,13 +227,7 @@ Cấu trúc code thu được từ phân tích AST (Class, Method, Endpoint, Par
 \\
 \hline
 
-Dependency
-&
-Quan hệ phụ thuộc
-&
-Mối liên kết phụ thuộc giữa các CodeEntity với nhau.
-\\
-\hline
+
 
 Document
 &
@@ -282,13 +269,7 @@ Vị trí chèn dữ liệu
 \\
 \hline
 
-TemplateMapping
-&
-Ánh xạ dữ liệu
-&
-Mối liên kết giữa Placeholder và CodeEntity giúp AI điền đúng thông tin.
-\\
-\hline
+
 
 GroundingEvidence
 &
@@ -342,13 +323,7 @@ Cảnh báo/tin nhắn gửi tới User (khi có PR chờ duyệt, kết nối T
 
 
 
-ApprovalDelegation
-&
-Ủy quyền phê duyệt
-&
-Bản ghi ủy quyền hạn duyệt bài từ Manager này sang Manager khác trong khoảng thời gian xác định.
-\\
-\hline
+
 
 ChangeLog
 &
@@ -546,11 +521,7 @@ hoàn toàn khỏi luồng nghiệp vụ review/approval.
     \item \textbf{Permission (Thực thể mạnh):}
     Quyền hạn chi tiết trên hệ thống
     (VD: DOC\_APPROVE, TEMPLATE\_EDIT).
-    \item\textbf{RolePermission(Thực thể mối kết hợp):}
-Ma trận phân quyền chi tiết thiết lập các quyền hạn cụ thể mà một vai trò sở hữu.
-    \item \textbf{WorkspaceMember (Thực thể mối kết hợp):}
-    Ghi nhận sự tham gia của User trong Workspace và vai trò (Role)
-    tương ứng.
+   
 
     \item \textbf{GitHubConnection (Thực thể phụ thuộc):}
     Lưu thông tin xác thực OAuth của User với GitHub.
@@ -604,9 +575,6 @@ Ma trận phân quyền chi tiết thiết lập các quyền hạn cụ thể m
 
     \item \textbf{Placeholder (Thực thể yếu -- phụ thuộc TemplateSection):}
     Biến/điểm chèn trong Section, làm nhiệm vụ nhận dữ liệu từ code.
-
-    \item \textbf{TemplateMapping (Thực thể mối kết hợp):}
-    Ánh xạ trực tiếp giữa Placeholder và CodeEntity để AI trích xuất thông tin.
 
 \end{itemize}
 
