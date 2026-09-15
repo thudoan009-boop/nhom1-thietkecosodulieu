@@ -1,235 +1,303 @@
+\setcounter{subsection}{1} % Ép subsection tiếp theo thành số 2 (tức là 3.2)
 \section{Lược đồ Quan hệ Lô-gíc - Phân hệ VCS \& Code Structure}
 
-\subsection*{Khai báo Chi tiết Bảng}
+\subsection*{Khai báo Chi tiết Bảng (Không có cột Mô tả)}
+... (giữ nguyên phần code phía sau)
 
 % Bảng repositories
 \noindent\textbf{Tên Bảng: repositories} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|p{8cm}|}
+\begin{tabular}{|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} & \textbf{Mô Tả} \\
+\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-repository\_id & PK & NOT NULL & Định danh duy nhất cho kho mã nguồn \\
+repository\_id & PK & NOT NULL \\
 \hline
-workspace\_id & FK & NOT NULL & Trỏ tới workspaces(workspace\_id) (Từ mối quan hệ: Workspace - owns - Repository) \\
+workspace\_id & FK & NOT NULL \\
 \hline
-name & & NOT NULL & Tên kho mã nguồn (VD: payment-gateway) \\
+name & & NOT NULL \\
 \hline
-url & Unique & NOT NULL & Đường dẫn gốc đến kho chứa trên VCS \\
+url & Unique & NOT NULL \\
 \hline
-default\_branch & & NOT NULL & Nhánh mặc định dùng để phân tích code (VD: main, master) \\
+default\_branch & & NOT NULL \\
 \hline
-sync\_status & & NOT NULL & Trạng thái đồng bộ dữ liệu (SYNCING, SUCCESS, FAILED) \\
+sync\_status & & NOT NULL \\
 \hline
-last\_synced\_at & & NULL & Thời điểm đồng bộ mã nguồn thành công gần nhất \\
+last\_synced\_at & & NULL \\
 \hline
-created\_at & & NOT NULL & Thời điểm tích hợp kho mã nguồn vào hệ thống \\
+created\_at & & NOT NULL \\
 \hline
-updated\_at & & NOT NULL & Thời điểm cập nhật trạng thái hoặc cấu hình kho gần nhất \\
+updated\_at & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng branches
 \noindent\textbf{Tên Bảng: branches} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|p{8cm}|}
+\begin{tabular}{|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} & \textbf{Mô Tả} \\
+\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-branch\_id & PK & NOT NULL & Định danh duy nhất cho nhánh \\
+branch\_id & PK & NOT NULL \\
 \hline
-repository\_id & FK & NOT NULL & Trỏ tới repositories(repository\_id) (Từ mối quan hệ: Repository - has\_branch - Branch) \\
+repository\_id & FK & NOT NULL \\
 \hline
-branch\_name & & NOT NULL & Tên nhánh (VD: main, staging, feature/auth) \\
+branch\_name & & NOT NULL \\
 \hline
-is\_default & & NOT NULL & Cờ xác định nhánh mặc định của repo (true/false) \\
+is\_default & & NOT NULL \\
 \hline
-created\_at & & NOT NULL & Thời điểm nhánh được nhận diện và lưu vào hệ thống \\
+created\_at & & NOT NULL \\
 \hline
-updated\_at & & NOT NULL & Thời điểm cập nhật commit hash hoặc trạng thái nhánh gần nhất \\
+updated\_at & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng commits
 \noindent\textbf{Tên Bảng: commits} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|p{8cm}|}
+\begin{tabular}{|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} & \textbf{Mô Tả} \\
+\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-commit\_id & PK & NOT NULL & Định danh nội bộ cho bản ghi commit \\
+commit\_id & PK & NOT NULL \\
 \hline
-branch\_id & FK & NOT NULL & Trỏ tới branches(branch\_id) (Từ mối quan hệ: Branch - contains\_commit - Commit) \\
+branch\_id & FK & NOT NULL \\
 \hline
-user\_id & FK & NULL & Trỏ tới users(user\_id) (Từ mối quan hệ: User - makes\_commit - Commit) \\
+user\_id & FK & NULL \\
 \hline
-commit\_hash & Unique & NOT NULL & Mã băm SHA-1/SHA-256 duy nhất từ Git (VD:7a8f9b2...) \\
+commit\_hash & Unique & NOT NULL \\
 \hline
-message & & NOT NULL & Nội dung mô tả của commit \\
+message & & NOT NULL \\
 \hline
-author\_name & & NOT NULL & Tên tác giả (Phẳng hóa từ thuộc tính phức hợp AuthorInfo) \\
+author\_name & & NOT NULL \\
 \hline
-author\_email & & NOT NULL & Email tác giả (Phẳng hóa từ thuộc tính phức hợp AuthorInfo) \\
+author\_email & & NOT NULL \\
 \hline
-committed\_at & & NOT NULL & Thời điểm commit được thực hiện trên VCS (thời gian nghiệp vụ) \\
+committed\_at & & NOT NULL \\
 \hline
-created\_at & & NOT NULL & Thời điểm bản ghi commit được đồng bộ vào LivingDocs (thời gian hệ thống) \\
+created\_at & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng pull_requests
 \noindent\textbf{Tên Bảng: pull\_requests} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|p{8cm}|}
+\begin{tabular}{|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} & \textbf{Mô Tả} \\
+\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-pr\_id & PK & NOT NULL & Định danh nội bộ của bản ghi PR \\
+pr\_id & PK & NOT NULL \\
 \hline
-repository\_id & FK & NOT NULL & Trỏ tới repositories(repository\_id) (Từ mối quan hệ: Repository - receives\_pr - PullRequest) \\
+repository\_id & FK & NOT NULL \\
 \hline
-pr\_number & & NOT NULL & Số thứ tự PR trên nền tảng gốc (VD: \#102, \#123) \\
+pr\_number & & NOT NULL \\
 \hline
-title & & NOT NULL & Tiêu đề của Pull Request \\
+title & & NOT NULL \\
 \hline
-description & & NOT NULL & Nội dung văn bản mô tả chi tiết PR (Dữ liệu đầu vào cho AI) \\
+description & & NOT NULL \\
 \hline
-source\_branch & & NOT NULL & Nhánh nguồn chứa mã nguồn thay đổi \\
+source\_branch & & NOT NULL \\
 \hline
-target\_branch & & NOT NULL & Nhánh đích dự định hợp nhất vào (VD: main, develop) \\
+target\_branch & & NOT NULL \\
 \hline
-status & & NOT NULL & Trạng thái vòng đời của PR (OPEN, MERGED, CLOSED) \\
+status & & NOT NULL \\
 \hline
-created\_at & & NOT NULL & Thời điểm mở PR trên VCS \\
+created\_at & & NOT NULL \\
 \hline
-updated\_at & & NOT NULL & Thời điểm PR cập nhật thông tin/trạng thái gần nhất \\
+updated\_at & & NOT NULL \\
 \hline
-merged\_at & & NULL & Thời điểm PR chính thức được chấp nhận hợp nhất \\
+merged\_at & & NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng pull_request_labels
 \noindent\textbf{Tên Bảng: pull\_request\_labels} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|p{8cm}|}
+\begin{tabular}{|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} & \textbf{Mô Tả} \\
+\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-label\_id & PK & NOT NULL & Khóa chính định danh nhãn \\
+label\_id & PK & NOT NULL \\
 \hline
-pr\_id & FK & NOT NULL & Trỏ tới pull\_requests(pr\_id) \\
+pr\_id & FK & NOT NULL \\
 \hline
-label\_name & & NOT NULL & Tên nhãn được gắn trên PR (Tách từ thuộc tính đa trị labels, VD: bug, api-change) \\
+label\_name & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng code_diffs
 \noindent\textbf{Tên Bảng: code\_diffs} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|p{8cm}|}
+\begin{tabular}{|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} & \textbf{Mô Tả} \\
+\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-diff\_id & PK & NOT NULL & Định danh nội bộ bản ghi chi tiết thay đổi \\
+diff\_id & PK & NOT NULL \\
 \hline
-commit\_id & FK & NULL & Trỏ tới commits(commit\_id) (Có thể NULL nếu diff thuộc về PR tổng hợp) \\
+commit\_id & FK & NULL \\
 \hline
-pr\_id & FK & NOT NULL & Trỏ tới pull\_requests(pr\_id) (Có thể NULL nếu diff tính theo từng commit đơn lẻ) \\
+pr\_id & FK & NOT NULL \\
 \hline
-file\_path & & NOT NULL & Đường dẫn tương đối đến tệp bị thay đổi (VD: src/controllers/payment.js) \\
+file\_path & & NOT NULL \\
 \hline
-change\_type & & NOT NULL & Loại thao tác trên file (ADD, MODIFY, DELETE, RENAME) \\
+change\_type & & NOT NULL \\
 \hline
-additions & & NOT NULL & Số dòng code được thêm mới \\
+additions & & NOT NULL \\
 \hline
-deletions & & NOT NULL & Số dòng code bị xóa đi \\
+deletions & & NOT NULL \\
 \hline
-diff\_content & & NULL & Nội dung chi tiết các đoạn code thay đổi (patch/hunk text) dùng làm input cho AI \\
+diff\_content & & NULL \\
 \hline
-created\_at & & NOT NULL & Thời điểm lưu bản ghi diff vào hệ thống \\
+created\_at & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng files
 \noindent\textbf{Tên Bảng: files} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|p{8cm}|}
+\begin{tabular}{|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} & \textbf{Mô Tả} \\
+\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-file\_id & PK & NOT NULL & Định danh nội bộ của tập tin trong hệ thống \\
+file\_id & PK & NOT NULL \\
 \hline
-repository\_id & FK & NOT NULL & Trỏ tới repositories(repository\_id) (Từ mối quan hệ: Repository - contains\_file - File) \\
+repository\_id & FK & NOT NULL \\
 \hline
-file\_path & & NOT NULL & Đường dẫn đầy đủ của file tính từ gốc repository (VD: src/controllers/user\_controller.ts) \\
+file\_path & & NOT NULL \\
 \hline
-file\_type & & NULL & Loại hoặc đuôi mở rộng của tệp (VD: ts, java, py, md) \\
+file\_type & & NULL \\
 \hline
-status & & NOT NULL & Trạng thái của file trong cây thư mục (ACTIVE, DELETED, RENAMED) \\
+status & & NOT NULL \\
 \hline
-created\_at & & NOT NULL & Thời điểm file lần đầu được ghi nhận vào hệ thống \\
+created\_at & & NOT NULL \\
 \hline
-updated\_at & & NOT NULL & Thời điểm thông tin file hoặc nội dung file thay đổi gần nhất \\
+updated\_at & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng code_entities
 \noindent\textbf{Tên Bảng: code\_entities} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|p{8cm}|}
+\begin{tabular}{|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} & \textbf{Mô Tả} \\
+\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-entity\_id & PK & NOT NULL & Định danh nội bộ của thực thể code \\
+entity\_id & PK & NOT NULL \\
 \hline
-file\_id & FK & NOT NULL & Trỏ tới files(file\_id) (Từ mối quan hệ: File - parses\_into - CodeEntity) \\
+file\_id & FK & NOT NULL \\
 \hline
-entity\_name & & NOT NULL & Tên của thành phần code (VD: processPayment, UserController) \\
+entity\_name & & NOT NULL \\
 \hline
-entity\_type & & NOT NULL & Loại thành phần code (CLASS, METHOD, FUNCTION, INTERFACE, ENDPOINT) \\
+entity\_type & & NOT NULL \\
 \hline
-signature & & NULL & Cấu trúc chữ ký (VD: public void processPayment(String orderId, Double amount)) \\
+signature & & NULL \\
 \hline
-doc\_comment & & NULL & Đoạn comment/docstring nguyên bản đính kèm hàm/lớp (nếu có) \\
+doc\_comment & & NULL \\
 \hline
-start\_line & & NOT NULL & Dòng bắt đầu của thực thể code (Phẳng hóa từ thuộc tính phức hợp position) \\
+start\_line & & NOT NULL \\
 \hline
-end\_line & & NOT NULL & Dòng kết thúc của thực thể code (Phẳng hóa từ thuộc tính phức hợp position) \\
+end\_line & & NOT NULL \\
 \hline
-created\_at & & NOT NULL & Thời điểm thực thể code được bóc tách và lưu vào hệ thống \\
+created\_at & & NOT NULL \\
 \hline
-updated\_at & & NOT NULL & Thời điểm cấu trúc của thực thể code thay đổi gần nhất \\
+updated\_at & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng dependencies
 \noindent\textbf{Tên Bảng: dependencies} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|p{8cm}|}
+\begin{tabular}{|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} & \textbf{Mô Tả} \\
+\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-dependency\_id & PK & NOT NULL & Định danh duy nhất cho bản ghi phụ thuộc \\
+dependency\_id & PK & NOT NULL \\
 \hline
-source\_entity\_id & FK & NOT NULL & Thực thể mã nguồn phụ thuộc (Trỏ tới code\_entities(entity\_id)) \\
+source\_entity\_id & FK & NOT NULL \\
 \hline
-target\_entity\_id & FK & NOT NULL & Thực thể mã nguồn được phụ thuộc (Trỏ tới code\_entities(entity\_id)) \\
+target\_entity\_id & FK & NOT NULL \\
 \hline
-dependency\_type & & NOT NULL & Loại quan hệ phụ thuộc (CALLS, INHERITS, IMPLEMENTS, USES, IMPORTS) \\
+dependency\_type & & NOT NULL \\
 \hline
-created\_at & & NOT NULL & Thời điểm hệ thống phân tích AST và ghi nhận mối quan hệ phụ thuộc \\
+created\_at & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.6cm}
 
-\subsection*{Lược đồ Dạng Cú pháp Rút gọn}
+\subsection{Lược đồ Dạng Cú pháp Rút gọn}
 \begin{itemize}
-    \item \textbf{repositories} (repository\_id UUID PK, workspace\_id UUID FK, name VARCHAR(255), url VARCHAR(255) UNIQUE, default\_branch VARCHAR(100), sync\_status VARCHAR(20), last\_synced\_at TIMESTAMP, created\_at TIMESTAMP, updated\_at TIMESTAMP) 
-    \item \textbf{branches} (branch\_id UUID PK, repository\_id UUID FK, branch\_name VARCHAR(100), is\_default BOOLEAN, created\_at TIMESTAMP, updated\_at TIMESTAMP) 
-    \item \textbf{commits} (commit\_id UUID PK, branch\_id UUID FK, user\_id UUID FK, commit\_hash VARCHAR(40) UNIQUE, message TEXT, author\_name VARCHAR(100), author\_email VARCHAR(255), committed\_at TIMESTAMP, created\_at TIMESTAMP) 
-    \item \textbf{pull\_requests} (pr\_id UUID PK, repository\_id UUID FK, pr\_number INT, title VARCHAR(255), description TEXT, source\_branch VARCHAR(100), target\_branch VARCHAR(100), status VARCHAR(20), created\_at TIMESTAMP, updated\_at TIMESTAMP, merged\_at TIMESTAMP) 
-    \item \textbf{pull\_request\_labels} (label\_id UUID PK, pr\_id UUID FK, label\_name VARCHAR(50)) 
-    \item \textbf{code\_diffs} (diff\_id UUID PK, commit\_id UUID FK, pr\_id UUID FK, file\_path VARCHAR(500), change\_type VARCHAR(20), additions INT, deletions INT, diff\_content TEXT, created\_at TIMESTAMP) 
-    \item \textbf{files} (file\_id UUID PK, repository\_id UUID FK, file\_path VARCHAR(500), file\_type VARCHAR(20), status VARCHAR(20), created\_at TIMESTAMP, updated\_at TIMESTAMP) 
-    \item \textbf{code\_entities} (entity\_id UUID PK, file\_id UUID FK, entity\_name VARCHAR(100), entity\_type VARCHAR(50), signature TEXT, doc\_comment TEXT, start\_line INT, end\_line INT, created\_at TIMESTAMP, updated\_at TIMESTAMP) 
-    \item \textbf{dependencies} (dependency\_id UUID PK, source\_entity\_id UUID FK, target\_entity\_id UUID FK, dependency\_type VARCHAR(50), created\_at TIMESTAMP)
+    \item \textbf{repositories} (repository\_id UUID PK, workspace\_id UUID FK, name, url UNIQUE, default\_branch, sync\_status, last\_synced\_at, created\_at, updated\_at) 
+    \item \textbf{branches} (branch\_id UUID PK, repository\_id UUID FK, branch\_name, is\_default, created\_at, updated\_at) 
+    \item \textbf{commits} (commit\_id UUID PK, branch\_id UUID FK, user\_id UUID FK, commit\_hash UNIQUE, message, author\_name, author\_email, committed\_at, created\_at) 
+    \item \textbf{pull\_requests} (pr\_id UUID PK, repository\_id UUID FK, pr\_number, title, description, source\_branch, target\_branch, status, created\_at, updated\_at, merged\_at) 
+    \item \textbf{pull\_request\_labels} (label\_id UUID PK, pr\_id UUID FK, label\_name) 
+    \item \textbf{code\_diffs} (diff\_id UUID PK, commit\_id UUID FK, pr\_id UUID FK, file\_path, change\_type, additions, deletions, diff\_content, created\_at) 
+    \item \textbf{files} (file\_id UUID PK, repository\_id UUID FK, file\_path, file\_type, status, created\_at, updated\_at) 
+    \item \textbf{code\_entities} (entity\_id UUID PK, file\_id UUID FK, entity\_name, entity\_type, signature, doc\_comment, start\_line, end\_line, created\_at, updated\_at) 
+    \item \textbf{dependencies} (dependency\_id UUID PK, source\_entity\_id UUID FK, target\_entity\_id UUID FK, dependency\_type, created\_at)
 \end{itemize}
+
+\subsection{Ràng buộc Tham chiếu (Foreign Key Constraints)}
+\begin{itemize}
+    \item \textbf{FK\_repositories\_workspace:} repositories(workspace\_id) $\rightarrow$ workspaces(workspace\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+    \item \textbf{FK\_branches\_repositories:} branches(repository\_id) $\rightarrow$ repositories(repository\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+    \item \textbf{FK\_commits\_branches:} commits(branch\_id) $\rightarrow$ branches(branch\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+    \item \textbf{FK\_commits\_users:} commits(user\_id) $\rightarrow$ users(user\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE SET NULL / ON UPDATE CASCADE
+    \item \textbf{FK\_pull\_requests\_repositories:} pull\_requests(repository\_id) $\rightarrow$ repositories(repository\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+    \item \textbf{FK\_pr\_labels\_pr:} pull\_request\_labels(pr\_id) $\rightarrow$ pull\_requests(pr\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+    \item \textbf{FK\_code\_diffs\_commits:} code\_diffs(commit\_id) $\rightarrow$ commits(commit\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+    \item \textbf{FK\_code\_diffs\_pr:} code\_diffs(pr\_id) $\rightarrow$ pull\_requests(pr\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+    \item \textbf{FK\_files\_repositories:} files(repository\_id) $\rightarrow$ repositories(repository\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+    \item \textbf{FK\_code\_entities\_files:} code\_entities(file\_id) $\rightarrow$ files(file\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+    \item \textbf{FK\_dependencies\_source:} dependencies(source\_entity\_id) $\rightarrow$ code\_entities(entity\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+    \item \textbf{FK\_dependencies\_target:} dependencies(target\_entity\_id) $\rightarrow$ code\_entities(entity\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
+\end{itemize}
+
+\subsection{Ràng buộc Giá trị Miền (CHECK Constraints)}
+\begin{itemize}
+    \item \textbf{CHK\_repo\_sync\_status:} CHECK (sync\_status IN ('SYNCING', 'SUCCESS', 'FAILED'))
+    \item \textbf{CHK\_pr\_status:} CHECK (status IN ('OPEN', 'MERGED', 'CLOSED'))
+    \item \textbf{CHK\_diff\_change\_type:} CHECK (change\_type IN ('ADD', 'MODIFY', 'DELETE', 'RENAME'))
+    \item \textbf{CHK\_file\_status:} CHECK (status IN ('ACTIVE', 'DELETED', 'RENAMED'))
+    \item \textbf{CHK\_entity\_type:} CHECK (entity\_type IN ('CLASS', 'METHOD', 'FUNCTION', 'INTERFACE', 'ENDPOINT'))
+    \item \textbf{CHK\_dependency\_type:} CHECK (dependency\_type IN ('CALLS', 'INHERITS', 'IMPLEMENTS', 'USES', 'IMPORTS'))
+\end{itemize}
+
+\subsection{Báo cáo Chứng minh Chuẩn hóa 3NF}
+
+\subsubsection{Khai báo Tập Phụ thuộc Hàm (Functional Dependencies - FDs)}
+Xét bảng \textbf{repositories} có tập phụ thuộc hàm $F = \{f_1, f_2\}$ như sau:
+\begin{itemize}
+    \item $f_1$: repository\_id $\rightarrow$ workspace\_id, name, url, default\_branch, sync\_status, last\_synced\_at, created\_at, updated\_at
+    \item $f_2$: url $\rightarrow$ repository\_id (Khóa ứng viên duy nhất định danh đường dẫn kho chứa trên VCS)
+\end{itemize}
+
+Xét bảng \textbf{commits} có tập phụ thuộc hàm:
+\begin{itemize}
+    \item $f_3$: commit\_id $\rightarrow$ branch\_id, user\_id, commit\_hash, message, author\_name, author\_email, committed\_at, created\_at
+    \item $f_4$: commit\_hash $\rightarrow$ commit\_id (Khóa ứng viên duy nhất từ Git Hash)
+\end{itemize}
+
+\subsubsection{Đánh giá Cấp Chuẩn}
+\begin{enumerate}
+    \item \textbf{Đạt Chuẩn 1NF (First Normal Form):}
+    \begin{itemize}
+        \item Tất cả các cột trong các bảng của phân hệ đều chứa giá trị nguyên tố (Atomic Value).
+        \item Thuộc tính phức hợp \textit{AuthorInfo} (của Commit) đã được phẳng hóa thành \texttt{author\_name} và \texttt{author\_email}.
+        \item Thuộc tính phức hợp \textit{position} (của CodeEntity) đã được phẳng hóa thành \texttt{start\_line} và \texttt{end\_line}.
+        \item Thuộc tính đa trị \textit{labels} (của PullRequest) đã được tách triệt để sang bảng phụ \texttt{pull\_request\_labels}.
+    \end{itemize}
+    
+    \item \textbf{Đạt Chuẩn 2NF (Second Normal Form):}
+    \begin{itemize}
+        \item Các bảng trong lược đồ đều sử dụng Khóa chính đơn (Surrogate PK dạng UUID như \texttt{repository\_id}, \texttt{commit\_id}, \texttt{pr\_id},...), không sử dụng khóa chính phức hợp cho các thực thể gốc.
+        \item Do đó, mọi thuộc tính không khóa đều phụ thuộc hoàn toàn và trực tiếp vào toàn bộ khóa chính, hoàn toàn không tồn tại phụ thuộc một phần (Partial Dependency).
+    \end{itemize}
+    
+    \item \textbf{Đạt Chuẩn 3NF (Third Normal Form):}
+    \begin{itemize}
+        \item Mọi thuộc tính không khóa trong các bảng đều phụ thuộc trực tiếp vào Khóa chính (ví dụ trong bảng \texttt{commits}, các thông tin như \texttt{message}, \texttt{author\_name}, \texttt{committed\_at} phụ thuộc trực tiếp vào \texttt{commit\_id}).
+        \item Không tồn tại phụ thuộc bắc cầu $X \rightarrow Y \rightarrow Z$ giữa các thuộc tính không khóa.
+    \end{itemize}
+\end{enumerate}
+
+\noindent\textbf{Kết luận:} Lược đồ quan hệ phân hệ VCS \& Code Structure đạt tiêu chuẩn \textbf{3NF}, đảm bảo tính toàn vẹn dữ liệu, loại bỏ các dị thường (anomalies) khi thêm, sửa, xóa và tối ưu hóa hiệu suất lưu trữ cho hệ thống.
