@@ -100,10 +100,10 @@ Tài liệu quy định chi tiết phân công công việc, tên nhánh Git (`G
 
 ## 1. Bảng Tổng Quan Phân Công
 
-| Thành viên | Phân hệ (Domain) | Số bảng | Nhánh Git | File Báo cáo (TeX) 
+| Thành viên | Phân hệ (Domain) | Số bảng | Nhánh Git | File Báo cáo (TeX) | File Script (SQL) |
 | :--- | :--- | :---: | :--- | :--- | :--- |
-| **Nguyên** (TV1) |n | 6 | `chapter3-tv1` | `chapter3/tv1.tex` | 
-| **Chiến** (TV2) |  | 5 | `chapter3-tv2` | `chapter3/tv2.tex` |  
-| **Hưng** (TV3) | C | 7 | `chapter3-tv3` | `chapter3/tv3.tex` | 
-| **Đại** (TV4) |  | 7 | `chapter3-tv4` | `chapter3/tv4.tex` |
-| **Thư** (TV5) |  | 6 | `chapter3-tv5` | `chapter3/tv5.tex` | 
+| **Nguyên** (TV1) | Auth & Access Control Domain | 6 | `chapter3-tv1` | `chapter3/tv1.tex` | `scripts/schema_member_1.sql` |
+| **Chiến** (TV2) | Workspace & External VCS Domain | 5 | `chapter3-tv2` | `chapter3/tv2.tex` | `scripts/schema_member_2.sql` |
+| **Hưng** (TV3) | Code Structure & AST Analysis Domain | 7 | `chapter3-tv3` | `chapter3/tv3.tex` | `scripts/schema_member_3.sql` |
+| **Đại** (TV4) | Template Engine & Core Doc Domain | 7 | `chapter3-tv4` | `chapter3/tv4.tex` | `scripts/schema_member_4.sql` |
+| **Thư** (TV5) | Governance, Review & AI Evidence Domain | 6 | `chapter3-tv5` | `chapter3/tv5.tex` | `scripts/schema_member_5.sql` |
