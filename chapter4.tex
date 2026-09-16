@@ -1,5 +1,20 @@
 
-sau khi xong thuat toan 2.2 ta co output la ERD mo muc logic 
+
+
+Sau khi áp dụng thành công \textbf{Thuật toán 2.2} (Ánh xạ mô hình ERD Quan niệm sang Lược đồ Quan hệ), toàn bộ thực thể, thuộc tính và mối kết hợp trong hệ thống đã được chuyển đổi hoàn chỉnh sang \textbf{Lược đồ ERD ở mức Lô-gíc (Logical ERD)}.
+
+Đầu ra đạt được sau bước này bao gồm:
+\begin{itemize}
+    \item \textbf{Cấu trúc bảng chuẩn hóa:} Chuyển đổi toàn bộ thực thể và các mối kết hợp $M:N$ thành \textbf{31 bảng} dữ liệu độc lập với tên gọi tuân thủ chuẩn \texttt{snake\_case}.
+    \item \textbf{Xử lý thuộc tính phức hợp \& đa trị:} Giải quyết triệt để các thuộc tính phức hợp, thuộc tính đa trị và chuyển đổi các mối kết hợp 3 ngôi (như cụm \texttt{USER-WORKSPACE-ROLE}) thành các thực thể liên kết hợp lệ.
+    \item \textbf{Cơ chế Khóa chính \& Khóa ngoại:} Đã đồng bộ hóa việc sử dụng Khóa chính đơn \textit{Surrogate PK (UUID)} cho tất cả các bảng, đồng thời thiết lập mạng lưới Khóa ngoại (\textit{FK}) chặt chẽ để duy trì ràng buộc toàn vẹn tham chiếu.
+    \item \textbf{Đạt dạng chuẩn 3NF/BCNF:} Xác định tập phụ thuộc hàm (FDs) cho 4 phân hệ nghiệp vụ, chứng minh toàn bộ các bảng loại bỏ được rủi ro dư thừa dữ liệu và bất thường thao tác.
+\end{itemize}
+
+Chi tiết sơ đồ ERD mức Lô-gíc và mô tả cấu trúc các bảng được trình bày ngay dưới đây:
+
+
+
 \input{chapter3/thanhvien5.tex}
 \section{Quotes}
 
