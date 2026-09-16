@@ -1,0 +1,262 @@
+\setcounter{subsection}{1} 
+\section{Lược đồ Quan hệ Lô-gíc - Phân hệ VCS \& Code Structure}
+\subsubsection{Bảng review}
+
+\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{review\_id} & PK & not null \\
+\hline
+\texttt{version\_id} & FK & not null \\
+\hline
+\texttt{user\_id} & FK & not null \\
+\hline
+\texttt{status} & & not null \\
+\hline
+\texttt{decision} & & null \\
+\hline
+\texttt{summary\_notes} & & null \\
+\hline
+\texttt{created\_at} & & not null \\
+\hline
+\texttt{updated\_at} & & not null \\
+\hline
+\end{longtable}
+
+
+\subsubsection{Bảng review\_comments}
+
+\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{comment\_id} & PK & not null \\
+\hline
+\texttt{review\_id} & FK & not null \\
+\hline
+\texttt{content} & & not null \\
+\hline
+\texttt{is\_resolved} & & not null, default false \\
+\hline
+\texttt{created\_at} & & not null \\
+\hline
+\texttt{update\_at} & & not null \\
+\hline
+\end{longtable}
+
+
+\subsubsection{Bảng grounding\_evidences}
+
+\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{evidence\_id} & PK & not null \\
+\hline
+\texttt{version\_id} & FK & not null \\
+\hline
+\texttt{snippet\_content} & & not null \\
+\hline
+\texttt{purpose} & & null \\
+\hline
+\texttt{created\_at} & & not null \\
+\hline
+\end{longtable}
+
+
+\subsubsection{Bảng approvals}
+
+\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{approval\_id} & PK & not null \\
+\hline
+\texttt{version\_id} & FK & not null \\
+\hline
+\texttt{user\_id} & FK & not null \\
+\hline
+\texttt{decision} & & not null \\
+\hline
+\texttt{rejection\_reason} & & null \\
+\hline
+\texttt{approved\_at} & & null \\
+\hline
+\end{longtable}
+
+
+\subsubsection{Bảng drift\_alerts}
+
+\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{alert\_id} & PK & not null \\
+\hline
+\texttt{evidence\_id} & FK & not null \\
+\hline
+\texttt{drift\_type} & & not null \\
+\hline
+\texttt{status} & & not null \\
+\hline
+\texttt{detected\_at} & & not null \\
+\hline
+\end{longtable}
+
+
+\subsubsection{Bảng grounding\_evidence\_code\_entities}
+
+\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{link\_id} & PK & not null \\
+\hline
+\texttt{evidence\_id} & FK & not null \\
+\hline
+\texttt{entity\_id} & FK & not null \\
+\hline
+\texttt{similarity\_score} & & not null \\
+\hline
+\texttt{match\_type} & & not null \\
+\hline
+\end{longtable}
+
+\subsection{Lược đồ dạng cú pháp rút gọn}
+
+\begin{itemize}
+    \item \texttt{review(review\_id UUID PK, version\_id UUID FK, user\_id FK, status, decision, summary\_notes, created\_at, updated\_at)}
+
+    \item \texttt{review\_comments(comment\_id UUID PK, review\_id UUID FK, content, is\_resolved, created\_at, update\_at)}
+
+    \item \texttt{grounding\_evidences(evidence\_id UUID PK, version\_id UUID FK, snippet\_content, purpose, created\_at)}
+
+    \item \texttt{approvals(approval\_id UUID PK, version\_id UUID FK, user\_id UUID FK, decision, rejection\_reason, approved\_at)}
+
+    \item \texttt{drift\_alerts(alert\_id UUID PK, evidence\_id UUID FK, drift\_type, status, detected\_at)}
+
+    \item \texttt{grounding\_evidence\_code\_entities(link\_id UUID PK, evidence\_id UUID FK, entity\_id UUID FK, similarity\_score, match\_type)}
+\end{itemize}
+
+
+\subsection{Báo cáo Chứng minh Chuẩn hóa 3NF}
+
+\subsubsection{Khai báo Tập Phụ thuộc Hàm 
+(Functional Dependencies -- FDs)}
+
+Xét bảng \texttt{review} có tập phụ thuộc hàm như sau:
+
+\[
+\texttt{review\_id}
+\rightarrow
+\{
+\texttt{version\_id},
+\texttt{user\_id},
+\texttt{status},
+\texttt{decision},
+\texttt{summary\_notes},
+\texttt{created\_at},
+\texttt{updated\_at}
+\}
+\]
+
+Xét bảng \texttt{review\_comments} có tập phụ thuộc hàm:
+
+\[
+\texttt{comment\_id}
+\rightarrow
+\{
+\texttt{review\_id},
+\texttt{content},
+\texttt{is\_resolved},
+\texttt{created\_at},
+\texttt{update\_at}
+\}
+\]
+
+Xét bảng \texttt{grounding\_evidences} có tập phụ thuộc hàm:
+
+\[
+\texttt{evidence\_id}
+\rightarrow
+\{
+\texttt{version\_id},
+\texttt{snippet\_content},
+\texttt{purpose},
+\texttt{created\_at}
+\}
+\]
+
+Xét bảng \texttt{approvals} có tập phụ thuộc hàm:
+
+\[
+\texttt{approval\_id}
+\rightarrow
+\{
+\texttt{version\_id},
+\texttt{user\_id},
+\texttt{decision},
+\texttt{rejection\_reason},
+\texttt{approved\_at}
+\}
+\]
+
+Xét bảng \texttt{drift\_alerts} có tập phụ thuộc hàm:
+
+\[
+\texttt{alert\_id}
+\rightarrow
+\{
+\texttt{evidence\_id},
+\texttt{drift\_type},
+\texttt{status},
+\texttt{detected\_at}
+\}
+\]
+
+Xét bảng \texttt{grounding\_evidence\_code\_entities} có tập phụ thuộc hàm:
+
+\[
+\texttt{link\_id}
+\rightarrow
+\{
+\texttt{evidence\_id},
+\texttt{entity\_id},
+\texttt{similarity\_score},
+\texttt{match\_type}
+\}
+\]
+
+\subsubsection{Đánh giá Cấp Chuẩn}
+
+\paragraph{1. Đạt Chuẩn 1NF (First Normal Form)}
+
+\begin{itemize}
+    \item Tất cả các cột trong các bảng của phân hệ đều chứa giá trị nguyên tố (Atomic Value).
+
+    \item Không có thuộc tính phức hợp hay đa trị. Các trường văn bản như 
+    \texttt{snippet\_content} (của \texttt{grounding\_evidences}) hoặc 
+    \texttt{summary\_notes} (của \texttt{review}) đều lưu trữ dữ liệu dạng phẳng, đơn trị.
+\end{itemize}
+
+
+\paragraph{2. Đạt Chuẩn 2NF (Second Normal Form)}
+
+\begin{itemize}
+    \item Các bảng trong lược đồ đều sử dụng Khóa chính đơn 
+    (Surrogate PK như \texttt{review\_id}, \texttt{comment\_id}, 
+    \texttt{evidence\_id}, \texttt{approval\_id}, \texttt{alert\_id}, 
+    \texttt{link\_id}), không sử dụng khóa chính phức hợp cho các thực thể gốc.
+
+    \item Do đó, mọi thuộc tính không khóa đều phụ thuộc hoàn toàn và trực tiếp vào toàn bộ khóa chính, hoàn toàn không tồn tại phụ thuộc một phần (Partial Dependency).
+\end{itemize}
+
+
+\paragraph{3. Đạt Chuẩn 3NF (Third Normal Form)}
+
+\begin{itemize}
+    \item Mọi thuộc tính không khóa trong các bảng đều phụ thuộc trực tiếp vào Khóa chính. Ví dụ trong bảng \texttt{review}, các thông tin như \texttt{status}, \texttt{decision}, \texttt{created\_at} phụ thuộc trực tiếp vào \texttt{review\_id}.
+
+    \item Không tồn tại phụ thuộc bắc cầu giữa các thuộc tính không khóa.
+\end{itemize}
