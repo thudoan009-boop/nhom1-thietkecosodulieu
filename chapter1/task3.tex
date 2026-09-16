@@ -1,0 +1,338 @@
+\section{Nhóm Quản trị \& Kết nối (Auth \& Workspace Domain)}
+
+\subsection{Mối kết hợp 3 ngôi: User --- Workspace --- Role}
+\begin{itemize}
+    \item \textbf{Tên mối kết hợp:} \textless participates\textgreater
+    \item \textbf{Các thực thể tham gia:} User (Thực thể mạnh), Workspace (Thực thể mạnh), Role (Thực thể mạnh)
+    \item \textbf{Tỷ lệ bản số tổng quát:} 
+    \item \textbf{Bản số chi tiết (Min..Max):}
+    \begin{itemize}
+        \item User: (0..*)
+        \item Workspace: (1..*)
+        \item Role: (0..*) 
+    \end{itemize}
+    \item \textbf{Mức tham gia:}
+    \begin{itemize}
+        \item User: Tùy chọn (Partial) 0
+        \item Workspace: Bắt Buộc (Total) 1
+        \item Role: Tùy chọn (Partial) 0
+    \end{itemize}
+    \item \textbf{Thuộc tính mối quan hệ:} joined\_at, status.
+    \item \textbf{Mô tả nghiệp vụ:} Ghi nhận sự tham gia của Người dùng vào một Không gian làm việc. Trong phạm vi từng Workspace cụ thể, mỗi người dùng bắt buộc được gán đúng một Vai trò xác định (Scoped RBAC). Một người dùng có thể tham gia nhiều Workspace khác nhau với các vai trò độc lập (ví dụ: là Manager ở Workspace A nhưng là Developer ở Workspace B).
+\end{itemize}
+
+\subsection{Mối quan hệ: Role --- contains --- Permission}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Role (Thực thể mạnh) $\leftrightarrow$ Permission (Thực thể mạnh)
+    \item \textbf{Tên mối kết hợp:} \textless contains\textgreater
+    \item \textbf{Tỷ lệ bản số:} M - N
+    \item \textbf{Bản số chi tiết:} Role (0..*) $\leftrightarrow$ Permission (0..*)
+    \item \textbf{Mức tham gia:} Role: Tùy chọn (Partial) | Permission: Tùy chọn (Partial)
+    \item \textbf{Thuộc tính mối kết hợp:} granted\_at.
+    \item \textbf{Mô tả nghiệp vụ:} Một vai trò chứa tập hợp nhiều quyền; một quyền hạn có thể thuộc về nhiều vai trò khác nhau.
+\end{itemize}
+
+\subsection{Mối quan hệ: User --- connects --- Github\_Connection}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} User (Thực thể mạnh) $\leftrightarrow$ Github\_Connection (Thực thể phụ thuộc --- phụ thuộc User)
+    \item \textbf{Tỷ lệ bản số:} 1 - N 
+    \item \textbf{Bản số chi tiết (Min..Max):} 
+    \begin{itemize}
+        \item User: (0..*) (Một người dùng có thể chưa kết nối hoặc liên kết tối đa 1 tài khoản GitHub)
+        \item Github\_Connection: (1..1) (Mỗi bản ghi kết nối OAuth bắt buộc phải thuộc về đúng một Người dùng)
+    \end{itemize}
+    \item \textbf{Mức tham gia:} 
+    \begin{itemize}
+        \item User: Tùy chọn (Partial)
+        \item Github\_Connection: Bắt buộc (Total)
+    \end{itemize}
+\item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Mối quan hệ ghi nhận việc Người dùng (User) ủy quyền và liên kết tài khoản cá nhân với hệ thống GitHub thông qua chuẩn OAuth2. Kết nối này lưu trữ access\_token và danh sách các scopes được cấp phép nhằm phục vụ việc đồng bộ repository, đọc commit, Pull Request và cấu hình webhook cho hệ thống.
+\end{itemize}
+
+\section{Nhóm Mã nguồn \& Cấu trúc Code (VCS \& Code Domain)}
+
+\subsection{Mối quan hệ: Workspace --- owns --- Repository}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Workspace (Thực thể mạnh) $\leftrightarrow$ Repository (Thực thể mạnh)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Workspace (1..1) $\leftrightarrow$ Repository (0..*)
+    \item \textbf{Mức tham gia:} Workspace: Tùy chọn (Partial) | Repository: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một Workspace quản lý nhiều Repository; mỗi Repository thuộc quyền sở hữu của một Workspace.
+\end{itemize}
+
+\subsection{Mối quan hệ: Repository --- has\_branch --- Branch}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Repository (Thực thể mạnh) $\leftrightarrow$ Branch (Thực thể yếu - phụ thuộc Repository)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Repository (1..1) $\leftrightarrow$ Branch (1..*)
+    \item \textbf{Mức tham gia:} Repository: Bắt buộc (Total) | Branch: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một kho chứa mã nguồn có ít nhất một nhánh mặc định; mỗi nhánh bắt buộc nằm trong duy nhất một kho chứa.
+\end{itemize}
+
+\subsection{Mối quan hệ: Branch --- contains\_commit --- Commit}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Branch (Thực thể yếu) $\leftrightarrow$ Commit (Thực thể yếu - phụ thuộc Branch/Repository)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Branch (0..*) $\leftrightarrow$ Commit (1..1)
+    \item \textbf{Mức tham gia:} Branch: Tùy chọn (Partial) | Commit: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một nhánh chứa nhiều lượt commit; mỗi commit thuộc về đúng một nhánh phát triển.
+\end{itemize}
+
+\subsection{Mối quan hệ: User --- makes\_commit --- Commit}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} User (Thực thể mạnh) $\leftrightarrow$ Commit (Thực thể yếu)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} User (0..*) $\leftrightarrow$ Commit (1..1)
+\item \textbf{Mức tham gia:} User: Tùy chọn (Partial) | Commit: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một người dùng thực hiện nhiều commit; mỗi commit được tạo bởi đúng một người dùng.
+\end{itemize}
+
+\subsection{Mối quan hệ: Repository --- receives\_pr --- PullRequest}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Repository (Thực thể mạnh) $\leftrightarrow$ PullRequest (Thực thể yếu - phụ thuộc Repository)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Repository (0..*) $\leftrightarrow$ PullRequest (1..1)
+    \item \textbf{Mức tham gia:} Repository: Tùy chọn (Partial) | PullRequest: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một Repository chứa nhiều Yêu cầu hợp nhất (PR); mỗi PR gửi về đúng một kho chứa.
+\end{itemize}
+
+\subsection{Mối quan hệ: Commit --- generates\_diff --- CodeDiff}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Commit (Thực thể yếu) $\leftrightarrow$ CodeDiff (Thực thể yếu - phụ thuộc Commit/PullRequest)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Commit (1..*) $\leftrightarrow$ CodeDiff (1..1)
+    \item \textbf{Mức tham gia:} Commit: Bắt buộc (Total) | CodeDiff: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một Commit sinh ra một hoặc nhiều bản ghi khác biệt code (Diff); mỗi bản ghi diff thuộc về duy nhất một commit.
+\end{itemize}
+
+\subsection{Mối quan hệ: PullRequest --- includes\_commit --- Commit}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} PullRequest (Thực thể yếu) $\leftrightarrow$ Commit (Thực thể yếu)
+    \item \textbf{Tỷ lệ bản số:} 
+    \item \textbf{Bản số chi tiết:} PullRequest (1..*) $\leftrightarrow$ Commit (1..1)
+    \item \textbf{Mức tham gia:} PullRequest: Bắt buộc (Total) | Commit: Tùy chọn (Partial)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một Yêu cầu hợp nhất (PR) tổng hợp danh sách gồm một hoặc nhiều commit; mỗi commit trong luồng xử lý thuộc về đúng một PR.
+\end{itemize}
+
+\subsection{Mối quan hệ: Commit --- modifies --- File}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Commit (Thực thể yếu) $\leftrightarrow$ File (Thực thể yếu - phụ thuộc Repository)
+    \item \textbf{Tên mối kết hợp:} \textless modifies\textgreater
+    \item \textbf{Tỷ lệ bản số:} M - N
+    \item \textbf{Bản số chi tiết:} Commit (1..*) $\leftrightarrow$ File (0..*)
+\item \textbf{Mức tham gia:} Commit: Bắt buộc (Total) | File: Tùy chọn (Partial)
+    \item \textbf{Thuộc tính mối quan hệ:} change\_type, lines\_added, lines\_deleted.
+    \item \textbf{Mô tả nghiệp vụ:} Một Commit tác động chỉnh sửa ít nhất một File; một File có thể chịu sự biến đổi qua nhiều lượt Commit.
+\end{itemize}
+
+\subsection{Mối quan hệ: Repository --- contains\_file --- File}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Repository (Thực thể mạnh) $\leftrightarrow$ File (Thực thể yếu - phụ thuộc Repository)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Repository (0..*) $\leftrightarrow$ File (1..1)
+    \item \textbf{Mức tham gia:} Repository: Tùy chọn (Partial) | File: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một Repository quản lý cấu trúc cây thư mục chứa nhiều File mã nguồn; mỗi File thuộc một kho chứa duy nhất.
+\end{itemize}
+
+\subsection{Mối quan hệ: File --- parses\_into --- CodeEntity}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} File (Thực thể yếu) $\leftrightarrow$ CodeEntity (Thực thể yếu - phụ thuộc File)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} File (0..*) $\leftrightarrow$ CodeEntity (1..1)
+    \item \textbf{Mức tham gia:} File: Tùy chọn (Partial) | CodeEntity: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một File code qua bóc tách AST thu được nhiều thực thể code (Class, Function); mỗi thực thể code nằm trọn trong đúng một File.
+\end{itemize}
+
+\subsection{Mối quan hệ: CodeEntity --- depends\_on --- CodeEntity}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} CodeEntity (Thực thể yếu) $\leftrightarrow$ CodeEntity (Thực thể yếu)
+    \item \textbf{Tỷ lệ bản số:} M - N
+    \item \textbf{Tên mối kết hợp đệ quy:} \textless depends\_on\textgreater
+    \item \textbf{Bản số chi tiết (Theo vai trò):}
+    \begin{itemize}
+        \item Vai trò Phụ thuộc (Dependent): 0..* (Một thực thể mã nguồn có thể phụ thuộc vào 0 hoặc nhiều thực thể mã nguồn khác).
+        \item Vai trò Được phụ thuộc (Target): 0..* (Một thực thể mã nguồn có thể được phụ thuộc bởi 0 hoặc nhiều thực thể mã nguồn khác).
+    \end{itemize}
+    \item \textbf{Mức tham gia:} Cả 2 phía đều là Tùy chọn (Partial) 
+    \item \textbf{Thuộc tính mối quan hệ:} dependency\_type (ví dụ: import, function\_call, inherits).
+    \item \textbf{Mô tả nghiệp vụ:} Xác định mối quan hệ phụ thuộc (gọi hàm, kế thừa, import) giữa các đơn vị code trong hệ thống.
+\end{itemize}
+\section{Nhóm Khuôn mẫu Tài liệu (Template Engine Domain)}
+
+\subsection{Mối quan hệ: Workspace --- defines --- Template}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Workspace (Thực thể mạnh) $\leftrightarrow$ Template (Thực thể mạnh)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Workspace (0..*) $\leftrightarrow$ Template (1..1)
+    \item \textbf{Mức tham gia:} Workspace: Tùy chọn (Partial) | Template: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một Workspace định nghĩa nhiều khuôn mẫu tài liệu; mỗi mẫu tài liệu thuộc sở hữu của một Workspace.
+\end{itemize}
+
+\subsection{Mối quan hệ: Template --- has\_section --- TemplateSection}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Template (Thực thể mạnh) $\leftrightarrow$ TemplateSection (Thực thể yếu - phụ thuộc Template)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Template (1..*) $\leftrightarrow$ TemplateSection (1..1)
+    \item \textbf{Mức tham gia:} Template: Bắt buộc (Total) | TemplateSection: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một Template cấu thành từ ít nhất một Section dàn ý; mỗi Section nằm trên đúng một Template.
+\end{itemize}
+
+\subsection{Mối quan hệ: TemplateSection --- contains\_placeholder --- Placeholder}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} TemplateSection (Thực thể yếu - phụ thuộc Template) $\leftrightarrow$ Placeholder (Thực thể yếu - phụ thuộc TemplateSection)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} TemplateSection (0..*) $\leftrightarrow$ Placeholder (1..1)
+    \item \textbf{Mức tham gia:} TemplateSection: Tùy chọn (Partial) | Placeholder: Bắt buộc (Total) - Một Placeholder không thể tồn tại độc lập nếu thiếu context/định danh của TemplateSection.
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Mỗi mục trong mẫu tài liệu chứa nhiều biến chèn tự động. Khi xóa một Section, tất cả các Placeholder nằm trong Section đó cũng bị xóa theo.
+\end{itemize}
+
+\subsection{Mối quan hệ: Placeholder --- maps\_to --- CodeEntity}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Placeholder (Thực thể yếu) $\leftrightarrow$ CodeEntity (Thực thể yếu)
+    \item \textbf{Tên mối kết hợp:} \textless maps\_to\textgreater
+    \item \textbf{Tỷ lệ bản số:} M - N
+\item \textbf{Bản số chi tiết:} Placeholder (0..*) $\leftrightarrow$ TemplateMapping (1..1) | CodeEntity (0..*) $\leftrightarrow$ TemplateMapping (1..1)
+    \item \textbf{Mức tham gia:} Placeholder: Tùy chọn (Partial) | CodeEntity: Tùy chọn (Partial)
+    \item \textbf{Thuộc tính mối quan hệ:} extraction\_rule, is\_active.
+    \item \textbf{Mô tả nghiệp vụ:} Ánh xạ chỉ thị cho AI biết lấy thông tin từ thành phần code nào để điền vào biến trong mẫu.
+\end{itemize}
+
+\section{Nhóm Tài liệu \& Vòng đời Dữ liệu (Documentation Domain)}
+
+\subsection{Mối quan hệ: Workspace --- manages --- Document}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Workspace (Thực thể mạnh) $\leftrightarrow$ Document (Thực thể mạnh)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Workspace (0..*) $\leftrightarrow$ Document (1..1)
+    \item \textbf{Mức tham gia:} Workspace: Tùy chọn (Partial) | Document: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Workspace quản lý danh mục tài liệu gốc của dự án; một tài liệu thuộc về đúng một Workspace.
+\end{itemize}
+
+\subsection{Mối quan hệ: User --- authors --- Document}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} User (Thực thể mạnh) $\leftrightarrow$ Document (Thực thể mạnh)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} User (0..*) $\leftrightarrow$ Document (1..1)
+    \item \textbf{Mức tham gia:} User: Tùy chọn (Partial) | Document: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Người dùng đứng tên tác giả khởi tạo tài liệu; mỗi tài liệu có một tác giả duy nhất.
+\end{itemize}
+
+\subsection{Mối quan hệ: Document --- has\_version --- DocumentVersion}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Document (Thực thể mạnh) $\leftrightarrow$ DocumentVersion (Thực thể yếu - phụ thuộc Document)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Document (1..*) $\leftrightarrow$ DocumentVersion (1..1)
+    \item \textbf{Mức tham gia:} Document: Bắt buộc (Total) | DocumentVersion: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một tài liệu chính thức chứa ít nhất một phiên bản nội dung; mỗi phiên bản đại diện cho một mốc chỉnh sửa của tài liệu gốc.
+\end{itemize}
+
+\subsection{Mối quan hệ: DocumentVersion --- tracks\_change --- ChangeLog}
+\begin{itemize}
+\item \textbf{Phân loại thực thể:} DocumentVersion (Thực thể yếu) $\leftrightarrow$ ChangeLog (Thực thể yếu - phụ thuộc DocumentVersion)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} DocumentVersion (0..*) $\leftrightarrow$ ChangeLog (1..1)
+    \item \textbf{Mức tham gia:} DocumentVersion: Tùy chọn (Partial) | ChangeLog: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Mỗi phiên bản tài liệu có thể ghi nhận nhiều lượt nhật ký biến động nội dung chi tiết.
+\end{itemize}
+
+\section{Nhóm Kiểm duyệt \& Phê duyệt (Review \& Governance Domain)}
+
+\subsection{Mối quan hệ: DocumentVersion --- has\_review --- Review}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} DocumentVersion (Thực thể yếu) $\leftrightarrow$ Review (Thực thể yếu - phụ thuộc DocumentVersion)
+    \item \textbf{Tỷ lệ bản số:} 
+    \item \textbf{Bản số chi tiết:} DocumentVersion (0..*) $\leftrightarrow$ Review (1..1)
+    \item \textbf{Mức tham gia:} DocumentVersion: Tùy chọn (Partial) | Review: Bắt buộc (Total)
+    \item \textbf{Thuộc tính thực thể Review:} status, decision, summary\_notes, created\_at.
+    \item \textbf{Mô tả nghiệp vụ:} Một phiên bản tài liệu có thể nhận 0 hoặc nhiều lượt đánh giá kỹ thuật; mỗi lượt đánh giá bắt buộc phải thuộc về duy nhất một phiên bản tài liệu.
+\end{itemize}
+
+\subsection{Mối quan hệ: User --- performs\_review --- Review}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} User (Thực thể mạnh) $\leftrightarrow$ Review (Thực thể yếu)
+    \item \textbf{Tỷ lệ bản số:} 
+    \item \textbf{Bản số chi tiết:} User (0..*) $\leftrightarrow$ Review (1..1)
+    \item \textbf{Mức tham gia:} User: Tùy chọn (Partial) | Review: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một người dùng có thể thực hiện 0 hoặc nhiều lượt đánh giá; mỗi lượt review bắt buộc do đúng một người dùng chịu trách nhiệm.
+\end{itemize}
+
+\subsection{Mối quan hệ: Review --- contains\_comment --- ReviewComment}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} Review (Thực thể sự kiện) $\leftrightarrow$ ReviewComment (Thực thể yếu - phụ thuộc Review)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} Review (0..*) $\leftrightarrow$ ReviewComment (1..1)
+    \item \textbf{Mức tham gia:} Review: Tùy chọn (Partial) | ReviewComment: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+\item \textbf{Mô tả nghiệp vụ:} Một phiên kiểm duyệt kỹ thuật chứa nhiều bình luận góp ý chi tiết; mỗi bình luận gắn chặt với một lượt review.
+\end{itemize}
+
+\subsection{Mối quan hệ: DocumentVersion --- requires\_approval --- Approval}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} DocumentVersion (Thực thể yếu) $\leftrightarrow$ Approval (Thực thể yếu - phụ thuộc DocumentVersion)
+    \item \textbf{Tỷ lệ bản số:} 
+    \item \textbf{Bản số chi tiết:} DocumentVersion (0..*) $\leftrightarrow$ Approval (1..1)
+    \item \textbf{Mức tham gia:} DocumentVersion: Tùy chọn (Partial) | Approval: Bắt buộc (Total)
+    \item \textbf{Thuộc tính thực thể Approval:} decision, rejection\_reason, approved\_at.
+    \item \textbf{Mô tả nghiệp vụ:} Một phiên bản tài liệu có thể có 0 hoặc nhiều lượt phê duyệt; mỗi lượt phê duyệt bắt buộc thuộc về đúng một phiên bản tài liệu cụ thể.
+\end{itemize}
+
+\subsection{Mối quan hệ: User --- grants\_approval --- Approval}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} User (Thực thể mạnh) $\leftrightarrow$ Approval (Thực thể yếu)
+    \item \textbf{Tỷ lệ bản số:} 
+    \item \textbf{Bản số chi tiết:} User (0..*) $\leftrightarrow$ Approval (1..1)
+    \item \textbf{Mức tham gia:} User: Tùy chọn (Partial) | Approval: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Một người dùng (Manager) có thể thực hiện 0 hoặc nhiều đợt phê duyệt; mỗi bản ghi phê duyệt bắt buộc do đúng một người dùng chịu trách nhiệm ra quyết định.
+\end{itemize}
+
+\section{Nhóm AI Evidence, Giám sát \& Kiểm toán (AI Evidence \& Observability Domain)}
+
+\subsection{Mối quan hệ: DocumentVersion --- has\_evidence --- GroundingEvidence}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} DocumentVersion (Thực thể yếu) $\leftrightarrow$ GroundingEvidence (Thực thể yếu - phụ thuộc DocumentVersion)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} DocumentVersion (0..*) $\leftrightarrow$ GroundingEvidence (1..1)
+    \item \textbf{Mức tham gia:} DocumentVersion: Tùy chọn (Partial) | GroundingEvidence: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Phiên bản tài liệu lưu trữ bảng minh chứng đối soát nguồn gốc code để chống ảo giác (hallucination) của AI.
+\end{itemize}
+
+\subsection{Mối quan hệ: GroundingEvidence --- references\_code --- CodeEntity}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} GroundingEvidence (Thực thể yếu) $\leftrightarrow$ CodeEntity (Thực thể yếu)
+    \item \textbf{Tỷ lệ bản số:} M - N
+\item \textbf{Tên mối kết hợp:} \textless references\_code\textgreater
+    \item \textbf{Bản số chi tiết:} GroundingEvidence (0..*) $\leftrightarrow$ CodeEntity (0..*)
+    \item \textbf{Mức tham gia:} GroundingEvidence: Tùy chọn (Partial) | CodeEntity: Tùy chọn (Partial)
+    \item \textbf{Thuộc tính mối quan hệ:} similarity\_score, match\_type.
+    \item \textbf{Mô tả nghiệp vụ:} Minh chứng AI liên kết trực tiếp với các đơn vị code cụ thể trong hệ thống để phục vụ đối soát sai lệch.
+\end{itemize}
+
+\subsection{Mối quan hệ: GroundingEvidence --- detects --- DriftAlert}
+\begin{itemize}
+    \item \textbf{Phân loại thực thể:} GroundingEvidence (Thực thể yếu) $\leftrightarrow$ DriftAlert (Thực thể sự kiện)
+    \item \textbf{Tỷ lệ bản số:} 1 - N
+    \item \textbf{Bản số chi tiết:} GroundingEvidence (0..*) $\leftrightarrow$ DriftAlert (1..1)
+    \item \textbf{Mức tham gia:} GroundingEvidence: Tùy chọn (Partial) | DriftAlert: Bắt buộc (Total)
+    \item \textbf{Thuộc tính mối quan hệ:} Không có.
+    \item \textbf{Mô tả nghiệp vụ:} Bằng chứng đối soát khi phát hiện sự bất đồng giữa tài liệu và mã nguồn mới sẽ kích hoạt cảnh báo sai lệch (Drift Alert).
+\end{itemize}
