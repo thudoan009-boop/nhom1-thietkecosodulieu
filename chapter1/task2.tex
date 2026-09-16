@@ -27,7 +27,7 @@ Người dùng cuối trong hệ thống (Developer, Staff, Manager, Tech Lead, 
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{user\_id (PK):} Định danh duy nhất cho từng người dùng.
+    \item \textbf{user\_id (PK):UUID} Định danh duy nhất cho từng người dùng.
     \item \textbf{email:} Địa chỉ email bắt buộc dùng để đăng nhập và nhận thông báo hệ thống.
     \item \textbf{password\_hash:} Mật khẩu đã mã hóa. Lưu giá trị khi đăng nhập bằng Email/Password và giữ \textbf{NULL} khi dùng thuần GitHub OAuth.
     \item \textbf{status:} Trạng thái tài khoản (ACTIVE, INACTIVE, BLOCKED).
@@ -44,7 +44,7 @@ Không gian làm việc chứa repository và tài liệu của một nhóm/dự
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{workspace\_id (PK):} Định danh duy nhất cho từng không gian làm việc.
+    \item \textbf{workspace\_id (PK):UUID} Định danh duy nhất cho từng không gian làm việc.
     \item \textbf{name:} Tên không gian làm việc/dự án (VD: ``Payment Service Platform'').
     \item \textbf{description:} Mô tả chi tiết về phạm vi và mục tiêu của workspace.
     \item \textbf{status:} Trạng thái hoạt động của workspace (ACTIVE, ARCHIVED).
@@ -61,7 +61,7 @@ Vai trò của người dùng, được scoped theo Workspace.
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{role\_id (PK):} Định danh duy nhất cho vai trò.
+    \item \textbf{role\_id (PK):UUID} Định danh duy nhất cho vai trò.
     \item \textbf{role\_name:} Tên vai trò (VD: Developer, Staff, Manager, Tech Lead, Admin).
     \item \textbf{description:} Mô tả tóm tắt mục đích và quyền hạn chung của vai trò.
     \item \textbf{created\_at:} Thời điểm khởi tạo vai trò trong hệ thống.
@@ -76,7 +76,7 @@ Quyền hạn chi tiết trên hệ thống (VD: DOC\_APPROVE, TEMPLATE\_EDIT).
 \subsubsection{Thuộc tính Đơn (Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{permission\_id (PK):} Định danh duy nhất cho quyền.
+    \item \textbf{permission\_id (PK):UUID} Định danh duy nhất cho quyền.
     \item \textbf{permission\_code:} Mã quyền thao tác hệ thống (VD: DOC\_APPROVE, TEMPLATE\_EDIT).
     \item \textbf{description:} Giải thích chi tiết giới hạn của thao tác này.
     \item \textbf{created\_at:} Mốc thời gian quyền được khởi tạo vào danh mục hệ thống.
@@ -90,9 +90,9 @@ Bản ghi phân quyền chi tiết cho từng vai trò trong hệ thống.
 \subsubsection{Thuộc tính Đơn (Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{role\_permission\_id (PK):} Định danh duy nhất cho bản ghi phân quyền (UUID).
-    \item \textbf{role\_id (FK):} Khóa ngoại trỏ đến vai trò được gán quyền (roles).
-    \item \textbf{permission\_id (FK):} Khóa ngoại trỏ đến quyền hạn cụ thể (permissions).
+    \item \textbf{role\_permission\_id (PK):UUID} Định danh duy nhất cho bản ghi phân quyền (UUID).
+    \item \textbf{role\_id (FK):UUID} Khóa ngoại trỏ đến vai trò được gán quyền (roles).
+    \item \textbf{permission\_id (FK):UUID} Khóa ngoại trỏ đến quyền hạn cụ thể (permissions).
     \item \textbf{created\_at:} Mốc thời gian quyền này được gán cho vai trò.
 \end{itemize}
 
@@ -104,7 +104,7 @@ Ghi nhận sự tham gia của User trong Workspace và vai trò (Role) tương 
 \subsubsection{Thuộc tính Đơn (Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{member\_id (PK):} Định danh duy nhất cho bản ghi tham gia.
+    \item \textbf{member\_id (PK):UUID} Định danh duy nhất cho bản ghi tham gia.
     \item \textbf{status:} Trạng thái thành viên (ACTIVE, INACTIVE, REMOVED).
     \item \textbf{joined\_at:} Thời điểm người dùng chính thức tham gia.
     \item \textbf{created\_at:} Thời điểm gửi lời mời / tạo bản ghi.
@@ -148,7 +148,7 @@ Kho chứa mã nguồn được đồng bộ vào hệ thống.
 \subsubsection{Thuộc tính Đơn (Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{repository\_id (PK):} Định danh duy nhất cho kho mã nguồn.
+    \item \textbf{repository\_id (PK):UUID} Định danh duy nhất cho kho mã nguồn.
     \item \textbf{name:} Tên kho mã nguồn (VD: payment-gateway).
     \item \textbf{url:} Đường dẫn gốc đến kho chứa trên VCS.
     \item \textbf{default\_branch:} Nhánh mặc định dùng để phân tích code (VD: main, master).
@@ -166,7 +166,7 @@ Nhánh phát triển trong repository.
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{branch\_id (PK):} Định danh duy nhất cho nhánh.
+    \item \textbf{branch\_id (PK):UUID} Định danh duy nhất cho nhánh.
     \item \textbf{branch\_name:} Tên nhánh (VD: main, staging, feature/auth).
     \item \textbf{is\_default:} Cờ xác định nhánh mặc định của repo (true/false).
     \item \textbf{created\_at:} Thời điểm nhánh được nhận diện và lưu vào hệ thống.
@@ -191,7 +191,7 @@ Bản ghi một lần commit mã nguồn.
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{commit\_id (PK):} Định danh nội bộ cho bản ghi commit.
+    \item \textbf{commit\_id (PK):UUID} Định danh nội bộ cho bản ghi commit.
     \item \textbf{commit\_hash:} Mã băm SHA-1/SHA-256 duy nhất từ Git (VD: 7a8f9b2...).
     \item \textbf{message:} Nội dung mô tả của commit.
     \item \textbf{committed\_at:} Thời điểm commit được thực hiện trên VCS (thời gian nghiệp vụ).
@@ -213,7 +213,7 @@ Yêu cầu hợp nhất nhánh từ GitHub.
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{pr\_id (PK):} Định danh nội bộ của bản ghi PR.
+    \item \textbf{pr\_id (PK):UUID} Định danh nội bộ của bản ghi PR.
     \item \textbf{pr\_number:} Số thứ tự PR trên nền tảng gốc (VD: \#102, \#123).
     \item \textbf{title:} Tiêu đề của Pull Request.
     \item \textbf{description:} Nội dung văn bản mô tả chi tiết PR, là dữ liệu đầu vào cho AI.
@@ -233,7 +233,7 @@ Chi tiết thay đổi mã nguồn trong commit hoặc PR.
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{diff\_id (PK):} Định danh nội bộ bản ghi chi tiết thay đổi.
+    \item \textbf{diff\_id (PK):UUID} Định danh nội bộ bản ghi chi tiết thay đổi.
     \item \textbf{file\_path:} Đường dẫn tương đối đến tệp bị thay đổi (VD: src/controllers/payment.js).
     \item \textbf{change\_type:} Loại thao tác trên file (ADD, MODIFY, DELETE, RENAME).
     \item \textbf{additions:} Số dòng code được thêm mới.
@@ -250,7 +250,7 @@ Cấu trúc tập tin mã nguồn trong kho chứa.
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{file\_id (PK):} Định danh nội bộ của tập tin trong hệ thống.
+    \item \textbf{file\_id (PK):UUID} Định danh nội bộ của tập tin trong hệ thống.
     \item \textbf{file\_path:} Đường dẫn đầy đủ của file tính từ gốc repository.
     \item \textbf{file\_type:} Loại hoặc đuôi mở rộng của tệp (VD: ts, java, py, md).
     \item \textbf{status:} Trạng thái của file trong cây thư mục (ACTIVE, DELETED, RENAMED).
@@ -276,7 +276,7 @@ Cấu trúc tập tin mã nguồn trong kho chứa.
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{entity\_id (PK):} Định danh nội bộ của thực thể code.
+    \item \textbf{entity\_id (PK):UUID} Định danh nội bộ của thực thể code.
     \item \textbf{entity\_name:} Tên của thành phần code (VD: processPayment, UserController).
     \item \textbf{entity\_type:} Loại thành phần code (CLASS, METHOD, FUNCTION, INTERFACE, ENDPOINT).
     \item \textbf{signature:} Cấu trúc chữ ký của thành phần code.
@@ -293,7 +293,7 @@ Mối quan hệ phụ thuộc giữa các CodeEntity.
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{dependency\_id (PK):} Định danh duy nhất cho bản ghi phụ thuộc.
+    \item \textbf{dependency\_id (PK):UUID} Định danh duy nhất cho bản ghi phụ thuộc.
     \item \textbf{dependency\_type:} Loại quan hệ phụ thuộc (CALLS, INHERITS, IMPLEMENTS, USES, IMPORTS).
     \item \textbf{created\_at:} Thời điểm hệ thống phân tích AST và ghi nhận mối quan hệ phụ thuộc.
 \end{itemize}
@@ -308,7 +308,7 @@ Khuôn mẫu chuẩn để AI/User sinh tài liệu.
 \subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
-    \item \textbf{template\_id (PK):} Định danh duy nhất cho khuôn mẫu tài liệu.
+    \item \textbf{template\_id (PK):UUID} Định danh duy nhất cho khuôn mẫu tài liệu.
     \item \textbf{name:} Tên khuôn mẫu.
     \item \textbf{description:} Mô tả mục đích sử dụng và phạm vi áp dụng.
     \item \textbf{content\_structure:} Nội dung cấu trúc dàn ý mẫu/Prompt Markdown hướng dẫn AI và User.
@@ -324,7 +324,7 @@ Khuôn mẫu chuẩn để AI/User sinh tài liệu.
 Mục con/heading trong cấu trúc dàn ý của Template.
 
 \begin{itemize}
-    \item \textbf{section\_id (PK):} Định danh duy nhất cho mục dàn ý.
+    \item \textbf{section\_id (PK):UUID} Định danh duy nhất cho mục dàn ý.
     \item \textbf{heading\_title:} Tiêu đề của mục.
     \item \textbf{order\_index:} Thứ tự sắp xếp của mục trong Template.
     \item \textbf{prompt\_instruction:} Câu lệnh hướng dẫn riêng cho AI khi sinh nội dung cho mục này.
@@ -338,7 +338,7 @@ Mục con/heading trong cấu trúc dàn ý của Template.
 Biến/điểm chèn trong Section, làm nhiệm vụ nhận dữ liệu từ code.
 
 \begin{itemize}
-    \item \textbf{placeholder\_id (PK):} Định danh duy nhất cho điểm chèn biến.
+    \item \textbf{placeholder\_id (PK):UUID} Định danh duy nhất cho điểm chèn biến.
     \item \textbf{variable\_name:} Mã nhận diện biến.
     \item \textbf{expected\_data\_type:} Loại dữ liệu kỳ vọng từ code.
     \item \textbf{description:} Mô tả ý nghĩa và ngữ cảnh dữ liệu cần điền vào biến.
@@ -353,7 +353,7 @@ Biến/điểm chèn trong Section, làm nhiệm vụ nhận dữ liệu từ co
 Ánh xạ trực tiếp giữa Placeholder và CodeEntity để AI trích xuất thông tin.
 
 \begin{itemize}
-    \item \textbf{mapping\_id (PK):} Định danh duy nhất cho bản ghi ánh xạ trích xuất.
+    \item \textbf{mapping\_id (PK):UUID} Định danh duy nhất cho bản ghi ánh xạ trích xuất.
     \item \textbf{extraction\_rule:} Quy tắc/Prompt chỉ thị chi tiết để AI biết cách lọc, biến đổi và trích xuất dữ liệu từ CodeEntity.
     \item \textbf{is\_active:} Trạng thái hiệu lực của quy tắc ánh xạ.
     \item \textbf{created\_at:} Thời điểm khởi tạo quy tắc ánh xạ.
@@ -368,7 +368,7 @@ Biến/điểm chèn trong Section, làm nhiệm vụ nhận dữ liệu từ co
 Tài liệu gốc (README, API Reference, Architecture Guide, ADR...).
 
 \begin{itemize}
-    \item \textbf{document\_id (PK):} Định danh duy nhất cho tài liệu chính thức.
+    \item \textbf{document\_id (PK):UUID} Định danh duy nhất cho tài liệu chính thức.
     \item \textbf{title:} Tên/Tiêu đề của tài liệu.
     \item \textbf{document\_type:} Phân loại loại tài liệu (README, API\_REFERENCE, ARCHITECTURE\_GUIDE, ADR, CUSTOM).
     \item \textbf{status:} Trạng thái vòng đời của tài liệu (PUBLISHED, ARCHIVED, DEPRECATED).
@@ -383,7 +383,7 @@ Tài liệu gốc (README, API Reference, Architecture Guide, ADR...).
 Bản ghi nội dung tài liệu theo từng mốc thời gian và trạng thái.
 
 \begin{itemize}
-    \item \textbf{version\_id (PK):} Định danh duy nhất cho bản ghi phiên bản.
+    \item \textbf{version\_id (PK):UUID} Định danh duy nhất cho bản ghi phiên bản.
     \item \textbf{version\_number:} Số hiệu phiên bản tài liệu (VD: 1.0.0, 1.1.0, 2.0-draft).
     \item \textbf{content:} Toàn bộ nội dung văn bản tài liệu dạng Markdown/HTML tại thời điểm chụp phiên bản.
     \item \textbf{change\_summary:} Tóm tắt mô tả lý do hoặc nội dung những điểm thay đổi trong phiên bản này.
@@ -399,7 +399,7 @@ Bản ghi nội dung tài liệu theo từng mốc thời gian và trạng thái
 Lịch sử vết thay đổi chi tiết giữa các phiên bản tài liệu.
 
 \begin{itemize}
-    \item \textbf{log\_id (PK):} Định danh duy nhất cho bản ghi nhật ký thay đổi.
+    \item \textbf{log\_id (PK):UUID} Định danh duy nhất cho bản ghi nhật ký thay đổi.
     \item \textbf{change\_type:} Loại thao tác biến đổi (ADDED, MODIFIED, DELETED, RESTORED).
     \item \textbf{change\_description:} Mô tả tóm tắt ý nghĩa sự thay đổi.
     \item \textbf{diff\_content:} Nội dung chênh lệch chi tiết (dạng Git patch / JSON delta).
@@ -415,7 +415,7 @@ Lịch sử vết thay đổi chi tiết giữa các phiên bản tài liệu.
 Tiến trình Staff thực hiện đánh giá kỹ thuật trên một DocumentVersion.
 
 \begin{itemize}
-    \item \textbf{review\_id (PK):} Định danh duy nhất cho phiên đánh giá kỹ thuật.
+    \item \textbf{review\_id (PK):UUID} Định danh duy nhất cho phiên đánh giá kỹ thuật.
     \item \textbf{status:} Trạng thái của tiến trình review (PENDING, IN\_PROGRESS, COMPLETED).
     \item \textbf{decision:} Kết quả thẩm định của reviewer (APPROVED, REJECTED, CHANGES\_REQUESTED).
     \item \textbf{summary\_notes:} Nhận xét hoặc ghi chú tổng quan của reviewer (Nullable).
@@ -429,7 +429,7 @@ Tiến trình Staff thực hiện đánh giá kỹ thuật trên một DocumentV
 Phản hồi, góp ý chi tiết trong quá trình kiểm duyệt.
 
 \begin{itemize}
-    \item \textbf{comment\_id (PK):} Định danh duy nhất cho bản ghi bình luận/góp ý.
+    \item \textbf{comment\_id (PK):UUID} Định danh duy nhất cho bản ghi bình luận/góp ý.
     \item \textbf{content:} Nội dung chi tiết của lời nhận xét, phản hồi.
     \item \textbf{is\_resolved:} Trạng thái xử lý góp ý (false: Chưa sửa / true: Đã sửa xong).
     \item \textbf{created\_at:} Thời điểm gửi bình luận.
@@ -442,7 +442,7 @@ Phản hồi, góp ý chi tiết trong quá trình kiểm duyệt.
 Quyết định phê duyệt xuất bản/commit tài liệu chính thức từ Manager.
 
 \begin{itemize}
-    \item \textbf{approval\_id (PK):} Định danh duy nhất cho bản ghi quyết định phê duyệt.
+    \item \textbf{approval\_id (PK):UUID} Định danh duy nhất cho bản ghi quyết định phê duyệt.
     \item \textbf{decision:} Trạng thái/Kết quả quyết định (APPROVED, REJECTED).
     \item \textbf{rejection\_reason:} Lý do từ chối xuất bản (Nullable, dùng khi decision = REJECTED).
     \item \textbf{approved\_at:} Mốc thời gian ra quyết định phê duyệt hoặc từ chối.
@@ -456,7 +456,7 @@ Quyết định phê duyệt xuất bản/commit tài liệu chính thức từ 
 Bảng minh chứng chứa liên kết nguồn gốc (File, CodeEntity, Commit) AI dùng để tạo nội dung, phục vụ chống hallucination.
 
 \begin{itemize}
-    \item \textbf{evidence\_id (PK):} Định danh duy nhất cho bản ghi bằng chứng minh chứng.
+    \item \textbf{evidence\_id (PK):UUID} Định danh duy nhất cho bản ghi bằng chứng minh chứng.
     \item \textbf{snippet\_content:} Đoạn mã nguồn hoặc văn bản thô trích xuất từ code làm căn cứ trực tiếp cho AI sinh nội dung.
     \item \textbf{purpose:} Phân loại mục đích lưu vết (HALLUCINATION\_PREVENTION, CODE\_REFERENCE, AST\_VERIFICATION).
     \item \textbf{created\_at:} Thời điểm ghi nhận bản ghi bằng chứng.
