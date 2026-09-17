@@ -23,6 +23,8 @@
 \texttt{updated\_at} & & not null \\
 \hline
 \end{longtable}
+\vspace{-0.3cm}
+\noindent UNIQUE (version\_id, user\_id) Một người dùng chỉ được phép có tối đa 1 bản review cho mỗi phiên bản
 
 
 \subsubsection{Bảng review\_comments}
@@ -84,6 +86,9 @@
 \texttt{approved\_at} & & null \\
 \hline
 \end{longtable}
+\vspace{-0.3cm}
+\noindent UNIQUE (version\_id, user\_id) Một người dùng chỉ nên có tối đa 1 bản ghi phê duyệt cho mỗi phiên bản.
+\
 
 
 \subsubsection{Bảng drift\_alerts}
@@ -103,7 +108,8 @@
 \texttt{detected\_at} & & not null \\
 \hline
 \end{longtable}
-
+\vspace{-0.3cm}
+\noindent UNIQUE (evidence\_id, drift\_type) Một loại drift chỉ nên có tối đa 1 cảnh báo cho mỗi bằng chứng.
 
 \subsubsection{Bảng grounding\_evidence\_code\_entities}
 
@@ -122,21 +128,23 @@
 \texttt{match\_type} & & not null \\
 \hline
 \end{longtable}
+\vspace{-0.3cm}
+\noindent UNIQUE (evidence\_id, entity\_id) Một bằng chứng chỉ nên liên kết với một thực thể duy nhất.
 
 \subsection{Lược đồ dạng cú pháp rút gọn}
 
 \begin{itemize}
-    \item \texttt{review(review\_id UUID PK, version\_id UUID FK, user\_id FK, status, decision, summary\_notes, created\_at, updated\_at)}
+    \item \texttt{review(review\_id UUID PK, version\_id UUID FK, user\_id FK, status, decision, summary\_notes, created\_at, updated\_at,UNIQUE (version\_id, user\_id))}
 
     \item \texttt{review\_comments(comment\_id UUID PK, review\_id UUID FK, content, is\_resolved, created\_at, update\_at)}
 
     \item \texttt{grounding\_evidences(evidence\_id UUID PK, version\_id UUID FK, snippet\_content, purpose, created\_at)}
 
-    \item \texttt{approvals(approval\_id UUID PK, version\_id UUID FK, user\_id UUID FK, decision, rejection\_reason, approved\_at)}
+    \item \texttt{approvals(approval\_id UUID PK, version\_id UUID FK, user\_id UUID FK, decision, rejection\_reason, approved\_at,UNIQUE (version\_id, user\_id))}
 
-    \item \texttt{drift\_alerts(alert\_id UUID PK, evidence\_id UUID FK, drift\_type, status, detected\_at)}
+    \item \texttt{drift\_alerts(alert\_id UUID PK, evidence\_id UUID FK, drift\_type, status, detected\_at,UNIQUE (evidence\_id, drift\_type))}
 
-    \item \texttt{grounding\_evidence\_code\_entities(link\_id UUID PK, evidence\_id UUID FK, entity\_id UUID FK, similarity\_score, match\_type)}
+    \item \texttt{grounding\_evidence\_code\_entities(link\_id UUID PK, evidence\_id UUID FK, entity\_id UUID FK, similarity\_score, match\_type,UNIQUE (evidence\_id, entity\_id))}
 \end{itemize}
 
 
