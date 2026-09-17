@@ -2,6 +2,11 @@
 \usepackage{book}
 \usepackage[utf8]{inputenc}
 \usepackage[vietnamese]{babel}
+
+% Bổ sung 2 package này để sửa lỗi Undefined control sequence
+\usepackage{microtype} 
+\usepackage{hyperref}  
+
 % Disable font expansion for bitmap Vietnamese fonts used by pdfTeX.
 \microtypesetup{expansion=false}
 \bibliographystyle{book}
@@ -54,14 +59,12 @@
 
 \input{chapter2}
 
-
-
 \part{Thiết kế logic}\label{p:second}
 
 \chapter{thuật toán 2.2 maping ER}\label{c:figures}
 
 \input{chapter3}
-\input{chapter3/thanhvien2} % Gọi file bài làm của bạn vào mục 3.2
+% Đã xóa dòng \input{chapter3/thanhvien2} ở đây để tránh lặp mục 3.7
 
 \chapter{Cross-references and quotes}\label{c:conclusion}
 

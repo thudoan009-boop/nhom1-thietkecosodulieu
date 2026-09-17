@@ -1,266 +1,240 @@
 \setcounter{subsection}{1} % Ép subsection tiếp theo thành số 2 (tức là 3.2)
 \section{Lược đồ Quan hệ Lô-gíc - Phân hệ VCS \& Code Structure}
 
-\subsection*{Khai báo Chi tiết Bảng (Không có cột Mô tả)}
-... (giữ nguyên phần code phía sau)
+\subsection*{Khai báo Chi tiết Bảng }
 
 % Bảng repositories
 \noindent\textbf{Tên Bảng: repositories} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|l|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
+\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-repository\_id & PK & NOT NULL \\
+repository\_id & UUID & PK & NOT NULL \\
 \hline
-workspace\_id & FK & NOT NULL \\
+workspace\_id &  & FK & NOT NULL \\
 \hline
-name & & NOT NULL \\
+name & & & NOT NULL \\
 \hline
-url & Unique & NOT NULL \\
+url & & Unique & NOT NULL \\
 \hline
-default\_branch & & NOT NULL \\
+default\_branch & & & NOT NULL \\
 \hline
-sync\_status & & NOT NULL \\
+sync\_status & & & NOT NULL \\
 \hline
-last\_synced\_at & & NULL \\
+last\_synced\_at & & & NULL \\
 \hline
-created\_at & & NOT NULL \\
+created\_at & & & NOT NULL \\
 \hline
-updated\_at & & NOT NULL \\
+updated\_at & & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng branches
 \noindent\textbf{Tên Bảng: branches} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|l|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
+\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-branch\_id & PK & NOT NULL \\
+branch\_id & UUID & PK & NOT NULL \\
 \hline
-repository\_id & FK & NOT NULL \\
+repository\_id &  & FK & NOT NULL \\
 \hline
-branch\_name & & NOT NULL \\
+branch\_name & & & NOT NULL \\
 \hline
-is\_default & & NOT NULL \\
+is\_default & & & NOT NULL \\
 \hline
-created\_at & & NOT NULL \\
+created\_at & & & NOT NULL \\
 \hline
-updated\_at & & NOT NULL \\
+updated\_at & & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng commits
 \noindent\textbf{Tên Bảng: commits} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|l|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
+\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-commit\_id & PK & NOT NULL \\
+commit\_id & UUID & PK & NOT NULL \\
 \hline
-branch\_id & FK & NOT NULL \\
+branch\_id &  & FK & NOT NULL \\
 \hline
-user\_id & FK & NULL \\
+user\_id &  & FK & NULL \\
 \hline
-commit\_hash & Unique & NOT NULL \\
+commit\_hash & & Unique & NOT NULL \\
 \hline
-message & & NOT NULL \\
+message & & & NOT NULL \\
 \hline
-author\_name & & NOT NULL \\
+author\_name & & & NOT NULL \\
 \hline
-author\_email & & NOT NULL \\
+author\_email & & & NOT NULL \\
 \hline
-committed\_at & & NOT NULL \\
+committed\_at & & & NOT NULL \\
 \hline
-created\_at & & NOT NULL \\
+created\_at & & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng pull_requests
 \noindent\textbf{Tên Bảng: pull\_requests} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|l|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
+\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-pr\_id & PK & NOT NULL \\
+pr\_id & UUID & PK & NOT NULL \\
 \hline
-repository\_id & FK & NOT NULL \\
+repository\_id &  & FK & NOT NULL \\
 \hline
-pr\_number & & NOT NULL \\
+pr\_number & & & NOT NULL \\
 \hline
-title & & NOT NULL \\
+title & & & NOT NULL \\
 \hline
-description & & NOT NULL \\
+description & & & NOT NULL \\
 \hline
-source\_branch & & NOT NULL \\
+source\_branch & & & NOT NULL \\
 \hline
-target\_branch & & NOT NULL \\
+target\_branch & & & NOT NULL \\
 \hline
-status & & NOT NULL \\
+status & & & NOT NULL \\
 \hline
-created\_at & & NOT NULL \\
+created\_at & & & NOT NULL \\
 \hline
-updated\_at & & NOT NULL \\
+updated\_at & & & NOT NULL \\
 \hline
-merged\_at & & NULL \\
+merged\_at & & & NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng pull_request_labels
 \noindent\textbf{Tên Bảng: pull\_request\_labels} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|l|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
+\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-label\_id & PK & NOT NULL \\
+label\_id & UUID & PK & NOT NULL \\
 \hline
-pr\_id & FK & NOT NULL \\
+pr\_id & & FK & NOT NULL \\
 \hline
-label\_name & & NOT NULL \\
+label\_name & & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng code_diffs
 \noindent\textbf{Tên Bảng: code\_diffs} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|l|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
+\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-diff\_id & PK & NOT NULL \\
+diff\_id & UUID & PK & NOT NULL \\
 \hline
-commit\_id & FK & NULL \\
+commit\_id &  & FK & NULL \\
 \hline
-pr\_id & FK & NOT NULL \\
+pr\_id &  & FK & NOT NULL \\
 \hline
-file\_path & & NOT NULL \\
+file\_path & & & NOT NULL \\
 \hline
-change\_type & & NOT NULL \\
+change\_type & & & NOT NULL \\
 \hline
-additions & & NOT NULL \\
+additions & & & NOT NULL \\
 \hline
-deletions & & NOT NULL \\
+deletions & & & NOT NULL \\
 \hline
-diff\_content & & NULL \\
+diff\_content & & & NULL \\
 \hline
-created\_at & & NOT NULL \\
+created\_at & & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng files
 \noindent\textbf{Tên Bảng: files} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|l|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
+\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-file\_id & PK & NOT NULL \\
+file\_id & UUID & PK & NOT NULL \\
 \hline
-repository\_id & FK & NOT NULL \\
+repository\_id &  & FK & NOT NULL \\
 \hline
-file\_path & & NOT NULL \\
+file\_path & & & NOT NULL \\
 \hline
-file\_type & & NULL \\
+file\_type & & & NULL \\
 \hline
-status & & NOT NULL \\
+status & & & NOT NULL \\
 \hline
-created\_at & & NOT NULL \\
+created\_at & & & NOT NULL \\
 \hline
-updated\_at & & NOT NULL \\
+updated\_at & & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng code_entities
 \noindent\textbf{Tên Bảng: code\_entities} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|l|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
+\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-entity\_id & PK & NOT NULL \\
+entity\_id & UUID & PK & NOT NULL \\
 \hline
-file\_id & FK & NOT NULL \\
+file\_id &  & FK & NOT NULL \\
 \hline
-entity\_name & & NOT NULL \\
+entity\_name & & & NOT NULL \\
 \hline
-entity\_type & & NOT NULL \\
+entity\_type & & & NOT NULL \\
 \hline
-signature & & NULL \\
+signature & & & NULL \\
 \hline
-doc\_comment & & NULL \\
+doc\_comment & & & NULL \\
 \hline
-start\_line & & NOT NULL \\
+start\_line & & & NOT NULL \\
 \hline
-end\_line & & NOT NULL \\
+end\_line & & & NOT NULL \\
 \hline
-created\_at & & NOT NULL \\
+created\_at & & & NOT NULL \\
 \hline
-updated\_at & & NOT NULL \\
+updated\_at & & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.4cm}
 
 % Bảng dependencies
 \noindent\textbf{Tên Bảng: dependencies} \par\vspace{0.1cm}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|l|l|c|c|}
 \hline
-\textbf{Tên Cột} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
+\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
 \hline
-dependency\_id & PK & NOT NULL \\
+dependency\_id & UUID & PK & NOT NULL \\
 \hline
-source\_entity\_id & FK & NOT NULL \\
+source\_entity\_id &  & FK & NOT NULL \\
 \hline
-target\_entity\_id & FK & NOT NULL \\
+target\_entity\_id &  & FK & NOT NULL \\
 \hline
-dependency\_type & & NOT NULL \\
+dependency\_type & & & NOT NULL \\
 \hline
-created\_at & & NOT NULL \\
+created\_at & & & NOT NULL \\
 \hline
 \end{tabular}
 \vspace{0.6cm}
 
 \subsection{Lược đồ Dạng Cú pháp Rút gọn}
 \begin{itemize}
-    \item \textbf{repositories} (repository\_id UUID PK, workspace\_id UUID FK, name, url UNIQUE, default\_branch, sync\_status, last\_synced\_at, created\_at, updated\_at) 
-    \item \textbf{branches} (branch\_id UUID PK, repository\_id UUID FK, branch\_name, is\_default, created\_at, updated\_at) 
-    \item \textbf{commits} (commit\_id UUID PK, branch\_id UUID FK, user\_id UUID FK, commit\_hash UNIQUE, message, author\_name, author\_email, committed\_at, created\_at) 
-    \item \textbf{pull\_requests} (pr\_id UUID PK, repository\_id UUID FK, pr\_number, title, description, source\_branch, target\_branch, status, created\_at, updated\_at, merged\_at) 
-    \item \textbf{pull\_request\_labels} (label\_id UUID PK, pr\_id UUID FK, label\_name) 
-    \item \textbf{code\_diffs} (diff\_id UUID PK, commit\_id UUID FK, pr\_id UUID FK, file\_path, change\_type, additions, deletions, diff\_content, created\_at) 
-    \item \textbf{files} (file\_id UUID PK, repository\_id UUID FK, file\_path, file\_type, status, created\_at, updated\_at) 
-    \item \textbf{code\_entities} (entity\_id UUID PK, file\_id UUID FK, entity\_name, entity\_type, signature, doc\_comment, start\_line, end\_line, created\_at, updated\_at) 
-    \item \textbf{dependencies} (dependency\_id UUID PK, source\_entity\_id UUID FK, target\_entity\_id UUID FK, dependency\_type, created\_at)
+    \item \textbf{repositories} (repository\_id UUID PK NOT NULL, workspace\_id UUID FK NOT NULL, name VARCHAR(255) NOT NULL, url VARCHAR(500) NOT NULL, default\_branch VARCHAR(100) NOT NULL, sync\_status VARCHAR(50) NOT NULL, last\_synced\_at TIMESTAMP NULL, created\_at TIMESTAMP NOT NULL, updated\_at TIMESTAMP NOT NULL, UNIQUE(url)) 
+    \item \textbf{branches} (branch\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, branch\_name VARCHAR(100) NOT NULL, is\_default BOOLEAN NOT NULL, created\_at TIMESTAMP NOT NULL, updated\_at TIMESTAMP NOT NULL, UNIQUE(repository\_id, branch\_name)) 
+    \item \textbf{commits} (commit\_id UUID PK NOT NULL, branch\_id UUID FK NOT NULL, user\_id UUID FK NULL, commit\_hash VARCHAR(64) NOT NULL, message TEXT NOT NULL, author\_name VARCHAR(100) NOT NULL, author\_email VARCHAR(100) NOT NULL, committed\_at TIMESTAMP NOT NULL, created\_at TIMESTAMP NOT NULL, UNIQUE(commit\_hash)) 
+    \item \textbf{pull\_requests} (pr\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, pr\_number INT NOT NULL, title VARCHAR(255) NOT NULL, description TEXT NOT NULL, source\_branch VARCHAR(100) NOT NULL, target\_branch VARCHAR(100) NOT NULL, status VARCHAR(50) NOT NULL, created\_at TIMESTAMP NOT NULL, updated\_at TIMESTAMP NOT NULL, merged\_at TIMESTAMP NULL, UNIQUE(repository\_id, pr\_number)) 
+    \item \textbf{pull\_request\_labels} (label\_id UUID PK NOT NULL, pr\_id UUID FK NOT NULL, label\_name VARCHAR(50) NOT NULL, UNIQUE(pr\_id, label\_name)) 
+    \item \textbf{code\_diffs} (diff\_id UUID PK NOT NULL, commit\_id UUID FK NULL, pr\_id UUID FK NOT NULL, file\_path VARCHAR(500) NOT NULL, change\_type VARCHAR(50) NOT NULL, additions INT NOT NULL, deletions INT NOT NULL, diff\_content TEXT NULL, created\_at TIMESTAMP NOT NULL) 
+    \item \textbf{files} (file\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, file\_path VARCHAR(500) NOT NULL, file\_type VARCHAR(50) NULL, status VARCHAR(50) NOT NULL, created\_at TIMESTAMP NOT NULL, updated\_at TIMESTAMP NOT NULL, UNIQUE(repository\_id, file\_path)) 
+    \item \textbf{code\_entities} (entity\_id UUID PK NOT NULL, file\_id UUID FK NOT NULL, entity\_name VARCHAR(255) NOT NULL, entity\_type VARCHAR(50) NOT NULL, signature TEXT NULL, doc\_comment TEXT NULL, start\_line INT NOT NULL, end\_line INT NOT NULL, created\_at TIMESTAMP NOT NULL, updated\_at TIMESTAMP NOT NULL) 
+    \item \textbf{dependencies} (dependency\_id UUID PK NOT NULL, source\_entity\_id UUID FK NOT NULL, target\_entity\_id UUID FK NOT NULL, dependency\_type VARCHAR(50) NOT NULL, created\_at TIMESTAMP NOT NULL, UNIQUE(source\_entity\_id, target\_entity\_id, dependency\_type))
 \end{itemize}
 
-\subsection{Ràng buộc Tham chiếu (Foreign Key Constraints)}
-\begin{itemize}
-    \item \textbf{FK\_repositories\_workspace:} repositories(workspace\_id) $\rightarrow$ workspaces(workspace\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-    \item \textbf{FK\_branches\_repositories:} branches(repository\_id) $\rightarrow$ repositories(repository\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-    \item \textbf{FK\_commits\_branches:} commits(branch\_id) $\rightarrow$ branches(branch\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-    \item \textbf{FK\_commits\_users:} commits(user\_id) $\rightarrow$ users(user\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE SET NULL / ON UPDATE CASCADE
-    \item \textbf{FK\_pull\_requests\_repositories:} pull\_requests(repository\_id) $\rightarrow$ repositories(repository\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-    \item \textbf{FK\_pr\_labels\_pr:} pull\_request\_labels(pr\_id) $\rightarrow$ pull\_requests(pr\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-    \item \textbf{FK\_code\_diffs\_commits:} code\_diffs(commit\_id) $\rightarrow$ commits(commit\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-    \item \textbf{FK\_code\_diffs\_pr:} code\_diffs(pr\_id) $\rightarrow$ pull\_requests(pr\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-    \item \textbf{FK\_files\_repositories:} files(repository\_id) $\rightarrow$ repositories(repository\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-    \item \textbf{FK\_code\_entities\_files:} code\_entities(file\_id) $\rightarrow$ files(file\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-    \item \textbf{FK\_dependencies\_source:} dependencies(source\_entity\_id) $\rightarrow$ code\_entities(entity\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-    \item \textbf{FK\_dependencies\_target:} dependencies(target\_entity\_id) $\rightarrow$ code\_entities(entity\_id) \newline $\Rightarrow$ Hành vi tham chiếu: ON DELETE CASCADE / ON UPDATE CASCADE
-\end{itemize}
-
-\subsection{Ràng buộc Giá trị Miền (CHECK Constraints)}
-\begin{itemize}
-    \item \textbf{CHK\_repo\_sync\_status:} CHECK (sync\_status IN ('SYNCING', 'SUCCESS', 'FAILED'))
-    \item \textbf{CHK\_pr\_status:} CHECK (status IN ('OPEN', 'MERGED', 'CLOSED'))
-    \item \textbf{CHK\_diff\_change\_type:} CHECK (change\_type IN ('ADD', 'MODIFY', 'DELETE', 'RENAME'))
-    \item \textbf{CHK\_file\_status:} CHECK (status IN ('ACTIVE', 'DELETED', 'RENAMED'))
-    \item \textbf{CHK\_entity\_type:} CHECK (entity\_type IN ('CLASS', 'METHOD', 'FUNCTION', 'INTERFACE', 'ENDPOINT'))
-    \item \textbf{CHK\_dependency\_type:} CHECK (dependency\_type IN ('CALLS', 'INHERITS', 'IMPLEMENTS', 'USES', 'IMPORTS'))
-\end{itemize}
 
 \subsection{Báo cáo Chứng minh Chuẩn hóa 3NF}
 
