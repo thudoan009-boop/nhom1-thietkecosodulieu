@@ -1,0 +1,215 @@
+\begin{lstlisting}[language=SQL, title={STAGE 3 - DDL SCRIPT (PostgreSQL)}]
+
+CREATE TABLE templates (
+    template_id         UUID            NOT NULL DEFAULT gen_random_uuid(),
+    workspace_id        UUID            NOT NULL,
+    name                VARCHAR(150)    NOT NULL,
+    description         TEXT            NULL,
+    content_structure   TEXT            NULL,
+    creator_type        VARCHAR(20)     NOT NULL,
+    status              VARCHAR(20)     NOT NULL DEFAULT 'DRAFT',
+    created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_templates PRIMARY KEY (template_id),
+
+    CONSTRAINT uq_templates_workspace_name UNIQUE (workspace_id, name),
+    CONSTRAINT fk_templates_workspace
+        FOREIGN KEY (workspace_id) REFERENCES workspaces (workspace_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,         
+    CONSTRAINT ck_templates_creator_type
+        CHECK (creator_type IN ('SYSTEM', 'USER', 'AI')),
+    CONSTRAINT ck_templates_status
+        CHECK (status IN ('DRAFT', 'ACTIVE', 'ARCHIVED')),
+    CONSTRAINT ck_templates_name_not_blank
+        CHECK (length(btrim(name)) > 0),
+    CONSTRAINT ck_templates_updated_after_created
+        CHECK (updated_at >= created_at)
+);
+
+CREATE TABLE template_sections (
+    section_id          UUID            NOT NULL DEFAULT gen_random_uuid(),
+    template_id         UUID            NOT NULL,
+    heading_title       VARCHAR(255)    NOT NULL,
+    order_index         INTEGER         NOT NULL,
+    prompt_instruction  TEXT            NULL,
+    created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_template_sections PRIMARY KEY (section_id),
+
+    CONSTRAINT uq_template_sections_order UNIQUE (template_id, order_index),
+    CONSTRAINT fk_template_sections_template
+        FOREIGN KEY (template_id) REFERENCES templates (template_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,          
+    CONSTRAINT ck_template_sections_order_index
+        CHECK (order_index >= 0),
+    CONSTRAINT ck_template_sections_heading_not_blank
+        CHECK (length(btrim(heading_title)) > 0)
+);
+
+CREATE TABLE placeholders (
+    placeholder_id      UUID            NOT NULL DEFAULT gen_random_uuid(),
+    section_id          UUID            NOT NULL,
+    variable_name       VARCHAR(100)    NOT NULL,
+    expected_data_type  VARCHAR(30)     NOT NULL,
+    description         TEXT            NULL,
+    is_required         BOOLEAN         NOT NULL DEFAULT TRUE,
+    created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_placeholders PRIMARY KEY (placeholder_id),
+
+    CONSTRAINT uq_placeholders_section_variable UNIQUE (section_id, variable_name),
+    CONSTRAINT fk_placeholders_section
+        FOREIGN KEY (section_id) REFERENCES template_sections (section_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT ck_placeholders_expected_data_type
+        CHECK (expected_data_type IN ('STRING', 'NUMBER', 'BOOLEAN',
+                                      'DATE', 'LIST', 'OBJECT', 'CODE')),
+  
+    CONSTRAINT ck_placeholders_variable_name_format
+        CHECK (variable_name ~ '^[A-Za-z_][A-Za-z0-9_]*$')
+);
+
+CREATE TABLE template_mappings (
+    mapping_id          UUID            NOT NULL DEFAULT gen_random_uuid(),
+    placeholder_id      UUID            NOT NULL,
+    code_entity_id      UUID            NOT NULL,
+    extraction_rule     TEXT            NULL,
+    is_active           BOOLEAN         NOT NULL DEFAULT TRUE,
+    CONSTRAINT pk_template_mappings PRIMARY KEY (mapping_id),
+
+    CONSTRAINT uq_template_mappings_pair UNIQUE (placeholder_id, code_entity_id),
+    CONSTRAINT fk_template_mappings_placeholder
+        FOREIGN KEY (placeholder_id) REFERENCES placeholders (placeholder_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_template_mappings_code_entity
+        FOREIGN KEY (code_entity_id) REFERENCES code_entities (code_entity_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+CREATE TABLE documents (
+    document_id         UUID            NOT NULL DEFAULT gen_random_uuid(),
+    workspace_id        UUID            NOT NULL,
+    author_user_id      UUID            NOT NULL,
+    title               VARCHAR(255)    NOT NULL,
+    document_type       VARCHAR(30)     NOT NULL,
+    status              VARCHAR(20)     NOT NULL DEFAULT 'DRAFT',
+    created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at          TIMESTAMP       NULL,
+    CONSTRAINT pk_documents PRIMARY KEY (document_id),
+    CONSTRAINT fk_documents_workspace
+        FOREIGN KEY (workspace_id) REFERENCES workspaces (workspace_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_documents_author
+        FOREIGN KEY (author_user_id) REFERENCES users (user_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,         
+    CONSTRAINT ck_documents_type
+        CHECK (document_type IN ('SRS', 'API_DOC', 'USER_GUIDE',
+                                 'RELEASE_NOTE', 'TECH_DESIGN', 'OTHER')),
+    CONSTRAINT ck_documents_status
+        CHECK (status IN ('DRAFT', 'IN_REVIEW', 'PUBLISHED', 'ARCHIVED')),
+    CONSTRAINT ck_documents_title_not_blank
+        CHECK (length(btrim(title)) > 0),
+    CONSTRAINT ck_documents_deleted_after_created
+        CHECK (deleted_at IS NULL OR deleted_at >= created_at)
+);
+
+CREATE UNIQUE INDEX uq_documents_workspace_title_active
+    ON documents (workspace_id, title)
+    WHERE deleted_at IS NULL;
+
+CREATE TABLE document_versions (
+    version_id          UUID            NOT NULL DEFAULT gen_random_uuid(),
+    document_id         UUID            NOT NULL,
+    version_number      VARCHAR(20)     NOT NULL,
+    content             TEXT            NULL,
+    change_summary      TEXT            NULL,
+    status              VARCHAR(20)     NOT NULL DEFAULT 'DRAFT',
+    ticket_codes        VARCHAR(500)    NULL,
+    created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_document_versions PRIMARY KEY (version_id),
+
+    CONSTRAINT uq_document_versions_number UNIQUE (document_id, version_number),
+    CONSTRAINT fk_document_versions_document
+        FOREIGN KEY (document_id) REFERENCES documents (document_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT ck_document_versions_status
+        CHECK (status IN ('DRAFT', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'PUBLISHED')),
+
+    CONSTRAINT ck_document_versions_number_format
+        CHECK (version_number ~ '^[vV]?[0-9]+(\.[0-9]+){0,2}$')
+);
+
+CREATE TABLE change_logs (
+    log_id              UUID            NOT NULL DEFAULT gen_random_uuid(),
+    version_id          UUID            NOT NULL,
+    change_type         VARCHAR(20)     NOT NULL,
+    change_description  TEXT            NULL,
+    diff_content        TEXT            NULL,
+    created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_change_logs PRIMARY KEY (log_id),
+    CONSTRAINT fk_change_logs_version
+        FOREIGN KEY (version_id) REFERENCES document_versions (version_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT ck_change_logs_change_type
+        CHECK (change_type IN ('CREATE', 'UPDATE', 'DELETE', 'RESTORE', 'PUBLISH'))
+);
+
+
+CREATE INDEX idx_templates_workspace_id  ON templates (workspace_id);
+CREATE INDEX idx_templates_status        ON templates (status);
+-- placeholders / mappings
+CREATE INDEX idx_template_mappings_code_entity ON template_mappings (code_entity_id);
+CREATE INDEX idx_template_mappings_active      ON template_mappings (placeholder_id)
+    WHERE is_active = TRUE;
+
+CREATE INDEX idx_documents_workspace_id  ON documents (workspace_id);
+CREATE INDEX idx_documents_author        ON documents (author_user_id);
+CREATE INDEX idx_documents_status        ON documents (status);
+CREATE INDEX idx_documents_created_at    ON documents (created_at DESC);
+
+CREATE INDEX idx_document_versions_status     ON document_versions (status);
+CREATE INDEX idx_document_versions_created_at ON document_versions (document_id, created_at DESC);
+
+CREATE INDEX idx_change_logs_version_id  ON change_logs (version_id);
+CREATE INDEX idx_change_logs_created_at  ON change_logs (created_at DESC);
+
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER trg_templates_updated_at
+    BEFORE UPDATE ON templates
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+CREATE TRIGGER trg_template_sections_updated_at
+    BEFORE UPDATE ON template_sections
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+CREATE TRIGGER trg_placeholders_updated_at
+    BEFORE UPDATE ON placeholders
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+CREATE TRIGGER trg_documents_updated_at
+    BEFORE UPDATE ON documents
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+CREATE TRIGGER trg_document_versions_updated_at
+    BEFORE UPDATE ON document_versions
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+CREATE TRIGGER trg_change_logs_updated_at
+    BEFORE UPDATE ON change_logs
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+\end{lstlisting}
+
+\end{document}
