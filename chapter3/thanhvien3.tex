@@ -1,0 +1,298 @@
+\setcounter{subsection}{1}
+
+\section{Lược đồ Quan hệ Lô-gíc - Phân hệ Templates \& Documents}
+
+% ============================================================
+% BẢNG TEMPLATES
+% ============================================================
+
+\subsubsection{Bảng templates}
+
+\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{template\_id} & PK & NOT NULL \\
+\hline
+\texttt{workspace\_id} & FK & NOT NULL \\
+\hline
+\texttt{name} & & NOT NULL \\
+\hline
+\texttt{description} & & NULL \\
+\hline
+\texttt{content\_structure} & & NOT NULL \\
+\hline
+\texttt{creator\_type} & & NOT NULL \\
+\hline
+\texttt{status} & & NOT NULL \\
+\hline
+\texttt{created\_at} & & NOT NULL \\
+\hline
+\texttt{updated\_at} & & NOT NULL \\
+\hline
+\end{tabular}
+
+% ============================================================
+% BẢNG TEMPLATE SECTIONS
+% ============================================================
+
+\subsubsection{Bảng template\_sections}
+
+\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{section\_id} & PK & NOT NULL \\
+\hline
+\texttt{template\_id} & FK & NOT NULL \\
+\hline
+\texttt{heading\_title} & & NOT NULL \\
+\hline
+\texttt{order\_index} & & NOT NULL \\
+\hline
+\texttt{prompt\_instruction} & & NULL \\
+\hline
+\texttt{created\_at} & & NOT NULL \\
+\hline
+\texttt{updated\_at} & & NOT NULL \\
+\hline
+\end{tabular}
+
+\noindent
+\textbf{Ràng buộc bổ sung:} 
+\texttt{UNIQUE(template\_id, order\_index)} -- đảm bảo thứ tự section
+không trùng trong cùng một Template.
+
+% ============================================================
+% BẢNG PLACEHOLDERS
+% ============================================================
+
+\subsubsection{Bảng placeholders}
+
+\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{placeholder\_id} & PK & NOT NULL \\
+\hline
+\texttt{section\_id} & FK & NOT NULL \\
+\hline
+\texttt{variable\_name} & & NOT NULL \\
+\hline
+\texttt{expected\_data\_type} & & NOT NULL \\
+\hline
+\texttt{description} & & NULL \\
+\hline
+\texttt{is\_required} & & NOT NULL \\
+\hline
+\texttt{created\_at} & & NOT NULL \\
+\hline
+\texttt{updated\_at} & & NOT NULL \\
+\hline
+\end{tabular}
+
+\noindent
+\textbf{Ràng buộc bổ sung:}
+\texttt{UNIQUE(section\_id, variable\_name)} -- đảm bảo tên biến
+không trùng trong cùng một Section.
+
+% ============================================================
+% BẢNG TEMPLATE MAPPINGS
+% ============================================================
+
+\subsubsection{Bảng template\_mappings}
+
+\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{mapping\_id} & PK & NOT NULL \\
+\hline
+\texttt{placeholder\_id} & FK & NOT NULL \\
+\hline
+\texttt{entity\_id} & FK & NOT NULL \\
+\hline
+\texttt{extraction\_rule} & & NULL \\
+\hline
+\texttt{is\_active} & & NOT NULL \\
+\hline
+\end{tabular}
+
+\noindent
+\textbf{Ràng buộc bổ sung:}
+\texttt{UNIQUE(placeholder\_id, entity\_id)} -- đảm bảo một cặp
+Placeholder--CodeEntity không bị ánh xạ trùng.
+
+% ============================================================
+% BẢNG DOCUMENTS
+% ============================================================
+
+\subsubsection{Bảng documents}
+
+\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{document\_id} & PK & NOT NULL \\
+\hline
+\texttt{workspace\_id} & FK & NOT NULL \\
+\hline
+\texttt{user\_id} & FK & NOT NULL \\
+\hline
+\texttt{title} & & NOT NULL \\
+\hline
+\texttt{document\_type} & & NOT NULL \\
+\hline
+\texttt{status} & & NOT NULL \\
+\hline
+\texttt{created\_at} & & NOT NULL \\
+\hline
+\texttt{updated\_at} & & NOT NULL \\
+\hline
+\texttt{deleted\_at} & & NULL \\
+\hline
+\end{tabular}
+
+% ============================================================
+% BẢNG DOCUMENT VERSIONS
+% ============================================================
+
+\subsubsection{Bảng document\_versions}
+
+\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{version\_id} & PK & NOT NULL \\
+\hline
+\texttt{document\_id} & FK & NOT NULL \\
+\hline
+\texttt{version\_number} & & NOT NULL \\
+\hline
+\texttt{content} & & NOT NULL \\
+\hline
+\texttt{change\_summary} & & NULL \\
+\hline
+\texttt{status} & & NOT NULL \\
+\hline
+\texttt{ticketed\_codes} & & NULL \\
+\hline
+\texttt{created\_at} & & NOT NULL \\
+\hline
+\texttt{updated\_at} & & NOT NULL \\
+\hline
+\end{tabular}
+
+\noindent
+\textbf{Ràng buộc bổ sung:}
+\texttt{UNIQUE(document\_id, version\_number)} -- đảm bảo số phiên
+bản không trùng trong cùng một Document.
+
+% ============================================================
+% BẢNG CHANGE LOGS
+% ============================================================
+
+\subsubsection{Bảng change\_logs}
+
+\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\hline
+\texttt{log\_id} & PK & NOT NULL \\
+\hline
+\texttt{version\_id} & FK & NOT NULL \\
+\hline
+\texttt{change\_type} & & NOT NULL \\
+\hline
+\texttt{change\_description} & & NOT NULL \\
+\hline
+\texttt{diff\_content} & & NULL \\
+\hline
+\texttt{created\_at} & & NOT NULL \\
+\hline
+\texttt{updated\_at} & & NOT NULL \\
+\hline
+\end{tabular}
+
+
+% ============================================================
+% LƯỢC ĐỒ DẠNG CÚ PHÁP RÚT GỌN
+% ============================================================
+
+\section{Lược đồ dạng cú pháp rút gọn}
+
+\begin{itemize}
+
+    \item \texttt{templates(
+    template\_id UUID PK NOT NULL,
+    workspace\_id UUID FK NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    content\_structure TEXT NOT NULL,
+    creator\_type VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    created\_at TIMESTAMP NOT NULL,
+    updated\_at TIMESTAMP NOT NULL)}
+
+    \item \texttt{template\_sections(
+    section\_id UUID PK NOT NULL,
+    template\_id UUID FK NOT NULL,
+    heading\_title VARCHAR(255) NOT NULL,
+    order\_index INT NOT NULL,
+    prompt\_instruction TEXT NULL,
+    created\_at TIMESTAMP NOT NULL,
+    updated\_at TIMESTAMP NOT NULL,
+    UNIQUE(template\_id, order\_index))}
+
+    \item \texttt{placeholders(
+    placeholder\_id UUID PK NOT NULL,
+    section\_id UUID FK NOT NULL,
+    variable\_name VARCHAR(100) NOT NULL,
+    expected\_data\_type VARCHAR(50) NOT NULL,
+    description TEXT NULL,
+    is\_required BOOLEAN NOT NULL,
+    created\_at TIMESTAMP NOT NULL,
+    updated\_at TIMESTAMP NULL,
+    UNIQUE(section\_id, variable\_name))}
+
+    \item \texttt{template\_mappings(
+    mapping\_id UUID PK NOT NULL,
+    placeholder\_id UUID FK NOT NULL,
+    entity\_id UUID FK NOT NULL,
+    extraction\_rule TEXT NULL,
+    is\_active BOOLEAN NOT NULL,
+    UNIQUE(placeholder\_id, entity\_id))}
+
+    \item \texttt{documents(
+    document\_id UUID PK NOT NULL,
+    workspace\_id UUID FK NOT NULL,
+    user\_id UUID FK NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    document\_type VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    created\_at TIMESTAMP NOT NULL,
+    updated\_at TIMESTAMP NULL,
+    deleted\_at TIMESTAMP NULL)}
+
+    \item \texttt{document\_versions(
+    version\_id UUID PK NOT NULL,
+    document\_id UUID FK NOT NULL,
+    version\_number INT NOT NULL,
+    content TEXT NOT NULL,
+    change\_summary TEXT NULL,
+    status VARCHAR(50) NOT NULL,
+    ticketed\_codes TEXT NULL,
+    created\_at TIMESTAMP NOT NULL,
+    updated\_at TIMESTAMP NULL,
+    UNIQUE(document\_id, version\_number))}
+
+    \item \texttt{change\_logs(
+    log\_id UUID PK NOT NULL,
+    version\_id UUID FK NOT NULL,
+    change\_type VARCHAR(50) NOT NULL,
+    change\_description TEXT NOT NULL,
+    diff\_content TEXT NULL,
+    created\_at TIMESTAMP NOT NULL,
+    updated\_at TIMESTAMP NOT NULL)}
+
+\end{itemize}
