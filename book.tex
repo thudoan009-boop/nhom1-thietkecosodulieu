@@ -1,5 +1,20 @@
-\documentclass[letterpaper,11pt,leqno]{book}
-\usepackage{book}
+\documentclass[letterpaper,11pt]{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage{microtype}
+
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage[vietnamese]{babel}
+\usepackage{longtable}
+
+% Keep pages from being stretched to an exact height.
+\raggedbottom
+
+% Disable font expansion for bitmap Vietnamese fonts used by pdfTeX.
+\microtypesetup{expansion=false}
 \bibliographystyle{book}
 
 % Enter book title to populate PDF metadata:
@@ -36,7 +51,7 @@
 % Enter book structure
 \chapter{Preface}
 
-\input{preface}
+\IfFileExists{preface.tex}{\input{preface}}{}
 
 \mainmatter
 
@@ -44,43 +59,33 @@
 
 \chapter{Introduction}\label{c:introduction}
 
-\input{chapter1}
+\IfFileExists{chapter1.tex}{\input{chapter1}}{}
 
 \chapter{Sections and content}\label{c:section}
 
-\input{chapter2}
+\IfFileExists{chapter2.tex}{\input{chapter2}}{}
 
-\chapter{Math}\label{c:math}
 
-\input{chapter3}
 
-\part{Second half of the book}\label{p:second}
+\part{Thiết kế logic}\label{p:second}
 
-\chapter{Lists, figures, and tables}\label{c:figures}
+\chapter{thuật toán 2.2 maping ER}\label{c:figures}
 
-\input{chapter4}
 
-\chapter{Cross-references and quotes}\label{c:conclusion}
+
+
+
+
+\part{Thiet Ke Vat Ly}\label{p:conclusion}
+
+
+\chapter{Thiết Kế Vật LÝ}\label{c:summary}
 
 \input{chapter5}
 
-\chapter{Further results}\label{c:further}
-
-\input{chapter6}
-
-\chapter{Extensions}\label{c:extensions}
-
-\input{chapter7}
-
-\part{Conclusion}\label{p:conclusion}
-
-\chapter{Summary}\label{c:summary}
-
-\input{chapter8}
-
 \chapter{Future research}\label{c:future}
 
-\input{chapter9}
+\IfFileExists{chapter9.tex}{\input{chapter9}}{}
 
 \appendix
 
@@ -88,15 +93,15 @@
 
 \chapter{Generic technical topic}\label{a:appendix1}
 
-\input{appendixA}
+\IfFileExists{appendixA.tex}{\input{appendixA}}{}
 
 \chapter{Another technical topic}\label{a:appendix2}
 
-\input{appendixB}
+\IfFileExists{appendixB.tex}{\input{appendixB}}{}
 
 \chapter{Last technical topic}\label{a:appendix3}
 
-\input{appendixC}
+\IfFileExists{appendixC.tex}{\input{appendixC}}{}
 
 \backmatter
 
@@ -104,7 +109,7 @@
 
 \chapter{Acknowledgments}
 
-\input{acknowledgements}
+\IfFileExists{acknowledgements.tex}{\input{acknowledgements}}{}
 
 \printindex
 

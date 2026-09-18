@@ -37,8 +37,11 @@
 
 % ---- Adjust page layout ----
 
-\usepackage[top=1in, left=1.3in, right=1.3in, bottom=1.2in, footskip=0.7in]{geometry}
-
+% Avoid an option clash when geometry is loaded by the document class or preamble.
+\makeatletter
+\@ifpackageloaded{geometry}{}{\RequirePackage{geometry}}
+\makeatother
+\geometry{top=1in, left=1.3in, right=1.3in, bottom=1.2in, footskip=0.7in}
 % ---- Adjust spacing ----
 
 % Set spacing between lines
