@@ -1,5 +1,7 @@
 \documentclass[letterpaper,11pt,leqno]{book}
 \usepackage{book}
+\usepackage{graphicx}
+\usepackage{float}
 \usepackage[utf8]{inputenc}
 \usepackage[vietnamese]{babel}
 
@@ -7,6 +9,8 @@
 \usepackage{microtype} 
 \usepackage{hyperref}  
 
+\usepackage{longtable}
+\usepackage{amsmath}
 % Disable font expansion for bitmap Vietnamese fonts used by pdfTeX.
 \microtypesetup{expansion=false}
 \bibliographystyle{book}
@@ -62,11 +66,17 @@
 \part{Thiết kế logic}\label{p:second}
 
 \chapter{thuật toán 2.2 maping ER}\label{c:figures}
+\input{chapter3/thanhvien1.tex}
+\input{chapter3/thanhvien4.tex}
 
+<<<<<<< HEAD
 \input{chapter3}
 % Đã xóa dòng \input{chapter3/thanhvien2} ở đây để tránh lặp mục 3.7
 
 \chapter{Cross-references and quotes}\label{c:conclusion}
+=======
+\chapter{LƯỢC ĐỒ QUAN HỆ LOGIC HOÀN CHỈNH VÀ ĐẦU RA STAGE 2}\label{c:erd_logic}
+>>>>>>> origin/chapter2-thietkelogic
 
 \input{chapter4}
 

@@ -1,11 +1,21 @@
-This section displays cross-references and quotes. Lorem ipsum\index{ipsum} dolor sit amet, consectetur\index{consectetur} adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-\section{Cross-references}
 
-As usual, it is possible to reference an equation, such as equation \eqref{e:cv}. It is also possible to reference a section, such as section \ref{s:graphs}, or a subsection, such as subsection \ref{s:text}. It is also possible to reference an appendix, such as appendix \ref{a:appendix1}, or a subsection in an appendix, such as appendix~\ref{a:subappendix}. 
 
-Of course it is possible to reference figures, such as figure \ref{f:graph2}, or tables, such as table~\ref{t:table1}. It is possible to refer to a specific panel in a figure, for instance figure \ref{f:panel1} or figure \ref{f:panel2}, and to the entire figure, for instance figure \ref{f:graph1} or figure \ref{f:graph2}.
+Sau khi áp dụng thành công \textbf{Thuật toán 2.2} (Ánh xạ mô hình ERD Quan niệm sang Lược đồ Quan hệ), toàn bộ thực thể, thuộc tính và mối kết hợp trong hệ thống đã được chuyển đổi hoàn chỉnh sang \textbf{Lược đồ ERD ở mức Lô-gíc (Logical ERD)}.
 
+Đầu ra đạt được sau bước này bao gồm:
+\begin{itemize}
+    \item \textbf{Cấu trúc bảng chuẩn hóa:} Chuyển đổi toàn bộ thực thể và các mối kết hợp $M:N$ thành \textbf{31 bảng} dữ liệu độc lập với tên gọi tuân thủ chuẩn \texttt{snake\_case}.
+    \item \textbf{Xử lý thuộc tính phức hợp \& đa trị:} Giải quyết triệt để các thuộc tính phức hợp, thuộc tính đa trị và chuyển đổi các mối kết hợp 3 ngôi (như cụm \texttt{USER-WORKSPACE-ROLE}) thành các thực thể liên kết hợp lệ.
+    \item \textbf{Cơ chế Khóa chính \& Khóa ngoại:} Đã đồng bộ hóa việc sử dụng Khóa chính đơn \textit{Surrogate PK (UUID)} cho tất cả các bảng, đồng thời thiết lập mạng lưới Khóa ngoại (\textit{FK}) chặt chẽ để duy trì ràng buộc toàn vẹn tham chiếu.
+    \item \textbf{Đạt dạng chuẩn 3NF/BCNF:} Xác định tập phụ thuộc hàm (FDs) cho 4 phân hệ nghiệp vụ, chứng minh toàn bộ các bảng loại bỏ được rủi ro dư thừa dữ liệu và bất thường thao tác.
+\end{itemize}
+
+Chi tiết sơ đồ ERD mức Lô-gíc và mô tả cấu trúc các bảng được trình bày ngay dưới đây:
+
+
+
+\input{chapter3/thanhvien5.tex}
 \section{Quotes}
 
 It is easy to quote material within the book. Vivamus at commodo nisl. Integer sodales eros a metus efficitur, eu tincidunt leo ullamcorper. Sed fermentum tellus nec nisi lobortis, vel pharetra neque mollis. Cras non dolor ut ex semper lobortis. Vivamus sit amet sapien in elit sodales luctus. Donec a tortor ut elit consequat mollis ac id metus. Maecenas vehicula, turpis at lacinia interdum, dolor dolor pretium turpis, non fermentum purus magna at est. Quotes appear as follows:
