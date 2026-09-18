@@ -1,0 +1,334 @@
+\section{ phan 1 }
+
+\subsection{Nhật ký Áp dụng Thuật toán 2.2}
+
+\subsubsection*{Bước 1: Thực thể mạnh $\rightarrow$ Bảng chính}
+Chuyển 7 thực thể mạnh thành 7 bảng chính, đặt tên theo chuẩn \texttt{snake\_case} số nhiều:
+\begin{itemize}
+    \item \texttt{users}, \texttt{workspaces}, \texttt{roles}, \texttt{permissions}, \texttt{repositories}, \texttt{templates}, \texttt{documents}.
+\end{itemize}
+
+\subsubsection*{Bước 2: Thực thể yếu $\rightarrow$ Bảng phụ \& Mối kết hợp $M:N \rightarrow$ Bảng trung gian (Surrogate PK UUID)}
+Chuyển 16 thực thể yếu thành 16 bảng phụ, mỗi bảng được gán khóa chính nhân tạo (Surrogate PK) kiểu \texttt{UUID} độc lập với bảng cha, mang FK định danh (identifying FK) trỏ về đúng 1 bảng cha:
+\begin{itemize}
+    \item \texttt{github\_connections} (phụ thuộc \texttt{users})
+    \item \texttt{branches} (phụ thuộc \texttt{repositories})
+    \item \texttt{commits} (phụ thuộc \texttt{branches}; FK phụ \texttt{author\_user\_id} $\rightarrow$ \texttt{users}, \texttt{pr\_id} $\rightarrow$ \texttt{pull\_requests})
+    \item \texttt{pull\_requests} (phụ thuộc \texttt{repositories})
+    \item \texttt{code\_diffs} (phụ thuộc \texttt{commits})
+    \item \texttt{files} (phụ thuộc \texttt{repositories})
+    \item \texttt{code\_entities} (phụ thuộc \texttt{files})
+    \item \texttt{template\_sections} (phụ thuộc \texttt{templates})
+    \item \texttt{placeholders} (phụ thuộc \texttt{template\_sections})
+    \item \texttt{document\_versions} (phụ thuộc \texttt{documents})
+    \item \texttt{change\_logs} (phụ thuộc \texttt{document\_versions})
+    \item \texttt{reviews} (phụ thuộc \texttt{document\_versions}; FK phụ \texttt{reviewer\_user\_id} $\rightarrow$ \texttt{users})
+    \item \texttt{review\_comments} (phụ thuộc \texttt{reviews})
+    \item \texttt{approvals} (phụ thuộc \texttt{document\_versions}; FK phụ \texttt{approver\_user\_id} $\rightarrow$ \texttt{users})
+    \item \texttt{grounding\_evidences} (phụ thuộc \texttt{document\_versions})
+    \item \texttt{drift\_alerts} (phụ thuộc \texttt{grounding\_evidences})
+\end{itemize}
+
+Song song đó, chuyển các mối kết hợp $M:N$ (bao gồm 1 mối kết hợp 3 ngôi và 1 mối kết hợp đệ quy) thành 6 bảng trung gian, mỗi bảng được gán Surrogate PK riêng kiểu \texttt{UUID}, chứa tối thiểu 2 FK cùng vai trò định danh trỏ về các bảng gốc:
+\begin{itemize}
+    \item \texttt{workspace\_members} (mối kết hợp 3 ngôi \textit{participates}: \texttt{user\_id}, \texttt{workspace\_id}, \texttt{role\_id})
+    \item \texttt{role\_permissions} (mối kết hợp \textit{contains}: \texttt{role\_id}, \texttt{permission\_id})
+    \item \texttt{commit\_file} (mối kết hợp \textit{modifies}: \texttt{commit\_id}, \texttt{file\_id})
+    \item \texttt{dependencies} (mối kết hợp đệ quy \textit{depends\_on}: \texttt{dependent\_entity\_id}, \texttt{target\_entity\_id} --- cả hai cùng trỏ về \texttt{code\_entities})
+    \item \texttt{template\_mappings} (mối kết hợp \textit{maps\_to}: \texttt{placeholder\_id}, \texttt{code\_entity\_id})
+    \item \texttt{grounding\_evidence\_code\_entities} (mối kết hợp \textit{references\_code}: \texttt{evidence\_id}, \texttt{code\_entity\_id})
+\end{itemize}
+
+\subsubsection*{Bước 3 \& 4: Quan hệ 1:1, 1:N $\rightarrow$ Chèn FK}
+\textbf{Nguyên tắc:} Chuyển khóa chính (PK) của bảng phía 1 sang làm khóa ngoại (FK) ở bảng phía N. Với quan hệ 1:1, đặt khóa ngoại ở phía tham gia tùy chọn và gán ràng buộc \texttt{UNIQUE} để đảm bảo tính một-một.
+\begin{itemize}
+    \item \texttt{users.user\_id} (PK) $\rightarrow$ \texttt{github\_connections.user\_id} (FK) (1:1 nghiệp vụ, ràng buộc \texttt{UNIQUE})
+    \item \texttt{workspaces.workspace\_id} (PK) $\rightarrow$ \texttt{repositories.workspace\_id} (FK) (1:N)
+    \item \texttt{repositories.repository\_id} (PK) $\rightarrow$ \texttt{branches.repository\_id} (FK) (1:N)
+    \item \texttt{branches.branch\_id} (PK) $\rightarrow$ \texttt{commits.branch\_id} (FK) (1:N)
+    \item \texttt{commits.author\_user\_id} (FK) $\rightarrow$ \texttt{users.user\_id} (PK) (1:N)
+    \item \texttt{commits.pr\_id} (FK) $\rightarrow$ \texttt{pull\_requests.pr\_id} (PK) (1:N, cho phép NULL)
+    \item \texttt{pull\_requests.repository\_id} (FK) $\rightarrow$ \texttt{repositories.repository\_id} (PK) (1:N)
+    \item \texttt{code\_diffs.commit\_id} (FK) $\rightarrow$ \texttt{commits.commit\_id} (PK) (1:N)
+    \item \texttt{files.repository\_id} (FK) $\rightarrow$ \texttt{repositories.repository\_id} (PK) (1:N)
+    \item \texttt{code\_entities.file\_id} (FK) $\rightarrow$ \texttt{files.file\_id} (PK) (1:N)
+    \item \texttt{templates.workspace\_id} (FK) $\rightarrow$ \texttt{workspaces.workspace\_id} (PK) (1:N)
+    \item \texttt{template\_sections.template\_id} (FK) $\rightarrow$ \texttt{templates.template\_id} (PK) (1:N)
+    \item \texttt{placeholders.section\_id} (FK) $\rightarrow$ \texttt{template\_sections.section\_id} (PK) (1:N)
+    \item \texttt{documents.workspace\_id} (FK) $\rightarrow$ \texttt{workspaces.workspace\_id} (PK) (1:N)
+    \item \texttt{documents.author\_user\_id} (FK) $\rightarrow$ \texttt{users.user\_id} (PK) (1:N)
+    \item \texttt{document\_versions.document\_id} (FK) $\rightarrow$ \texttt{documents.document\_id} (PK) (1:N)
+    \item \texttt{change\_logs.version\_id} (FK) $\rightarrow$ \texttt{document\_versions.version\_id} (PK) (1:N)
+    \item \texttt{reviews.version\_id} (FK) $\rightarrow$ \texttt{document\_versions.version\_id} (PK) (1:N)
+    \item \texttt{reviews.reviewer\_user\_id} (FK) $\rightarrow$ \texttt{users.user\_id} (PK) (1:N)
+    \item \texttt{review\_comments.review\_id} (FK) $\rightarrow$ \texttt{reviews.review\_id} (PK) (1:N)
+    \item \texttt{approvals.version\_id} (FK) $\rightarrow$ \texttt{document\_versions.version\_id} (PK) (1:N)
+    \item \texttt{approvals.approver\_user\_id} (FK) $\rightarrow$ \texttt{users.user\_id} (PK) (1:N)
+    \item \texttt{grounding\_evidences.version\_id} (FK) $\rightarrow$ \texttt{document\_versions.version\_id} (PK) (1:N)
+    \item \texttt{drift\_alerts.evidence\_id} (FK) $\rightarrow$ \texttt{grounding\_evidences.evidence\_id} (PK) (1:N)
+\end{itemize}
+
+\subsubsection*{Bước 5: Quan hệ M:N $\rightarrow$ Bảng trung gian}
+Tạo 6 bảng trung gian, mỗi bảng có Surrogate PK riêng kiểu \texttt{UUID} và tối thiểu 2 FK trỏ về các bảng gốc:
+\begin{itemize}
+    \item \texttt{workspace\_members}: chứa FK \texttt{user\_id}, \texttt{workspace\_id}, \texttt{role\_id} (mối kết hợp 3 ngôi \textit{participates}, tỷ lệ M:N:1)
+    \item \texttt{role\_permissions}: chứa FK \texttt{role\_id}, \texttt{permission\_id} (mối kết hợp \textit{contains}, M:N)
+    \item \texttt{commit\_file}: chứa FK \texttt{commit\_id}, \texttt{file\_id} (mối kết hợp \textit{modifies}, M:N)
+    \item \texttt{dependencies}: chứa FK \texttt{dependent\_entity\_id}, \texttt{target\_entity\_id} (mối kết hợp đệ quy \textit{depends\_on}, M:N)
+    \item \texttt{template\_mappings}: chứa FK \texttt{placeholder\_id}, \texttt{code\_entity\_id} (mối kết hợp \textit{maps\_to}, M:N)
+    \item \texttt{grounding\_evidence\_code\_entities}: chứa FK \texttt{evidence\_id}, \texttt{code\_entity\_id} (mối kết hợp \textit{references\_code}, M:N)
+\end{itemize}
+
+\subsubsection*{Bước 6: Thuộc tính đặc biệt}
+\begin{itemize}
+    \item \textbf{Phẳng hóa thuộc tính phức hợp:}
+    \begin{itemize}
+        \item \texttt{User.FullName} $\rightarrow$ \texttt{users.first\_name}, \texttt{users.last\_name}
+        \item \texttt{Commit.AuthorInfo} $\rightarrow$ \texttt{commits.author\_name}, \texttt{commits.author\_email}
+        \item \texttt{CodeEntity.position} $\rightarrow$ \texttt{code\_entities.start\_line}, \texttt{code\_entities.end\_line}
+    \end{itemize}
+    \item \textbf{Tách thuộc tính đa trị thành bảng phụ chứa FK trỏ về bảng chính:}
+    \begin{itemize}
+        \item \texttt{User.NotificationPreferences} $\rightarrow$ \texttt{user\_notification\_preferences}
+        \item \texttt{GitHubConnection.scopes} $\rightarrow$ \texttt{github\_connection\_scopes}
+        \item \texttt{PullRequest.labels} $\rightarrow$ \texttt{pull\_request\_labels}
+    \end{itemize}
+\end{itemize};
+
+% ==========================================
+\section{ nhóm A của thanh vien 1 ( phan 2 4 trong template)}
+
+
+\paragraph{1. Bảng \texttt{users}} (Bảng chính - Thực thể mạnh: User)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
+\texttt{user\_id} & UUID & PK & NOT NULL \\ \hline
+\texttt{email} & - & Unique & NOT NULL \\ \hline
+\texttt{password\_hash} & - & - & NULL \\ \hline
+\texttt{first\_name} & - & - & NULL \\ \hline
+\texttt{last\_name} & - & - & NULL \\ \hline
+\texttt{status} & - & - & NOT NULL \\ \hline
+\texttt{created\_at} & - & - & NOT NULL \\ \hline
+\texttt{updated\_at} & - & - & NOT NULL \\ \hline
+\texttt{deleted\_at} & - & - & NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\paragraph{2. Bảng \texttt{workspaces}} (Bảng chính - Thực thể mạnh: Workspace)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
+\texttt{workspace\_id} & UUID & PK & NOT NULL \\ \hline
+\texttt{name} & - & - & NOT NULL \\ \hline
+\texttt{description} & - & - & NULL \\ \hline
+\texttt{status} & - & - & NOT NULL \\ \hline
+\texttt{created\_at} & - & - & NOT NULL \\ \hline
+\texttt{updated\_at} & - & - & NOT NULL \\ \hline
+\texttt{deleted\_at} & - & - & NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\paragraph{3. Bảng \texttt{roles}} (Bảng chính - Thực thể mạnh: Role)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
+\texttt{role\_id} & UUID & PK & NOT NULL \\ \hline
+\texttt{role\_name} & - & - & NOT NULL \\ \hline
+\texttt{description} & - & - & NULL \\ \hline
+\texttt{created\_at} & - & - & NOT NULL \\ \hline
+\texttt{updated\_at} & - & - & NOT NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\paragraph{4. Bảng \texttt{permissions}} (Bảng chính - Thực thể mạnh: Permission)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
+\texttt{permission\_id} & UUID & PK & NOT NULL \\ \hline
+\texttt{permission\_code} & - & Unique & NOT NULL \\ \hline
+\texttt{description} & - & - & NULL \\ \hline
+\texttt{created\_at} & - & - & NOT NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\paragraph{5. Bảng \texttt{github\_connections}} (Bảng phụ - Thực thể yếu phụ thuộc User, Surrogate PK UUID)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
+\texttt{connection\_id} & UUID & PK & NOT NULL \\ \hline
+\texttt{user\_id} & - & FK, Unique & NOT NULL \\ \hline
+\texttt{github\_user\_id} & - & - & NOT NULL \\ \hline
+\texttt{github\_username} & - & - & NOT NULL \\ \hline
+\texttt{access\_token} & - & - & NOT NULL \\ \hline
+\texttt{created\_at} & - & - & NOT NULL \\ \hline
+\texttt{updated\_at} & - & - & NOT NULL \\ \hline
+\multicolumn{4}{|l|}{\textbf{Ràng buộc bổ sung:} \texttt{UNIQUE (user\_id)}} \\ \hline
+\end{tabular}
+\end{table}
+
+\paragraph{6. Bảng \texttt{user\_notification\_preferences}} (Bảng phụ đa trị từ \texttt{NotificationPreferences} của User)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
+\texttt{preference\_id} & UUID & PK & NOT NULL \\ \hline
+\texttt{user\_id} & - & FK & NOT NULL \\ \hline
+\texttt{channel} & - & - & NOT NULL \\ \hline
+\multicolumn{4}{|l|}{\textbf{Ràng buộc bổ sung:} \texttt{UNIQUE (user\_id, channel)}} \\
+\multicolumn{4}{|l|}{\textit{Một người dùng chỉ có tối đa 1 bản ghi cho mỗi kênh.}} \\ \hline
+\end{tabular}
+\end{table}
+
+\paragraph{7. Bảng \texttt{github\_connection\_scopes}} (Bảng phụ đa trị từ \texttt{scopes} của GitHubConnection)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
+\texttt{scope\_id} & UUID & PK & NOT NULL \\ \hline
+\texttt{connection\_id} & - & FK & NOT NULL \\ \hline
+\texttt{scope\_value} & - & - & NOT NULL \\ \hline
+\multicolumn{4}{|l|}{\textbf{Ràng buộc bổ sung:} \texttt{UNIQUE (connection\_id, scope\_value)}} \\
+\multicolumn{4}{|l|}{\textit{Đảm bảo tài khoản OAuth không lưu lặp lại cùng một quyền scope.}} \\ \hline
+\end{tabular}
+\end{table}
+
+\paragraph{8. Bảng \texttt{workspace\_members}} (Bảng trung gian mối kết hợp 3 ngôi User–Workspace–Role, tỷ lệ M:N:1)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
+\texttt{membership\_id} & UUID & PK & NOT NULL \\ \hline
+\texttt{user\_id} & - & FK & NOT NULL \\ \hline
+\texttt{workspace\_id} & - & FK & NOT NULL \\ \hline
+\texttt{role\_id} & - & FK & NOT NULL \\ \hline
+\texttt{joined\_at} & - & - & NOT NULL \\ \hline
+\texttt{status} & - & - & NOT NULL \\ \hline
+\multicolumn{4}{|l|}{\textbf{Ràng buộc bổ sung:} \texttt{UNIQUE (user\_id, workspace\_id)}} \\
+\multicolumn{4}{|l|}{\textit{Đảm bảo mỗi User chỉ giữ đúng 1 Role trong 1 Workspace (Scoped RBAC).}} \\ \hline
+\end{tabular}
+\end{table}
+
+\paragraph{9. Bảng \texttt{role\_permissions}} (Bảng trung gian mối kết hợp Role–Permission, tỷ lệ M:N)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
+\texttt{role\_permission\_id} & UUID & PK & NOT NULL \\ \hline
+\texttt{role\_id} & - & FK & NOT NULL \\ \hline
+\texttt{permission\_id} & - & FK & NOT NULL \\ \hline
+\texttt{granted\_at} & - & - & NOT NULL \\ \hline
+\multicolumn{4}{|l|}{\textbf{Ràng buộc bổ sung:} \texttt{UNIQUE (role\_id, permission\_id)}} \\
+\multicolumn{4}{|l|}{\textit{Ngăn chặn gán trùng lặp quyền cho một vai trò (RBAC).}} \\ \hline
+\end{tabular}
+\end{table}
+\subsection{Lược đồ Cú pháp Rút gọn \& Chứng minh Chuẩn hóa 3NF}
+
+\subsubsection{Lược đồ Dạng Cú pháp Rút gọn}
+
+\begin{itemize}
+    \item \texttt{users} (\underline{\texttt{user\_id}} [UUID, PK], \texttt{email} [Unique], \texttt{password\_hash}, \texttt{first\_name}, \texttt{last\_name}, \texttt{status}, \texttt{created\_at}, \texttt{updated\_at}, \texttt{deleted\_at})
+    \item \texttt{workspaces} (\underline{\texttt{workspace\_id}} [UUID, PK], \texttt{name}, \texttt{description}, \texttt{status}, \texttt{created\_at}, \texttt{updated\_at}, \texttt{deleted\_at})
+    \item \texttt{roles} (\underline{\texttt{role\_id}} [UUID, PK], \texttt{role\_name}, \texttt{description}, \texttt{created\_at}, \texttt{updated\_at})
+    \item \texttt{permissions} (\underline{\texttt{permission\_id}} [UUID, PK], \texttt{permission\_code} [Unique], \texttt{description}, \texttt{created\_at})
+    \item \texttt{github\_connections} (\underline{\texttt{connection\_id}} [UUID, PK], \texttt{user\_id} [FK, Unique], \texttt{github\_user\_id}, \texttt{github\_username}, \texttt{access\_token}, \texttt{created\_at}, \texttt{updated\_at})
+    \item \texttt{user\_notification\_preferences} (\underline{\texttt{preference\_id}} [UUID, PK], \texttt{user\_id} [FK], \texttt{channel}, \texttt{UNIQUE(user\_id, channel)})
+    \item \texttt{github\_connection\_scopes} (\underline{\texttt{scope\_id}} [UUID, PK], \texttt{connection\_id} [FK], \texttt{scope\_value}, \texttt{UNIQUE(connection\_id, scope\_value)})
+    \item \texttt{workspace\_members} (\underline{\texttt{membership\_id}} [UUID, PK], \texttt{user\_id} [FK], \texttt{workspace\_id} [FK], \texttt{role\_id} [FK], \texttt{joined\_at}, \texttt{status}, \texttt{UNIQUE(user\_id, workspace\_id)})
+    \item \texttt{role\_permissions} (\underline{\texttt{role\_permission\_id}} [UUID, PK], \texttt{role\_id} [FK], \texttt{permission\_id} [FK], \texttt{granted\_at}, \texttt{UNIQUE(role\_id, permission\_id)})
+\end{itemize}
+
+% ==========================================
+\subsection{Báo cáo Chứng minh Chuẩn hóa 3NF}
+
+\subsubsection{Khai báo Tập Phụ thuộc Hàm (Functional Dependencies - FDs)}
+Xét các bảng trong phân hệ Quản trị, Người dùng \& Phân quyền có tập phụ thuộc hàm được xác định chi tiết như sau:
+
+\paragraph{1. Bảng \texttt{users}}
+\begin{itemize}
+    \item $f_1: \text{user\_id} \rightarrow \text{email, password\_hash, first\_name, last\_name, status, created\_at, updated\_at, deleted\_at}$
+    \item $f_2: \text{email} \rightarrow \text{user\_id, password\_hash, first\_name, last\_name, status, created\_at, updated\_at, deleted\_at}$ \textit{(Khóa ứng viên)}
+\end{itemize}
+
+\paragraph{2. Bảng \texttt{user\_notification\_preferences}}
+\begin{itemize}
+    \item $f_1: \text{preference\_id} \rightarrow \text{user\_id, channel}$
+    \item $f_2: (\text{user\_id, channel}) \rightarrow \text{preference\_id}$
+\end{itemize}
+
+\paragraph{3. Bảng \texttt{workspaces}}
+\begin{itemize}
+    \item $f_1: \text{workspace\_id} \rightarrow \text{name, description, status, created\_at, updated\_at, deleted\_at}$
+\end{itemize}
+
+\paragraph{4. Bảng \texttt{roles}}
+\begin{itemize}
+    \item $f_1: \text{role\_id} \rightarrow \text{role\_name, description, created\_at, updated\_at}$
+\end{itemize}
+
+\paragraph{5. Bảng \texttt{permissions}}
+\begin{itemize}
+    \item $f_1: \text{permission\_id} \rightarrow \text{permission\_code, description, created\_at}$
+    \item $f_2: \text{permission\_code} \rightarrow \text{permission\_id, description, created\_at}$ \textit{(Khóa ứng viên)}
+\end{itemize}
+
+\paragraph{6. Bảng \texttt{role\_permissions}}
+\begin{itemize}
+    \item $f_1: \text{role\_permission\_id} \rightarrow \text{role\_id, permission\_id, granted\_at}$
+    \item $f_2: (\text{role\_id, permission\_id}) \rightarrow \text{role\_permission\_id, granted\_at}$
+\end{itemize}
+
+\paragraph{7. Bảng \texttt{workspace\_members}}
+\begin{itemize}
+    \item $f_1: \text{membership\_id} \rightarrow \text{user\_id, workspace\_id, role\_id, joined\_at, status}$
+    \item $f_2: (\text{user\_id, workspace\_id}) \rightarrow \text{membership\_id, role\_id, joined\_at, status}$
+\end{itemize}
+
+\paragraph{8. Bảng \texttt{github\_connections}}
+\begin{itemize}
+    \item $f_1: \text{connection\_id} \rightarrow \text{user\_id, github\_user\_id, github\_username, access\_token, created\_at, updated\_at}$
+    \item $f_2: \text{user\_id} \rightarrow \text{connection\_id, github\_user\_id, github\_username, access\_token, created\_at, updated\_at}$ \textit{(Khóa ứng viên)}
+\end{itemize}
+
+\paragraph{9. Bảng \texttt{github\_connection\_scopes}}
+\begin{itemize}
+    \item $f_1: \text{scope\_id} \rightarrow \text{connection\_id, scope\_value}$
+    \item $f_2: (\text{connection\_id, scope\_value}) \rightarrow \text{scope\_id}$
+\end{itemize}
+
+\subsubsection{Đánh giá Cấp Chuẩn (Normal Forms Assessment)}
+
+\begin{itemize}
+    \item \textbf{Đạt Chuẩn 1NF (First Normal Form):}
+    \begin{itemize}
+        \item \textit{Giá trị nguyên tố (Atomic Values):} Toàn bộ các cột trong tất cả các bảng đều lưu giữ giá trị đơn, không thể phân chia nhỏ hơn.
+        \item \textit{Phẳng hóa thuộc tính phức hợp:} Thuộc tính phức hợp \texttt{FullName} đã được tách thành hai thuộc tính nguyên tố là \texttt{first\_name} và \texttt{last\_name}.
+        \item \textit{Tách thuộc tính đa trị:} Các thuộc tính đa trị như danh sách cài đặt thông báo (\texttt{NotificationPreferences}) và danh sách quyền truy cập (\texttt{scopes}) đã được tách thành các bảng phụ tương ứng là \texttt{user\_notification\_preferences} và \texttt{github\_connection\_scopes}.
+    \end{itemize}
+
+    \item \textbf{Đạt Chuẩn 2NF (Second Normal Form):}
+    \begin{itemize}
+        \item \textit{Sử dụng Khóa chính đơn (Surrogate PK):} Mọi bảng trong phân hệ đều thiết lập Khóa chính đơn định danh bằng chuỗi UUID (\texttt{user\_id}, \texttt{workspace\_id}, \texttt{role\_id}, \texttt{membership\_id},...).
+        \item \textit{Loại bỏ phụ thuộc một phần:} Do không dùng Khóa chính phức hợp làm khóa chính duy nhất, mọi thuộc tính không khóa đều phụ thuộc đầy đủ vào toàn bộ Khóa chính, loại bỏ hoàn toàn hiện tượng phụ thuộc một phần (Partial Dependency).
+    \end{itemize}
+
+    \item \textbf{Đạt Chuẩn 3NF (Third Normal Form):}
+    \begin{itemize}
+        \item \textit{Phụ thuộc trực tiếp:} Tất cả thuộc tính không khóa đều phụ thuộc trực tiếp vào Khóa chính của bảng chứa nó.
+        \item \textit{Loại bỏ phụ thuộc bắc cầu:} Không tồn tại phụ thuộc bắc cầu dạng $X \rightarrow Y \rightarrow Z$ giữa các thuộc tính không khóa. Ví dụ: Thông tin phân quyền giữa nhóm quyền và người dùng không lưu trực tiếp trong \texttt{users} hay \texttt{roles} mà được tách riêng thành các bảng trung gian \texttt{role\_permissions} và \texttt{workspace\_members}.
+    \end{itemize}
+\end{itemize}

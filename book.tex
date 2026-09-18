@@ -2,10 +2,26 @@
 \usepackage{float}
 \usepackage{longtable}
 \usepackage{book}
+
 \usepackage[utf8]{inputenc}
 \usepackage[vietnamese]{babel}
 \usepackage{graphicx}
 \usepackage{float}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage[vietnamese]{babel}
+
+% Bổ sung các package cần thiết
+\usepackage{microtype} 
+\usepackage{hyperref} 
+\usepackage{longtable}
+\usepackage{amsmath}
+
+% Disable font expansion for bitmap Vietnamese fonts used by pdfTeX.
+\microtypesetup{expansion=false}
 \bibliographystyle{book}
 
 % Enter book title to populate PDF metadata:
@@ -20,7 +36,11 @@
 \begin{document}
 
 % Enter title:
+
 \title{Thiết Kế Cơ Sở Dữ Liệu}
+
+\title{Research Monograph}
+
 
 % Enter subtitle (can be commented out):
 \subtitle{Đề Tài: LivingDocs}
@@ -61,11 +81,17 @@
 
 
 
+\part{Thiết kế logic}\label{p:second}
 
 
-\chapter{Cross-references and quotes}\label{c:conclusion}
+\chapter{thuật toán 2.2 maping ER}\label{c:figures}
+\input{chapter3/thanhvien1.tex}
+\input{chapter3/thanhvien4.tex}
 
-\input{chapter5}
+\chapter{Thuật toán 2.2  mô hình LOGIC ERD}\label{c:stage2}
+
+\chapter{LƯỢC ĐỒ QUAN HỆ LOGIC HOÀN CHỈNH VÀ ĐẦU RA STAGE 2}\label{c:erd_logic}
+
 
 \chapter{Further results}\label{c:further}
 
