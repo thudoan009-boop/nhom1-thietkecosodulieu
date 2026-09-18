@@ -1,25 +1,4 @@
-\section{Phân hệ Quản trị, Kiểm duyệt \& Minh chứng AI}
-
-\noindent\rule{\linewidth}{0.5pt}
-
-
-
-\subsection{Cú pháp Rút gọn (Logical Schema Syntax)}
-\begin{itemize}
-    \item \texttt{reviews (\underline{review\_id} UUID PK, version\_id UUID FK, user\_id UUID FK, status VARCHAR(20), decision VARCHAR(20), summary\_notes TEXT, created\_at TIMESTAMP, updated\_at TIMESTAMP)}
-    \item \texttt{review\_comments (\underline{comment\_id} UUID PK, review\_id UUID FK, user\_id UUID FK, content TEXT, is\_resolved BOOLEAN, created\_at TIMESTAMP, updated\_at TIMESTAMP)}
-    \item \texttt{approvals (\underline{approval\_id} UUID PK, version\_id UUID FK, user\_id UUID FK, decision VARCHAR(20), rejection\_reason TEXT, approved\_at TIMESTAMP)}
-    \item \texttt{grounding\_evidences (\underline{evidence\_id} UUID PK, version\_id UUID FK, snippet\_content TEXT, purpose VARCHAR(30), created\_at TIMESTAMP)}
-    \item \texttt{drift\_alerts (\underline{alert\_id} UUID PK, evidence\_id UUID FK, repository\_id UUID FK, drift\_type VARCHAR(20), status VARCHAR(20), detected\_at TIMESTAMP)}
-    \item \texttt{reports (\underline{report\_id} UUID PK, workspace\_id UUID FK, report\_type VARCHAR(50), metric\_data TEXT, generated\_at TIMESTAMP)}
-\end{itemize}
-
-\subsection{Mã DDL SQL Hoàn Chỉnh (\texttt{schema\_member\_5.sql})}
-
-
-\begin{lstlisting}[language=SQL]
-
-
+-- 1. BẢNG REVIEWS (Tiến trình đánh giá kỹ thuật của Staff)
 CREATE TABLE reviews (
     review_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     version_id UNIQUEIDENTIFIER NOT NULL,
@@ -30,10 +9,12 @@ CREATE TABLE reviews (
     created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
     updated_at DATETIME2 NULL,
     
+    -- Check Constraints
     CONSTRAINT chk_reviews_status CHECK (status IN ('PENDING', 'IN_PROGRESS', 'COMPLETED')),
     CONSTRAINT chk_reviews_decision CHECK (decision IS NULL OR decision IN ('APPROVED', 'REJECTED', 'CHANGES_REQUESTED'))
 );
 
+-- 2. BẢNG REVIEW_COMMENTS (Bình luận/Góp ý chi tiết trong phiên review)
 CREATE TABLE review_comments (
     comment_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     review_id UNIQUEIDENTIFIER NOT NULL,
@@ -43,10 +24,12 @@ CREATE TABLE review_comments (
     created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
     updated_at DATETIME2 NULL,
 
+    -- Foreign Key nội bộ phân hệ
     CONSTRAINT fk_comments_review FOREIGN KEY (review_id) 
         REFERENCES reviews(review_id) ON DELETE CASCADE
 );
 
+-- 3. BẢNG APPROVALS (Quyết định phê duyệt xuất bản từ Manager)
 CREATE TABLE approvals (
     approval_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     version_id UNIQUEIDENTIFIER NOT NULL,
@@ -55,9 +38,11 @@ CREATE TABLE approvals (
     rejection_reason NVARCHAR(MAX) NULL,
     approved_at DATETIME2 NOT NULL DEFAULT GETDATE(),
 
+    -- Check Constraint
     CONSTRAINT chk_approvals_decision CHECK (decision IN ('APPROVED', 'REJECTED'))
 );
 
+-- 4. BẢNG GROUNDING_EVIDENCES (Bằng chứng đối soát code chống AI Hallucination)
 CREATE TABLE grounding_evidences (
     evidence_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     version_id UNIQUEIDENTIFIER NOT NULL,
@@ -65,9 +50,11 @@ CREATE TABLE grounding_evidences (
     purpose VARCHAR(30) NOT NULL DEFAULT 'HALLUCINATION_PREVENTION',
     created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
 
+    -- Check Constraint
     CONSTRAINT chk_evidences_purpose CHECK (purpose IN ('HALLUCINATION_PREVENTION', 'CODE_REFERENCE', 'AST_VERIFICATION'))
 );
 
+-- 5. BẢNG DRIFT_ALERTS (Cảnh báo độ lệch ngữ nghĩa giữa Code và Tài liệu)
 CREATE TABLE drift_alerts (
     alert_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     evidence_id UNIQUEIDENTIFIER NOT NULL,
@@ -76,12 +63,16 @@ CREATE TABLE drift_alerts (
     status VARCHAR(20) NOT NULL DEFAULT 'OPEN',
     detected_at DATETIME2 NOT NULL DEFAULT GETDATE(),
 
+    -- Foreign Key nội bộ phân hệ
     CONSTRAINT fk_alerts_evidence FOREIGN KEY (evidence_id) 
         REFERENCES grounding_evidences(evidence_id) ON DELETE CASCADE,
+        
+    -- Check Constraints
     CONSTRAINT chk_alerts_type CHECK (drift_type IN ('REFERENTIAL', 'SIGNATURE', 'SEMANTIC', 'OUTDATED')),
     CONSTRAINT chk_alerts_status CHECK (status IN ('OPEN', 'RESOLVED', 'IGNORED'))
 );
 
+-- 6. BẢNG REPORTS (Báo cáo sức khỏe tài liệu & governance)
 CREATE TABLE reports (
     report_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     workspace_id UNIQUEIDENTIFIER NOT NULL,
@@ -91,22 +82,33 @@ CREATE TABLE reports (
 );
 GO
 
+-- ============================================================
+-- KHAI BÁO CÁC KHÓA NGOẠI THAM CHIẾU LIÊN PHÂN HỆ (CROSS-DOMAIN FKs)
+-- (Sẽ kích hoạt khi nạp gộp cùng file của Thành viên 1, 2, 3)
+-- ============================================================
 ALTER TABLE reviews ADD CONSTRAINT fk_reviews_version 
     FOREIGN KEY (version_id) REFERENCES document_versions(version_id);
+
 ALTER TABLE reviews ADD CONSTRAINT fk_reviews_user 
     FOREIGN KEY (user_id) REFERENCES users(user_id);
+
 ALTER TABLE review_comments ADD CONSTRAINT fk_comments_user 
     FOREIGN KEY (user_id) REFERENCES users(user_id);
+
 ALTER TABLE approvals ADD CONSTRAINT fk_approvals_version 
     FOREIGN KEY (version_id) REFERENCES document_versions(version_id);
+
 ALTER TABLE approvals ADD CONSTRAINT fk_approvals_user 
     FOREIGN KEY (user_id) REFERENCES users(user_id);
+
 ALTER TABLE grounding_evidences ADD CONSTRAINT fk_evidences_version 
     FOREIGN KEY (version_id) REFERENCES document_versions(version_id);
+
 ALTER TABLE drift_alerts ADD CONSTRAINT fk_alerts_repository 
     FOREIGN KEY (repository_id) REFERENCES repositories(repository_id);
+
 ALTER TABLE reports ADD CONSTRAINT fk_reports_workspace 
     FOREIGN KEY (workspace_id) REFERENCES workspaces(workspace_id);
 GO
 
-\end{lstlisting}
+-- ============================================================
