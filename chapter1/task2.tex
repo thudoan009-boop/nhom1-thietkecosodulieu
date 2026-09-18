@@ -1,12 +1,15 @@
-\chapter{Chi tiết các Thực thể Dữ liệu}
+\section{Chi tiết các Thực thể Dữ liệu}
 
-\section{Nhóm Quản trị \& Kết nối}
+% LaTeX does not define a fourth-level sectioning command by default.
+\providecommand{\subsubsubsection}[1]{\paragraph{#1}}
 
-\subsection{User (Thực thể mạnh)}
+\subsection{Nhóm Quản trị \& Kết nối}
+
+\subsubsection{User (Thực thể mạnh)}
 
 Người dùng cuối trong hệ thống (Developer, Staff, Manager, Tech Lead, Admin).
 
-\subsubsection{Thuộc tính Phức hợp (Composite Attribute)}
+\subsubsubsection{Thuộc tính Phức hợp (Composite Attribute)}
 
 \begin{itemize}
     \item \textbf{FullName:} Thuộc tính phức hợp gồm:
@@ -16,15 +19,15 @@ Người dùng cuối trong hệ thống (Developer, Staff, Manager, Tech Lead, 
     \end{itemize}
 \end{itemize}
 
-\subsubsection{Thuộc tính Đa trị (Multi-valued Attribute)}
+\subsubsubsection{Thuộc tính Đa trị (Multi-valued Attribute)}
 
 \begin{itemize}
     \item \textbf{NotificationPreferences (Cài đặt thông báo):}
     Lưu nhiều giá trị cùng lúc cho một người dùng
-    (ví dụ: chọn đồng thời cả EMAIL và SYSTEM).
+    (ví dụ: chọn đồng thời cả \texttt{EMAIL} và \texttt{SYSTEM}).
 \end{itemize}
 
-\subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{user\_id (PK):UUID} Định danh duy nhất cho từng người dùng.
@@ -69,11 +72,11 @@ Vai trò của người dùng, được scoped theo Workspace.
 \end{itemize}
 
 
-\subsection{Permission (Thực thể mạnh)}
+\subsubsection{Permission (Thực thể mạnh)}
 
 Quyền hạn chi tiết trên hệ thống (VD: DOC\_APPROVE, TEMPLATE\_EDIT).
 
-\subsubsection{Thuộc tính Đơn (Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{permission\_id (PK):UUID} Định danh duy nhất cho quyền.
@@ -83,11 +86,11 @@ Quyền hạn chi tiết trên hệ thống (VD: DOC\_APPROVE, TEMPLATE\_EDIT).
 \end{itemize}
 
 
-\subsection{RolePermission (Thực thể liên kết)}
+\subsubsection{RolePermission (Thực thể liên kết)}
 
 Bản ghi phân quyền chi tiết cho từng vai trò trong hệ thống.
 
-\subsubsection{Thuộc tính Đơn (Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{role\_permission\_id (PK):UUID} Định danh duy nhất cho bản ghi phân quyền (UUID).
@@ -97,11 +100,11 @@ Bản ghi phân quyền chi tiết cho từng vai trò trong hệ thống.
 \end{itemize}
 
 
-\subsection{WorkspaceMember (Thực thể mối kết hợp)}
+\subsubsection{WorkspaceMember (Thực thể mối kết hợp)}
 
 Ghi nhận sự tham gia của User trong Workspace và vai trò (Role) tương ứng.
 
-\subsubsection{Thuộc tính Đơn (Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{member\_id (PK):UUID} Định danh duy nhất cho bản ghi tham gia.
@@ -112,17 +115,17 @@ Ghi nhận sự tham gia của User trong Workspace và vai trò (Role) tương 
 \end{itemize}
 
 
-\subsection{GitHubConnection (Thực thể phụ thuộc)}
+\subsubsection{GitHubConnection (Thực thể phụ thuộc)}
 
 Lưu thông tin xác thực OAuth của User với GitHub.
 
-\subsubsection{Thuộc tính Khóa (Key Attribute)}
+\paragraph{Thuộc tính Khóa (Key Attribute)}
 
 \begin{itemize}
     \item \textbf{connection\_id:} Định danh duy nhất cho bản ghi kết nối OAuth.
 \end{itemize}
 
-\subsubsection{Thuộc tính Đơn / Nguyên tố (Simple / Atomic Attributes)}
+\paragraph{Thuộc tính Đơn / Nguyên tố (Simple / Atomic Attributes)}
 
 \begin{itemize}
     \item \textbf{github\_user\_id:} ID tài khoản người dùng trên hệ thống GitHub để đối soát định danh.
@@ -132,20 +135,20 @@ Lưu thông tin xác thực OAuth của User với GitHub.
     \item \textbf{updated\_at:} Thời điểm làm mới token hoặc cập nhật quyền hạn gần nhất.
 \end{itemize}
 
-\subsubsection{Thuộc tính Đa trị (Multi-valued Attribute)}
+\subsubsubsection{Thuộc tính Đa trị (Multi-valued Attribute)}
 
 \begin{itemize}
     \item \textbf{scopes:} Lưu danh sách các phạm vi quyền OAuth được cấp phép cùng lúc (VD: repo, read:user, workflow).
 \end{itemize}
 
 
-\section{Nhóm Mã nguồn \& Cấu trúc Code}
+\subsection{Nhóm Mã nguồn \& Cấu trúc Code}
 
-\subsection{Repository (Thực thể mạnh)}
+\subsubsection{Repository (Thực thể mạnh)}
 
 Kho chứa mã nguồn được đồng bộ vào hệ thống.
 
-\subsubsection{Thuộc tính Đơn (Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{repository\_id (PK):UUID} Định danh duy nhất cho kho mã nguồn.
@@ -159,11 +162,11 @@ Kho chứa mã nguồn được đồng bộ vào hệ thống.
 \end{itemize}
 
 
-\subsection{Branch (Thực thể yếu -- phụ thuộc Repository)}
+\subsubsection{Branch (Thực thể yếu -- phụ thuộc Repository)}
 
 Nhánh phát triển trong repository.
 
-\subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{branch\_id (PK):UUID} Định danh duy nhất cho nhánh.
@@ -174,11 +177,11 @@ Nhánh phát triển trong repository.
 \end{itemize}
 
 
-\subsection{Commit (Thực thể yếu -- phụ thuộc Branch/Repository)}
+\subsubsection{Commit (Thực thể yếu -- phụ thuộc Branch/Repository)}
 
 Bản ghi một lần commit mã nguồn.
 
-\subsubsection{Thuộc tính Phức hợp (Composite Attribute)}
+\subsubsubsection{Thuộc tính Phức hợp (Composite Attribute)}
 
 \begin{itemize}
     \item \textbf{AuthorInfo:} Thông tin tác giả thực hiện commit, gồm:
@@ -188,7 +191,7 @@ Bản ghi một lần commit mã nguồn.
     \end{itemize}
 \end{itemize}
 
-\subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{commit\_id (PK):UUID} Định danh nội bộ cho bản ghi commit.
@@ -199,18 +202,18 @@ Bản ghi một lần commit mã nguồn.
 \end{itemize}
 
 
-\subsection{PullRequest (Thực thể yếu -- phụ thuộc Repository)}
+\subsubsection{PullRequest (Thực thể yếu -- phụ thuộc Repository)}
 
 Yêu cầu hợp nhất nhánh từ GitHub.
 
-\subsubsection{Thuộc tính Đa trị (Multi-valued Attribute)}
+\subsubsubsection{Thuộc tính Đa trị (Multi-valued Attribute)}
 
 \begin{itemize}
     \item \textbf{labels:} Danh sách nhãn phân loại được gắn trên PR
     (VD: bug, enhancement, documentation, api-change).
 \end{itemize}
 
-\subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{pr\_id (PK):UUID} Định danh nội bộ của bản ghi PR.
@@ -226,11 +229,11 @@ Yêu cầu hợp nhất nhánh từ GitHub.
 \end{itemize}
 
 
-\subsection{CodeDiff (Thực thể yếu -- phụ thuộc Commit/PR)}
+\subsubsection{CodeDiff (Thực thể yếu -- phụ thuộc Commit/PR)}
 
 Chi tiết thay đổi mã nguồn trong commit hoặc PR.
 
-\subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{diff\_id (PK):UUID} Định danh nội bộ bản ghi chi tiết thay đổi.
@@ -243,11 +246,11 @@ Chi tiết thay đổi mã nguồn trong commit hoặc PR.
 \end{itemize}
 
 
-\subsection{File (Thực thể yếu -- phụ thuộc Repository)}
+\subsubsection{File (Thực thể yếu -- phụ thuộc Repository)}
 
 Cấu trúc tập tin mã nguồn trong kho chứa.
 
-\subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{file\_id (PK):UUID} Định danh nội bộ của tập tin trong hệ thống.
@@ -259,11 +262,11 @@ Cấu trúc tập tin mã nguồn trong kho chứa.
 \end{itemize}
 
 
-\subsection{CodeEntity (Thực thể yếu -- phụ thuộc File)}
+\subsubsection{CodeEntity (Thực thể yếu -- phụ thuộc File)}
 
 Đơn vị mã nguồn cụ thể thu được từ AST (Class, Method, Function...).
 
-\subsubsection{Thuộc tính Phức hợp (Composite Attribute)}
+\subsubsubsection{Thuộc tính Phức hợp (Composite Attribute)}
 
 \begin{itemize}
     \item \textbf{position:} Vị trí của thực thể trong tập tin, gồm:
@@ -273,7 +276,7 @@ Cấu trúc tập tin mã nguồn trong kho chứa.
     \end{itemize}
 \end{itemize}
 
-\subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{entity\_id (PK):UUID} Định danh nội bộ của thực thể code.
@@ -286,11 +289,11 @@ Cấu trúc tập tin mã nguồn trong kho chứa.
 \end{itemize}
 
 
-\subsection{Dependency (Thực thể mối kết hợp)}
+\subsubsection{Dependency (Thực thể mối kết hợp)}
 
 Mối quan hệ phụ thuộc giữa các CodeEntity.
 
-\subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{dependency\_id (PK):UUID} Định danh duy nhất cho bản ghi phụ thuộc.
@@ -299,13 +302,13 @@ Mối quan hệ phụ thuộc giữa các CodeEntity.
 \end{itemize}
 
 
-\section{Nhóm Khuôn mẫu Tài liệu (Template Engine Domain)}
+\subsection{Nhóm Khuôn mẫu Tài liệu (Template Engine Domain)}
 
-\subsection{Template (Thực thể mạnh)}
+\subsubsection{Template (Thực thể mạnh)}
 
 Khuôn mẫu chuẩn để AI/User sinh tài liệu.
 
-\subsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
+\subsubsubsection{Thuộc tính Đơn (Simple / Atomic Attribute)}
 
 \begin{itemize}
     \item \textbf{template\_id (PK):UUID} Định danh duy nhất cho khuôn mẫu tài liệu.
@@ -319,7 +322,7 @@ Khuôn mẫu chuẩn để AI/User sinh tài liệu.
 \end{itemize}
 
 
-\subsection{TemplateSection (Thực thể yếu -- phụ thuộc Template)}
+\subsubsection{TemplateSection (Thực thể yếu -- phụ thuộc Template)}
 
 Mục con/heading trong cấu trúc dàn ý của Template.
 
@@ -333,7 +336,7 @@ Mục con/heading trong cấu trúc dàn ý của Template.
 \end{itemize}
 
 
-\subsection{Placeholder (Thực thể yếu -- phụ thuộc TemplateSection)}
+\subsubsection{Placeholder (Thực thể yếu -- phụ thuộc TemplateSection)}
 
 Biến/điểm chèn trong Section, làm nhiệm vụ nhận dữ liệu từ code.
 
@@ -348,7 +351,7 @@ Biến/điểm chèn trong Section, làm nhiệm vụ nhận dữ liệu từ co
 \end{itemize}
 
 
-\subsection{TemplateMapping (Thực thể mối kết hợp)}
+\subsubsection{TemplateMapping (Thực thể mối kết hợp)}
 
 Ánh xạ trực tiếp giữa Placeholder và CodeEntity để AI trích xuất thông tin.
 
@@ -361,9 +364,9 @@ Biến/điểm chèn trong Section, làm nhiệm vụ nhận dữ liệu từ co
 \end{itemize}
 
 
-\section{Nhóm Tài liệu \& Vòng đời Dữ liệu (Documentation Domain)}
+\subsection{Nhóm Tài liệu \& Vòng đời Dữ liệu (Documentation Domain)}
 
-\subsection{Document (Thực thể mạnh)}
+\subsubsection{Document (Thực thể mạnh)}
 
 Tài liệu gốc (README, API Reference, Architecture Guide, ADR...).
 
@@ -378,7 +381,7 @@ Tài liệu gốc (README, API Reference, Architecture Guide, ADR...).
 \end{itemize}
 
 
-\subsection{DocumentVersion (Thực thể yếu -- phụ thuộc Document)}
+\subsubsection{DocumentVersion (Thực thể yếu -- phụ thuộc Document)}
 
 Bản ghi nội dung tài liệu theo từng mốc thời gian và trạng thái.
 
@@ -394,7 +397,7 @@ Bản ghi nội dung tài liệu theo từng mốc thời gian và trạng thái
 \end{itemize}
 
 
-\subsection{ChangeLog (Thực thể yếu -- phụ thuộc DocumentVersion)}
+\subsubsection{ChangeLog (Thực thể yếu -- phụ thuộc DocumentVersion)}
 
 Lịch sử vết thay đổi chi tiết giữa các phiên bản tài liệu.
 
@@ -408,9 +411,9 @@ Lịch sử vết thay đổi chi tiết giữa các phiên bản tài liệu.
 \end{itemize}
 
 
-\section{Nhóm Kiểm duyệt \& Phê duyệt (Review \& Governance Domain)}
+\subsection{Nhóm Kiểm duyệt \& Phê duyệt (Review \& Governance Domain)}
 
-\subsection{Review (Thực thể mối kết hợp/Sự kiện)}
+\subsubsection{Review (Thực thể mối kết hợp/Sự kiện)}
 
 Tiến trình Staff thực hiện đánh giá kỹ thuật trên một DocumentVersion.
 
@@ -424,7 +427,7 @@ Tiến trình Staff thực hiện đánh giá kỹ thuật trên một DocumentV
 \end{itemize}
 
 
-\subsection{ReviewComment (Thực thể yếu -- phụ thuộc Review)}
+\subsubsection{ReviewComment (Thực thể yếu -- phụ thuộc Review)}
 
 Phản hồi, góp ý chi tiết trong quá trình kiểm duyệt.
 
@@ -437,7 +440,7 @@ Phản hồi, góp ý chi tiết trong quá trình kiểm duyệt.
 \end{itemize}
 
 
-\subsection{Approval (Thực thể mối kết hợp/Sự kiện)}
+\subsubsection{Approval (Thực thể mối kết hợp/Sự kiện)}
 
 Quyết định phê duyệt xuất bản/commit tài liệu chính thức từ Manager.
 
@@ -449,9 +452,9 @@ Quyết định phê duyệt xuất bản/commit tài liệu chính thức từ 
 \end{itemize}
 
 
-\section{Nhóm AI Evidence, Giám sát \& Kiểm toán}
+\subsection{Nhóm AI Evidence, Giám sát \& Kiểm toán}
 
-\subsection{GroundingEvidence (Thực thể yếu -- phụ thuộc DocumentVersion)}
+\subsubsection{GroundingEvidence (Thực thể yếu -- phụ thuộc DocumentVersion)}
 
 Bảng minh chứng chứa liên kết nguồn gốc (File, CodeEntity, Commit) AI dùng để tạo nội dung, phục vụ chống hallucination.
 
@@ -463,17 +466,17 @@ Bảng minh chứng chứa liên kết nguồn gốc (File, CodeEntity, Commit) 
 \end{itemize}
 
 
-\subsection{DriftAlert (Thực thể sự kiện)}
+\subsubsection{DriftAlert (Thực thể sự kiện)}
 
 Cảnh báo phát hiện tài liệu bị lệch ngữ nghĩa/lỗi thời so với code mới.
 
-\subsubsection{Thuộc tính Khóa (Key Attribute)}
+\subsubsubsection{Thuộc tính Khóa (Key Attribute)}
 
 \begin{itemize}
     \item \textbf{alert\_id:} Định danh duy nhất cho từng bản ghi cảnh báo.
 \end{itemize}
 
-\subsubsection{Thuộc tính Đơn / Nguyên tố (Simple / Atomic Attributes)}
+\subsubsubsection{Thuộc tính Đơn / Nguyên tố (Simple / Atomic Attributes)}
 
 \begin{itemize}
     \item \textbf{drift\_type:} Phân loại hình thức lệch pha (SEMANTIC, OUTDATED).
