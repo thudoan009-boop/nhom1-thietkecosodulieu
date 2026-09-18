@@ -1,208 +1,230 @@
-\setcounter{subsection}{1} 
+\setcounter{subsection}{1}
+
 \section{Lược đồ Quan hệ Lô-gíc - Phân hệ Template Engine \& Core Documentation}
+
+% =========================================================
+% BẢNG TEMPLATES
+% =========================================================
 
 \subsubsection{Bảng templates}
 
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\begin{tabular}{|p{0.25\textwidth}|p{0.18\textwidth}|p{0.12\textwidth}|p{0.30\textwidth}|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\textbf{Tên cột} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Ràng buộc} \\
 \hline
-\texttt{template\_id} & PK & not null \\
+\texttt{template\_id} & UUID & PK & NOT NULL \\
 \hline
-\texttt{workspace\_id} & FK & not null \\
+\texttt{workspace\_id} & UUID & FK & NOT NULL \\
 \hline
-\texttt{name} & & not null \\
+\texttt{name} & - & - & NOT NULL \\
 \hline
-\texttt{description} & & null \\
+\texttt{description} & - & - & NULL \\
 \hline
-\texttt{content\_structure} & & not null \\
+\texttt{content\_structure} & - & - & NOT NULL \\
 \hline
-\texttt{creator\_type} & & not null \\
+\texttt{creator\_type} & - & - & NOT NULL \\
 \hline
-\texttt{status} & & not null \\
+\texttt{status} & - & - & NOT NULL \\
 \hline
-\texttt{created\_at} & & not null \\
+\texttt{created\_at} & - & - & NOT NULL \\
 \hline
-\texttt{updated\_at} & & not null \\
+\texttt{updated\_at} & - & - & NOT NULL \\
 \hline
 \end{tabular}
 
+% =========================================================
+% BẢNG TEMPLATE_SECTIONS
+% =========================================================
 
 \subsubsection{Bảng template\_sections}
 
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\begin{tabular}{|p{0.25\textwidth}|p{0.18\textwidth}|p{0.12\textwidth}|p{0.30\textwidth}|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\textbf{Tên cột} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Ràng buộc} \\
 \hline
-\texttt{section\_id} & PK & not null \\
+\texttt{section\_id} & UUID & PK & NOT NULL \\
 \hline
-\texttt{template\_id} & FK & not null \\
+\texttt{template\_id} & UUID & FK & NOT NULL \\
 \hline
-\texttt{heading\_title} & & not null \\
+\texttt{heading\_title} & - & - & NOT NULL \\
 \hline
-\texttt{order\_index} & & not null \\
+\texttt{order\_index} & - & - & NOT NULL \\
 \hline
-\texttt{prompt\_instruction} & & null \\
+\texttt{prompt\_instruction} & - & - & NULL \\
 \hline
-\texttt{created\_at} & & not null \\
+\texttt{created\_at} & - & - & NOT NULL \\
 \hline
-\texttt{updated\_at} & & not null \\
-\hline
-\multicolumn{3}{|l|}{\textbf{Ràng buộc bổ sung: } UNIQUE(\texttt{template\_id}, \texttt{order\_index})} \\
+\texttt{updated\_at} & - & - & NOT NULL \\
 \hline
 \end{tabular}
 
+% =========================================================
+% BẢNG PLACEHOLDERS
+% =========================================================
 
 \subsubsection{Bảng placeholders}
 
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\begin{tabular}{|p{0.25\textwidth}|p{0.18\textwidth}|p{0.12\textwidth}|p{0.30\textwidth}|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\textbf{Tên cột} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Ràng buộc} \\
 \hline
-\texttt{placeholder\_id} & PK & not null \\
+\texttt{placeholder\_id} & UUID & PK & NOT NULL \\
 \hline
-\texttt{section\_id} & FK & not null \\
+\texttt{section\_id} & UUID & FK & NOT NULL \\
 \hline
-\texttt{variable\_name} & & not null \\
+\texttt{variable\_name} & - & - & NOT NULL \\
 \hline
-\texttt{expected\_data\_type} & & not null \\
+\texttt{expected\_data\_type} & - & - & NOT NULL \\
 \hline
-\texttt{description} & & null \\
+\texttt{description} & - & - & NULL \\
 \hline
-\texttt{is\_required} & & not null \\
+\texttt{is\_required} & - & - & NOT NULL \\
 \hline
-\texttt{created\_at} & & not null \\
+\texttt{created\_at} & - & - & NOT NULL \\
 \hline
-\texttt{updated\_at} & & not null \\
-\hline
-\multicolumn{3}{|l|}{\textbf{Ràng buộc bổ sung: } UNIQUE(\texttt{section\_id}, \texttt{variable\_name})} \\
+\texttt{updated\_at} & - & - & NOT NULL \\
 \hline
 \end{tabular}
 
+% =========================================================
+% BẢNG TEMPLATE_MAPPINGS
+% =========================================================
 
 \subsubsection{Bảng template\_mappings}
 
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\begin{tabular}{|p{0.25\textwidth}|p{0.18\textwidth}|p{0.12\textwidth}|p{0.30\textwidth}|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\textbf{Tên cột} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Ràng buộc} \\
 \hline
-\texttt{mapping\_id} & PK & not null \\
+\texttt{mapping\_id} & UUID & PK & NOT NULL \\
 \hline
-\texttt{placeholder\_id} & FK & not null \\
+\texttt{placeholder\_id} & UUID & FK & NOT NULL \\
 \hline
-\texttt{entity\_id} & FK & not null \\
+\texttt{entity\_id} & UUID & FK & NOT NULL \\
 \hline
-\texttt{extraction\_rule} & & null \\
+\texttt{extraction\_rule} & - & - & NULL \\
 \hline
-\texttt{is\_active} & & not null \\
-\hline
-\multicolumn{3}{|l|}{\textbf{Ràng buộc bổ sung: } UNIQUE(\texttt{placeholder\_id}, \texttt{entity\_id})} \\
+\texttt{is\_active} & - & - & NOT NULL \\
 \hline
 \end{tabular}
 
+% =========================================================
+% BẢNG DOCUMENTS
+% =========================================================
 
 \subsubsection{Bảng documents}
 
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\begin{tabular}{|p{0.25\textwidth}|p{0.18\textwidth}|p{0.12\textwidth}|p{0.30\textwidth}|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\textbf{Tên cột} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Ràng buộc} \\
 \hline
-\texttt{document\_id} & PK & not null \\
+\texttt{document\_id} & UUID & PK & NOT NULL \\
 \hline
-\texttt{workspace\_id} & FK & not null \\
+\texttt{workspace\_id} & UUID & FK & NOT NULL \\
 \hline
-\texttt{user\_id} & FK & not null \\
+\texttt{user\_id} & UUID & FK & NOT NULL \\
 \hline
-\texttt{title} & & not null \\
+\texttt{title} & - & - & NOT NULL \\
 \hline
-\texttt{document\_type} & & not null \\
+\texttt{document\_type} & - & - & NOT NULL \\
 \hline
-\texttt{status} & & not null \\
+\texttt{status} & - & - & NOT NULL \\
 \hline
-\texttt{created\_at} & & not null \\
+\texttt{created\_at} & - & - & NOT NULL \\
 \hline
-\texttt{updated\_at} & & not null \\
+\texttt{updated\_at} & - & - & NOT NULL \\
 \hline
-\texttt{deleted\_at} & & null \\
+\texttt{deleted\_at} & - & - & NULL \\
 \hline
 \end{tabular}
 
+% =========================================================
+% BẢNG DOCUMENT_VERSIONS
+% =========================================================
 
 \subsubsection{Bảng document\_versions}
 
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\begin{tabular}{|p{0.25\textwidth}|p{0.18\textwidth}|p{0.12\textwidth}|p{0.30\textwidth}|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\textbf{Tên cột} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Ràng buộc} \\
 \hline
-\texttt{version\_id} & PK & not null \\
+\texttt{version\_id} & UUID & PK & NOT NULL \\
 \hline
-\texttt{document\_id} & FK & not null \\
+\texttt{document\_id} & UUID & FK & NOT NULL \\
 \hline
-\texttt{version\_number} & & not null \\
+\texttt{version\_number} & - & - & NOT NULL \\
 \hline
-\texttt{content} & & not null \\
+\texttt{content} & - & - & NOT NULL \\
 \hline
-\texttt{change\_summary} & & null \\
+\texttt{change\_summary} & - & - & NULL \\
 \hline
-\texttt{status} & & not null \\
+\texttt{status} & - & - & NOT NULL \\
 \hline
-\texttt{ticketed\_codes} & & null \\
+\texttt{ticketed\_codes} & - & - & NULL \\
 \hline
-\texttt{created\_at} & & not null \\
+\texttt{created\_at} & - & - & NOT NULL \\
 \hline
-\texttt{updated\_at} & & not null \\
-\hline
-\multicolumn{3}{|l|}{\textbf{Ràng buộc bổ sung: } UNIQUE(\texttt{document\_id}, \texttt{version\_number})} \\
+\texttt{updated\_at} & - & - & NOT NULL \\
 \hline
 \end{tabular}
 
+% =========================================================
+% BẢNG CHANGE_LOGS
+% =========================================================
 
 \subsubsection{Bảng change\_logs}
 
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\begin{tabular}{|p{0.25\textwidth}|p{0.18\textwidth}|p{0.12\textwidth}|p{0.30\textwidth}|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
+\textbf{Tên cột} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Ràng buộc} \\
 \hline
-\texttt{log\_id} & PK & not null \\
+\texttt{log\_id} & UUID & PK & NOT NULL \\
 \hline
-\texttt{version\_id} & FK & not null \\
+\texttt{version\_id} & UUID & FK & NOT NULL \\
 \hline
-\texttt{change\_type} & & not null \\
+\texttt{change\_type} & - & - & NOT NULL \\
 \hline
-\texttt{change\_description} & & not null \\
+\texttt{change\_description} & - & - & NOT NULL \\
 \hline
-\texttt{diff\_content} & & null \\
+\texttt{diff\_content} & - & - & NULL \\
 \hline
-\texttt{created\_at} & & not null \\
+\texttt{created\_at} & - & - & NOT NULL \\
 \hline
-\texttt{updated\_at} & & not null \\
+\texttt{updated\_at} & - & - & NOT NULL \\
 \hline
 \end{tabular}
 
+% =========================================================
+% LƯỢC ĐỒ DẠNG CÚ PHÁP RÚT GỌN
+% =========================================================
 
-\subsection{Lược đồ dạng cú pháp rút gọn}
+\section{Lược đồ dạng cú pháp rút gọn}
 
 \begin{itemize}
-    \item \texttt{templates(template\_id PK, workspace\_id FK, name, description, content\_structure, creator\_type, status, created\_at, updated\_at)}
 
-    \item \texttt{template\_sections(section\_id PK, template\_id FK, heading\_title, order\_index, prompt\_instruction, created\_at, updated\_at, UNIQUE(template\_id, order\_index))}
+\item \texttt{templates(template\_id [UUID, PK], workspace\_id [UUID, FK], name, description, content\_structure, creator\_type, status, created\_at, updated\_at)}
 
-    \item \texttt{placeholders(placeholder\_id PK, section\_id FK, variable\_name, expected\_data\_type, description, is\_required, created\_at, updated\_at, UNIQUE(section\_id, variable\_name))}
+\item \texttt{template\_sections(section\_id [UUID, PK], template\_id [UUID, FK], heading\_title, order\_index, prompt\_instruction, created\_at, updated\_at, UNIQUE(template\_id, order\_index))}
 
-    \item \texttt{template\_mappings(mapping\_id PK, placeholder\_id FK, entity\_id FK, extraction\_rule, is\_active, UNIQUE(placeholder\_id, entity\_id))}
+\item \texttt{placeholders(placeholder\_id [UUID, PK], section\_id [UUID, FK], variable\_name, expected\_data\_type, description, is\_required, created\_at, updated\_at, UNIQUE(section\_id, variable\_name))}
 
-    \item \texttt{documents(document\_id PK, workspace\_id FK, user\_id FK, title, document\_type, status, created\_at, updated\_at, deleted\_at)}
+\item \texttt{template\_mappings(mapping\_id [UUID, PK], placeholder\_id [UUID, FK], entity\_id [UUID, FK], extraction\_rule, is\_active)}
 
-    \item \texttt{document\_versions(version\_id PK, document\_id FK, version\_number, content, change\_summary, status, ticketed\_codes, created\_at, updated\_at, UNIQUE(document\_id, version\_number))}
+\item \texttt{documents(document\_id [UUID, PK], workspace\_id [UUID, FK], user\_id [UUID, FK], title, document\_type, status, created\_at, updated\_at, deleted\_at)}
 
-    \item \texttt{change\_logs(log\_id PK, version\_id FK, change\_type, change\_description, diff\_content, created\_at, updated\_at)}
+\item \texttt{document\_versions(version\_id [UUID, PK], document\_id [UUID, FK], version\_number, content, change\_summary, status, ticketed\_codes, created\_at, updated\_at, UNIQUE(document\_id, version\_number))}
+
+\item \texttt{change\_logs(log\_id [UUID, PK], version\_id [UUID, FK], change\_type, change\_description, diff\_content, created\_at, updated\_at)}
+
 \end{itemize}
 
+% =========================================================
+% BÁO CÁO CHỨNG MINH CHUẨN HÓA 3NF
+% =========================================================
 
-\subsection{Báo cáo Chứng minh Chuẩn hóa 3NF}
+\section{Báo cáo Chứng minh Chuẩn hóa 3NF}
 
-\subsubsection{Khai báo Tập Phụ thuộc Hàm 
-(Functional Dependencies -- FDs)}
+\subsubsection{Khai báo Tập Phụ thuộc Hàm (Functional Dependencies -- FDs)}
 
 Xét bảng \texttt{templates} có tập phụ thuộc hàm như sau:
 
@@ -287,17 +309,6 @@ Xét bảng \texttt{template\_mappings} có tập phụ thuộc hàm:
 \}
 \]
 
-Ngoài ra:
-
-\[
-(\texttt{placeholder\_id},\texttt{entity\_id})
-\rightarrow
-\texttt{mapping\_id}
-\]
-
-vì có ràng buộc
-\texttt{UNIQUE(placeholder\_id, entity\_id)}.
-
 Xét bảng \texttt{documents} có tập phụ thuộc hàm:
 
 \[
@@ -358,8 +369,11 @@ Xét bảng \texttt{change\_logs} có tập phụ thuộc hàm:
 \}
 \]
 
+% =========================================================
+% ĐÁNH GIÁ CẤP CHUẨN
+% =========================================================
 
-\subsubsection{Đánh giá Cấp Chuẩn}
+\subsection{Đánh giá Cấp Chuẩn}
 
 \paragraph{1. Đạt Chuẩn 1NF (First Normal Form)}
 
@@ -371,30 +385,28 @@ Xét bảng \texttt{change\_logs} có tập phụ thuộc hàm:
     \item Các thông tin có tính chất riêng biệt đã được tách thành các bảng tương ứng. Ví dụ, thông tin về Section được lưu trong \texttt{template\_sections}, thông tin Placeholder được lưu trong \texttt{placeholders}, còn thông tin phiên bản tài liệu được lưu trong \texttt{document\_versions}.
 \end{itemize}
 
-
 \paragraph{2. Đạt Chuẩn 2NF (Second Normal Form)}
 
 \begin{itemize}
-    \item Các bảng trong lược đồ đều sử dụng Khóa chính đơn (Surrogate PK) như \texttt{template\_id}, \texttt{section\_id}, \texttt{placeholder\_id}, \texttt{mapping\_id}, \texttt{document\_id}, \texttt{version\_id}, \texttt{log\_id}, không sử dụng khóa chính phức hợp cho các bảng.
+    \item Các bảng trong lược đồ đều sử dụng Khóa chính đơn (Surrogate PK) như \texttt{template\_id}, \texttt{section\_id}, \texttt{placeholder\_id}, \texttt{mapping\_id}, \texttt{document\_id}, \texttt{version\_id}, \texttt{log\_id}; không sử dụng khóa chính phức hợp.
 
     \item Do khóa chính của các bảng chỉ gồm một thuộc tính, không tồn tại trường hợp thuộc tính không khóa chỉ phụ thuộc vào một phần của khóa chính.
 
     \item Vì vậy, không tồn tại phụ thuộc bộ phận (Partial Dependency).
 
-    \item Các ràng buộc UNIQUE như \texttt{UNIQUE(template\_id, order\_index)}, \texttt{UNIQUE(section\_id, variable\_name)}, \texttt{UNIQUE(placeholder\_id, entity\_id)} và \texttt{UNIQUE(document\_id, version\_number)} được sử dụng để đảm bảo tính duy nhất của dữ liệu, nhưng không làm phát sinh phụ thuộc bộ phận đối với khóa chính đơn.
+    \item Các ràng buộc UNIQUE như \texttt{UNIQUE(template\_id, order\_index)}, \texttt{UNIQUE(section\_id, variable\_name)} và \texttt{UNIQUE(document\_id, version\_number)} được sử dụng để đảm bảo tính duy nhất của dữ liệu, nhưng không làm phát sinh phụ thuộc bộ phận đối với khóa chính đơn.
 \end{itemize}
-
 
 \paragraph{3. Đạt Chuẩn 3NF (Third Normal Form)}
 
 \begin{itemize}
     \item Mọi thuộc tính không khóa trong các bảng đều phụ thuộc trực tiếp vào Khóa chính của bảng.
 
-    \item Ví dụ trong bảng \texttt{templates}, các thông tin như \texttt{workspace\_id}, \texttt{name}, \texttt{description}, \texttt{content\_structure}, \texttt{creator\_type}, \texttt{status}, \texttt{created\_at}, \texttt{updated\_at} đều phụ thuộc trực tiếp vào \texttt{template\_id}.
+    \item Trong bảng \texttt{templates}, các thuộc tính \texttt{workspace\_id}, \texttt{name}, \texttt{description}, \texttt{content\_structure}, \texttt{creator\_type}, \texttt{status}, \texttt{created\_at}, \texttt{updated\_at} đều phụ thuộc trực tiếp vào \texttt{template\_id}.
 
-    \item Trong bảng \texttt{document\_versions}, các thông tin như \texttt{document\_id}, \texttt{version\_number}, \texttt{content}, \texttt{change\_summary}, \texttt{status}, \texttt{ticketed\_codes}, \texttt{created\_at}, \texttt{updated\_at} phụ thuộc trực tiếp vào \texttt{version\_id}.
+    \item Trong bảng \texttt{document\_versions}, các thuộc tính \texttt{document\_id}, \texttt{version\_number}, \texttt{content}, \texttt{change\_summary}, \texttt{status}, \texttt{ticketed\_codes}, \texttt{created\_at}, \texttt{updated\_at} phụ thuộc trực tiếp vào \texttt{version\_id}.
 
-    \item Tương tự, trong bảng \texttt{change\_logs}, các thuộc tính \texttt{version\_id}, \texttt{change\_type}, \texttt{change\_description}, \texttt{diff\_content}, \texttt{created\_at}, \texttt{updated\_at} phụ thuộc trực tiếp vào \texttt{log\_id}.
+    \item Trong bảng \texttt{change\_logs}, các thuộc tính \texttt{version\_id}, \texttt{change\_type}, \texttt{change\_description}, \texttt{diff\_content}, \texttt{created\_at}, \texttt{updated\_at} phụ thuộc trực tiếp vào \texttt{log\_id}.
 
-    \item Không tồn tại phụ thuộc bắc cầu (Transitive Dependency) giữa các thuộc tính không khóa trong phạm vi các phụ thuộc hàm được xác định.
+    \item Không tồn tại phụ thuộc bắc cầu (Transitive Dependency) giữa các thuộc tính không khóa trong phạm vi các phụ thuộc hàm đã xác định.
 \end{itemize}
