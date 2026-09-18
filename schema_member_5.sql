@@ -72,15 +72,7 @@ CREATE TABLE drift_alerts (
     CONSTRAINT chk_alerts_status CHECK (status IN ('OPEN', 'RESOLVED', 'IGNORED'))
 );
 
--- 6. BẢNG REPORTS (Báo cáo sức khỏe tài liệu & governance)
-CREATE TABLE reports (
-    report_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    workspace_id UNIQUEIDENTIFIER NOT NULL,
-    report_type VARCHAR(50) NOT NULL,
-    metric_data NVARCHAR(MAX) NOT NULL,
-    generated_at DATETIME2 NOT NULL DEFAULT GETDATE()
-);
-GO
+
 
 -- ============================================================
 -- KHAI BÁO CÁC KHÓA NGOẠI THAM CHIẾU LIÊN PHÂN HỆ (CROSS-DOMAIN FKs)
@@ -107,8 +99,7 @@ ALTER TABLE grounding_evidences ADD CONSTRAINT fk_evidences_version
 ALTER TABLE drift_alerts ADD CONSTRAINT fk_alerts_repository 
     FOREIGN KEY (repository_id) REFERENCES repositories(repository_id);
 
-ALTER TABLE reports ADD CONSTRAINT fk_reports_workspace 
-    FOREIGN KEY (workspace_id) REFERENCES workspaces(workspace_id);
+
 GO
 
 -- ============================================================

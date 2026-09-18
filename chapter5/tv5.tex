@@ -11,7 +11,7 @@
     \item \texttt{approvals (\underline{approval\_id} UUID PK, version\_id UUID FK, user\_id UUID FK, decision VARCHAR(20), rejection\_reason TEXT, approved\_at TIMESTAMP)}
     \item \texttt{grounding\_evidences (\underline{evidence\_id} UUID PK, version\_id UUID FK, snippet\_content TEXT, purpose VARCHAR(30), created\_at TIMESTAMP)}
     \item \texttt{drift\_alerts (\underline{alert\_id} UUID PK, evidence\_id UUID FK, repository\_id UUID FK, drift\_type VARCHAR(20), status VARCHAR(20), detected\_at TIMESTAMP)}
-    \item \texttt{reports (\underline{report\_id} UUID PK, workspace\_id UUID FK, report\_type VARCHAR(50), metric\_data TEXT, generated\_at TIMESTAMP)}
+  
 \end{itemize}
 
 \subsection{Mã DDL SQL Hoàn Chỉnh (\texttt{schema\_member\_5.sql})}
@@ -82,14 +82,7 @@ CREATE TABLE drift_alerts (
     CONSTRAINT chk_alerts_status CHECK (status IN ('OPEN', 'RESOLVED', 'IGNORED'))
 );
 
-CREATE TABLE reports (
-    report_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    workspace_id UNIQUEIDENTIFIER NOT NULL,
-    report_type VARCHAR(50) NOT NULL,
-    metric_data NVARCHAR(MAX) NOT NULL,
-    generated_at DATETIME2 NOT NULL DEFAULT GETDATE()
-);
-GO
+
 
 ALTER TABLE reviews ADD CONSTRAINT fk_reviews_version 
     FOREIGN KEY (version_id) REFERENCES document_versions(version_id);
@@ -105,8 +98,7 @@ ALTER TABLE grounding_evidences ADD CONSTRAINT fk_evidences_version
     FOREIGN KEY (version_id) REFERENCES document_versions(version_id);
 ALTER TABLE drift_alerts ADD CONSTRAINT fk_alerts_repository 
     FOREIGN KEY (repository_id) REFERENCES repositories(repository_id);
-ALTER TABLE reports ADD CONSTRAINT fk_reports_workspace 
-    FOREIGN KEY (workspace_id) REFERENCES workspaces(workspace_id);
+
 GO
 
 \end{lstlisting}

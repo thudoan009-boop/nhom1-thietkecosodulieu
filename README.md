@@ -76,7 +76,7 @@ Mọi file SQL bắt buộc tuân thủ đúng **5 thành phần chuẩn hóa**:
 
 ### **Thành viên 5: Governance, Review, AI Evidence & Observability Domain**
 * **File script:** `schema_member_5.sql`
-* **Danh sách 6 bảng:** `reviews`, `review_comments`, `approvals`, `grounding_evidences`, `drift_alerts`, `reports`.
+* **Danh sách 6 bảng:** `reviews`, `review_comments`, `approvals`, `grounding_evidences`, `drift_alerts`.
 * **Yêu cầu DDL:**
   * **Surrogate PK:** Kiểu `UUID` cho tất cả các bảng.
   * **Foreign Keys:** Cài đặt FK `version_id`, `review_id`, `evidence_id`, `repository_id`.
