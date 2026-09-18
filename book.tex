@@ -4,6 +4,8 @@
 \usepackage{xcolor}
 \usepackage[utf8]{inputenc}
 \usepackage[T5]{fontenc}
+<<<<<<< HEAD
+=======
 \usepackage[vietnamese]{babel}
 \usepackage{microtype}
 \microtypesetup{expansion=false}
@@ -56,15 +58,11 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{listings}
+>>>>>>> 148eee031243f58a97aabaf109c973e34a5d3db9
 \usepackage[vietnamese]{babel}
-\usepackage{longtable}
-\usepackage{amsmath}
-\usepackage{amssymb}
-% Keep pages from being stretched to an exact height.
-\raggedbottom
-
-% Disable font expansion for bitmap Vietnamese fonts used by pdfTeX.
+\usepackage{microtype}
 \microtypesetup{expansion=false}
+
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
@@ -107,10 +105,11 @@
 }
 
 \lstset{style=sqlstyle}
+% -------------------------------------------------------------------------
 \bibliographystyle{book}
-\usepackage{hyperref}
+
 % Enter book title to populate PDF metadata:
-\hypersetup{pdftitle={Minimalist LaTeX Template for Academic Books}}
+\hypersetup{pdftitle={Thiết Kế Cơ Sở Dữ Liệu - LivingDocs}}
 
 % Enter path to BibTeX file with references:
 \newcommand{\bib}{book.bib}
@@ -118,21 +117,26 @@
 % Enter path to PDF file with figures:
 \newcommand{\pdf}{figures.pdf}
 
+<<<<<<< HEAD
+=======
 
 \pagestyle{plain}
 
 
+>>>>>>> 148eee031243f58a97aabaf109c973e34a5d3db9
 \begin{document}
 
 % Enter title:
-\title{Research Monographaskdfjhjk}
+\title{Thiết Kế Cơ Sở Dữ Liệu}
 
+% Enter subtitle (can be commented out):
+\subtitle{Đề Tài: LivingDocs}
 
 % Enter author:
-\author{Book Author}
+\author{Nhóm 1}
 
 % Enter date:
-\date{Month Year}
+\date{2026}
 
 \begin{titlepage}
 \maketitle
@@ -144,7 +148,6 @@
 
 % Enter book structure
 \chapter{Preface}
-
 \input{preface}
 
 \mainmatter
@@ -152,13 +155,24 @@
 \part{First half of the book}\label{p:first}
 
 \chapter{Introduction}\label{c:introduction}
-
 \input{chapter1}
 
 \chapter{Sections and content}\label{c:section}
-
 \input{chapter2}
 
+<<<<<<< HEAD
+\part{Thiết kế \& Cài đặt}\label{p:second}
+
+\chapter{Thuật toán maping ER}\label{c:figures}
+
+% Ép hiển thị thành Chương 2 trong phần này
+\setcounter{chapter}{1}
+\chapter{Phân hệ Workspace \& Extension (Thành viên 2)}\label{c:workspace_module}
+\input{chapter5/tv2}
+
+\chapter{Future research}\label{c:future}
+
+=======
 
 
 \part{Thiết kế logic}\label{p:second}
@@ -225,4 +239,5 @@
 \chapter{Future research}\label{c:future}
 
 
+>>>>>>> 148eee031243f58a97aabaf109c973e34a5d3db9
 \end{document}
