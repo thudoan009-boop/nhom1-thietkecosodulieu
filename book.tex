@@ -9,14 +9,15 @@
 \usepackage{listings}
 \usepackage[vietnamese]{babel}
 \usepackage{longtable}
-
+\usepackage{amsmath}
+\usepackage{amssymb}
 % Keep pages from being stretched to an exact height.
 \raggedbottom
 
 % Disable font expansion for bitmap Vietnamese fonts used by pdfTeX.
 \microtypesetup{expansion=false}
 \bibliographystyle{book}
-
+\usepackage{hyperref}
 % Enter book title to populate PDF metadata:
 \hypersetup{pdftitle={Minimalist LaTeX Template for Academic Books}}
 
@@ -30,9 +31,6 @@
 
 % Enter title:
 \title{Research Monographaskdfjhjk}
-
-% Enter subtitle (can be commented out):
-\subtitle{How to Use the Book Template}
 
 % Enter author:
 \author{Book Author}
@@ -110,7 +108,5 @@
 \chapter{Acknowledgments}
 
 \IfFileExists{acknowledgements.tex}{\input{acknowledgements}}{}
-
-\printindex
 
 \end{document}

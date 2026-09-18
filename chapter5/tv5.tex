@@ -1,10 +1,4 @@
-% ============================================================
-% BÁO CÁO THIẾT KẾ VẬT LÝ & MÃ DDL SQL (STAGE 3) - TV 5
-% PHÂN HỆ: Governance, Review, AI Evidence & Observability
-% ============================================================
-
 \section{Phân hệ Quản trị, Kiểm duyệt \& Minh chứng AI}
-Phân hệ đảm nhận chức năng kiểm duyệt 2 cấp (Staff Review $\rightarrow$ Manager Approval), theo dõi bằng chứng đối soát code chống ảo giác AI (Grounding Evidence) và phát hiện các cảnh báo lệch ngữ nghĩa tài liệu (Drift Alert). Danh mục gồm 6 bảng vật lý: \texttt{reviews}, \texttt{review\_comments}, \texttt{approvals}, \texttt{grounding\_evidences}, \texttt{drift\_alerts}, \texttt{reports}.
 
 \noindent\rule{\linewidth}{0.5pt}
 
@@ -21,16 +15,11 @@ Phân hệ đảm nhận chức năng kiểm duyệt 2 cấp (Staff Review $\rig
 \end{itemize}
 
 \subsection{Mã DDL SQL Hoàn Chỉnh (\texttt{schema\_member\_5.sql})}
-Đoạn mã DDL SQL dưới đây khởi tạo 6 bảng, cài đặt các khóa chính Surrogate PK kiểu UUID, Khóa ngoại FK, ràng buộc kiểm tra CHECK miền giá trị và các Chỉ mục phụ tối ưu truy vấn.
+
 
 \begin{lstlisting}[language=SQL]
--- ============================================================
--- STAGE 3: PHYSICAL SCHEMA DDL (MEMBER 5)
--- DOMAIN: GOVERNANCE, REVIEW, AI EVIDENCE & OBSERVABILITY
--- FILE: schema_member_5.sql
--- ============================================================
 
--- 1. BANG REVIEWS
+
 CREATE TABLE reviews (
     review_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     version_id UNIQUEIDENTIFIER NOT NULL,
@@ -45,7 +34,6 @@ CREATE TABLE reviews (
     CONSTRAINT chk_reviews_decision CHECK (decision IS NULL OR decision IN ('APPROVED', 'REJECTED', 'CHANGES_REQUESTED'))
 );
 
--- 2. BANG REVIEW_COMMENTS
 CREATE TABLE review_comments (
     comment_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     review_id UNIQUEIDENTIFIER NOT NULL,
@@ -59,7 +47,6 @@ CREATE TABLE review_comments (
         REFERENCES reviews(review_id) ON DELETE CASCADE
 );
 
--- 3. BANG APPROVALS
 CREATE TABLE approvals (
     approval_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     version_id UNIQUEIDENTIFIER NOT NULL,
@@ -71,7 +58,6 @@ CREATE TABLE approvals (
     CONSTRAINT chk_approvals_decision CHECK (decision IN ('APPROVED', 'REJECTED'))
 );
 
--- 4. BANG GROUNDING_EVIDENCES
 CREATE TABLE grounding_evidences (
     evidence_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     version_id UNIQUEIDENTIFIER NOT NULL,
@@ -82,7 +68,6 @@ CREATE TABLE grounding_evidences (
     CONSTRAINT chk_evidences_purpose CHECK (purpose IN ('HALLUCINATION_PREVENTION', 'CODE_REFERENCE', 'AST_VERIFICATION'))
 );
 
--- 5. BANG DRIFT_ALERTS
 CREATE TABLE drift_alerts (
     alert_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     evidence_id UNIQUEIDENTIFIER NOT NULL,
@@ -97,7 +82,6 @@ CREATE TABLE drift_alerts (
     CONSTRAINT chk_alerts_status CHECK (status IN ('OPEN', 'RESOLVED', 'IGNORED'))
 );
 
--- 6. BANG REPORTS
 CREATE TABLE reports (
     report_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     workspace_id UNIQUEIDENTIFIER NOT NULL,
@@ -107,7 +91,6 @@ CREATE TABLE reports (
 );
 GO
 
--- KHAI BAO KHOA NGOAI LIEN PHAN HE (CROSS-DOMAIN FKs)
 ALTER TABLE reviews ADD CONSTRAINT fk_reviews_version 
     FOREIGN KEY (version_id) REFERENCES document_versions(version_id);
 ALTER TABLE reviews ADD CONSTRAINT fk_reviews_user 
@@ -126,3 +109,4 @@ ALTER TABLE reports ADD CONSTRAINT fk_reports_workspace
     FOREIGN KEY (workspace_id) REFERENCES workspaces(workspace_id);
 GO
 
+\end{lstlisting}
