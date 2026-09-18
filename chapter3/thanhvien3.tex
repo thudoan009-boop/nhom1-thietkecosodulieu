@@ -2,10 +2,6 @@
 
 \section{Lược đồ Quan hệ Lô-gíc - Phân hệ Templates \& Documents}
 
-% ============================================================
-% BẢNG TEMPLATES
-% ============================================================
-
 \subsubsection{Bảng templates}
 
 \begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
@@ -31,10 +27,6 @@
 \texttt{updated\_at} & & NOT NULL \\
 \hline
 \end{tabular}
-
-% ============================================================
-% BẢNG TEMPLATE SECTIONS
-% ============================================================
 
 \subsubsection{Bảng template\_sections}
 
@@ -62,10 +54,6 @@
 \textbf{Ràng buộc bổ sung:} 
 \texttt{UNIQUE(template\_id, order\_index)} -- đảm bảo thứ tự section
 không trùng trong cùng một Template.
-
-% ============================================================
-% BẢNG PLACEHOLDERS
-% ============================================================
 
 \subsubsection{Bảng placeholders}
 
@@ -96,10 +84,6 @@ không trùng trong cùng một Template.
 \texttt{UNIQUE(section\_id, variable\_name)} -- đảm bảo tên biến
 không trùng trong cùng một Section.
 
-% ============================================================
-% BẢNG TEMPLATE MAPPINGS
-% ============================================================
-
 \subsubsection{Bảng template\_mappings}
 
 \begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
@@ -122,10 +106,6 @@ không trùng trong cùng một Section.
 \textbf{Ràng buộc bổ sung:}
 \texttt{UNIQUE(placeholder\_id, entity\_id)} -- đảm bảo một cặp
 Placeholder--CodeEntity không bị ánh xạ trùng.
-
-% ============================================================
-% BẢNG DOCUMENTS
-% ============================================================
 
 \subsubsection{Bảng documents}
 
@@ -152,10 +132,6 @@ Placeholder--CodeEntity không bị ánh xạ trùng.
 \texttt{deleted\_at} & & NULL \\
 \hline
 \end{tabular}
-
-% ============================================================
-% BẢNG DOCUMENT VERSIONS
-% ============================================================
 
 \subsubsection{Bảng document\_versions}
 
@@ -188,10 +164,6 @@ Placeholder--CodeEntity không bị ánh xạ trùng.
 \texttt{UNIQUE(document\_id, version\_number)} -- đảm bảo số phiên
 bản không trùng trong cùng một Document.
 
-% ============================================================
-% BẢNG CHANGE LOGS
-% ============================================================
-
 \subsubsection{Bảng change\_logs}
 
 \begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
@@ -213,11 +185,6 @@ bản không trùng trong cùng một Document.
 \texttt{updated\_at} & & NOT NULL \\
 \hline
 \end{tabular}
-
-
-% ============================================================
-% LƯỢC ĐỒ DẠNG CÚ PHÁP RÚT GỌN
-% ============================================================
 
 \section{Lược đồ dạng cú pháp rút gọn}
 
