@@ -1,0 +1,6 @@
+CREATE TABLE permissions (
+    permission_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    permission_code VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT NULL,
+    created_at DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET()
+);
