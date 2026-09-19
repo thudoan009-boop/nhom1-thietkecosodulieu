@@ -1,5 +1,5 @@
 \setcounter{subsection}{1} % Ép subsection tiếp theo thành số 2 (tức là 3.2)
-\section{Lược đồ Quan hệ Lô-gíc - Phân hệ VCS \& Code Structure}
+\section{Lược đồ Quan hệ Lô-gíc (Logical Schema) \& 3NF-Phân hệ Mã nguồn \& Cấu trúc Code}
 
 \subsection*{Khai báo Chi tiết Bảng }
 
@@ -224,15 +224,15 @@ created\_at & & & NOT NULL \\
 
 \subsection{Lược đồ Dạng Cú pháp Rút gọn}
 \begin{itemize}
-    \item \textbf{repositories} (repository\_id UUID PK NOT NULL, workspace\_id UUID FK NOT NULL, name VARCHAR(255) NOT NULL, url VARCHAR(500) NOT NULL, default\_branch VARCHAR(100) NOT NULL, sync\_status VARCHAR(50) NOT NULL, last\_synced\_at TIMESTAMP NULL, created\_at TIMESTAMP NOT NULL, updated\_at TIMESTAMP NOT NULL, UNIQUE(url)) 
-    \item \textbf{branches} (branch\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, branch\_name VARCHAR(100) NOT NULL, is\_default BOOLEAN NOT NULL, created\_at TIMESTAMP NOT NULL, updated\_at TIMESTAMP NOT NULL, UNIQUE(repository\_id, branch\_name)) 
-    \item \textbf{commits} (commit\_id UUID PK NOT NULL, branch\_id UUID FK NOT NULL, user\_id UUID FK NULL, commit\_hash VARCHAR(64) NOT NULL, message TEXT NOT NULL, author\_name VARCHAR(100) NOT NULL, author\_email VARCHAR(100) NOT NULL, committed\_at TIMESTAMP NOT NULL, created\_at TIMESTAMP NOT NULL, UNIQUE(commit\_hash)) 
-    \item \textbf{pull\_requests} (pr\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, pr\_number INT NOT NULL, title VARCHAR(255) NOT NULL, description TEXT NOT NULL, source\_branch VARCHAR(100) NOT NULL, target\_branch VARCHAR(100) NOT NULL, status VARCHAR(50) NOT NULL, created\_at TIMESTAMP NOT NULL, updated\_at TIMESTAMP NOT NULL, merged\_at TIMESTAMP NULL, UNIQUE(repository\_id, pr\_number)) 
+    \item \textbf{repositories} (repository\_id UUID PK NOT NULL, workspace\_id UUID FK NOT NULL, name  NOT NULL, url  NOT NULL, default\_branch  NOT NULL, sync\_status  NOT NULL, last\_synced\_at TIMESTAMP NULL, created\_at  NOT NULL, updated\_at  NOT NULL, UNIQUE(url)) 
+    \item \textbf{branches} (branch\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, branch\_name NOT NULL, is\_default NOT NULL, created\_at NOT NULL, updated\_at  NOT NULL, UNIQUE(repository\_id, branch\_name)) 
+    \item \textbf{commits} (commit\_id UUID PK NOT NULL, branch\_id UUID FK NOT NULL, user\_id UUID FK NULL, commit\_hash  NOT NULL, message TEXT NOT NULL, author\_name  NOT NULL, author\_email  NOT NULL, committed\_at NOT NULL, created\_at  NOT NULL, UNIQUE(commit\_hash)) 
+    \item \textbf{pull\_requests} (pr\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, pr\_number  NOT NULL, title  NOT NULL, description NOT NULL, source\_branch  NOT NULL, target\_branch VARCHAR(100) NOT NULL, status VARCHAR(50) NOT NULL, created\_at  NOT NULL, updated\_at  NOT NULL, merged\_at  NULL, UNIQUE(repository\_id, pr\_number)) 
     \item \textbf{pull\_request\_labels} (label\_id UUID PK NOT NULL, pr\_id UUID FK NOT NULL, label\_name VARCHAR(50) NOT NULL, UNIQUE(pr\_id, label\_name)) 
-    \item \textbf{code\_diffs} (diff\_id UUID PK NOT NULL, commit\_id UUID FK NULL, pr\_id UUID FK NOT NULL, file\_path VARCHAR(500) NOT NULL, change\_type VARCHAR(50) NOT NULL, additions INT NOT NULL, deletions INT NOT NULL, diff\_content TEXT NULL, created\_at TIMESTAMP NOT NULL) 
-    \item \textbf{files} (file\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, file\_path VARCHAR(500) NOT NULL, file\_type VARCHAR(50) NULL, status VARCHAR(50) NOT NULL, created\_at TIMESTAMP NOT NULL, updated\_at TIMESTAMP NOT NULL, UNIQUE(repository\_id, file\_path)) 
-    \item \textbf{code\_entities} (entity\_id UUID PK NOT NULL, file\_id UUID FK NOT NULL, entity\_name VARCHAR(255) NOT NULL, entity\_type VARCHAR(50) NOT NULL, signature TEXT NULL, doc\_comment TEXT NULL, start\_line INT NOT NULL, end\_line INT NOT NULL, created\_at TIMESTAMP NOT NULL, updated\_at TIMESTAMP NOT NULL) 
-    \item \textbf{dependencies} (dependency\_id UUID PK NOT NULL, source\_entity\_id UUID FK NOT NULL, target\_entity\_id UUID FK NOT NULL, dependency\_type VARCHAR(50) NOT NULL, created\_at TIMESTAMP NOT NULL, UNIQUE(source\_entity\_id, target\_entity\_id, dependency\_type))
+    \item \textbf{code\_diffs} (diff\_id UUID PK NOT NULL, commit\_id UUID FK NULL, pr\_id UUID FK NOT NULL, file\_path  NOT NULL, change\_type  NOT NULL, additions NOT NULL, deletions  NOT NULL, diff\_content TEXT NULL, created\_at  NOT NULL) 
+    \item \textbf{files} (file\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, file\_path  NOT NULL, file\_type  NULL, status  NOT NULL, created\_at TIMESTAMP NOT NULL, updated\_at  NOT NULL, UNIQUE(repository\_id, file\_path)) 
+    \item \textbf{code\_entities} (entity\_id UUID PK NOT NULL, file\_id UUID FK NOT NULL, entity\_name NOT NULL, entity\_type VARCHAR(50) NOT NULL, signature  NULL, doc\_comment  NULL, start\_line  NOT NULL, end\_line  NOT NULL, created\_at  NOT NULL, updated\_at NOT NULL) 
+    \item \textbf{dependencies} (dependency\_id UUID PK NOT NULL, source\_entity\_id UUID FK NOT NULL, target\_entity\_id UUID FK NOT NULL, dependency\_type NOT NULL, created\_at NOT NULL, UNIQUE(source\_entity\_id, target\_entity\_id, dependency\_type))
 \end{itemize}
 
 

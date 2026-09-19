@@ -483,3 +483,19 @@ Cảnh báo phát hiện tài liệu bị lệch ngữ nghĩa/lỗi thời so v�
     \item \textbf{status:} Trạng thái xử lý cảnh báo (OPEN, RESOLVED, IGNORED).
     \item \textbf{detected\_at:} Thời điểm hệ thống AI quét và phát hiện ra độ lệch.
 \end{itemize}
+
+\subsection{Thực thể mối kết hợp / Sự kiện: Approval}
+
+\begin{itemize}
+    \item \textbf{Tên thực thể:} \texttt{Approval} (\textit{Phê duyệt})
+    \item \textbf{Mô tả nghiệp vụ:} Quyết định phê duyệt xuất bản hoặc \textit{commit} tài liệu chính thức từ phía Manager.
+    \item \textbf{Thuộc tính đơn \& Khóa (Atomic \& Key Attributes):}
+    \begin{itemize}
+        \item \texttt{approval\_id} (\textbf{PK}): Định danh duy nhất cho bản ghi quyết định phê duyệt (\texttt{UUID}).
+        \item \texttt{version\_id} (\textbf{FK}): Khóa ngoại trỏ đến phiên bản tài liệu (\texttt{document\_versions}) được xét duyệt.
+        \item \texttt{user\_id} (\textbf{FK}): Khóa ngoại trỏ đến Manager (\texttt{users}) thực hiện ra quyết định.
+        \item \texttt{decision}: Trạng thái/Kết quả quyết định (\texttt{APPROVED}, \texttt{REJECTED}).
+        \item \texttt{rejection\_reason}: Lý do từ chối xuất bản (\textit{Nullable}, dùng khi \texttt{decision} = \texttt{REJECTED}).
+        \item \texttt{approved\_at}: Mốc thời gian ra quyết định phê duyệt hoặc từ chối (\texttt{DATETIME2} / \texttt{TIMESTAMP}).
+    \end{itemize}
+\end{itemize}

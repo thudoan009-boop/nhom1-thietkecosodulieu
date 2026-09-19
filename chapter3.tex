@@ -1,6 +1,30 @@
+Ở mức thiết kế logic (\textit{Logical Design Level}), mục tiêu cốt lõi là chuyển hóa mô hình dữ liệu quan niệm trừu tượng (ERD/UML) thành lược đồ quan hệ lô-gíc (\textit{Logical Relational Schema}) cụ thể, xác định rõ cấu trúc các bảng, cột, khóa chính (PK), khóa ngoại (FK) và các ràng buộc toàn vẹn [1, 2]. Đồ án áp dụng \textbf{Thuật toán 2.2} (\textit{Algorithm 2.2: Ánh xạ ERD sang Lược đồ Quan hệ}) để đảm bảo tính toàn vẹn tham chiếu, loại bỏ các dị thường dữ liệu và đưa toàn bộ lược đồ đạt tiêu chuẩn chuẩn hóa 3NF cho hệ thống \textbf{LivingDocs — Design and Implementation of an AI-Assisted Self-Updating Document System for Engineering Teams} [3-5].
+
+Quá trình này tiếp nhận đầu vào (\textit{Input}) là Sơ đồ Quan niệm (\textit{Conceptual ERD/UML}) đã qua kiểm chứng ở Stage 1, và kết xuất đầu ra (\textit{Output}) là Lược đồ Quan hệ Lô-gíc (\textit{Logical Schema}) hoàn chỉnh, hồ sơ Ràng buộc Khóa ngoại/Giá trị miền (\textit{FK \& CHECK Rules}) và Báo cáo chứng minh Chuẩn hóa 3NF [3, 5-12].
+
+\textbf{Quy trình Thuật toán 2.2 (\textit{Relational Mapping Algorithm}):}
+\begin{itemize}
+    \item \textbf{Đầu vào (\textit{Input}):} Sơ đồ Quan niệm ERD/UML và từ điển dữ liệu hoàn chỉnh từ Stage 1 .
+    \item \textbf{Bước 1 (Thực thể mạnh):} Ánh xạ các thực thể mạnh thành các bảng chính, chuyển thuộc tính đơn thành cột và thiết lập Khóa chính (PK) .
+    \item \textbf{Bước 2 (Thực thể yếu):} Ánh xạ các thực thể yếu thành các bảng phụ thuộc, gán Surrogate PK kiểu UUID và cài đặt FK trỏ về thực thể chủ .
+    \item \textbf{Bước 3 \& 4 (Mối kết hợp $1:1$ và $1:N$):} Chèn Khóa ngoại (FK) từ bảng phía 1 sang bảng phía $N$ (hoặc phía tham gia bắt buộc) kèm các ràng buộc NOT NULL/UNIQUE phù hợp .
+    \item \textbf{Bước 5 (Mối kết hợp $M:N$):} Khởi tạo các bảng trung gian (\textit{Junction Tables}) chứa cặp Khóa ngoại (FK) trỏ về hai bảng gốc và các thuộc tính riêng của mối kết hợp .
+    \item \textbf{Bước 6 (Thuộc tính đặc biệt):} Phẳng hóa các thuộc tính phức hợp thành các cột đơn độc lập và tách các thuộc tính đa trị thành các bảng phụ riêng .
+    \item \textbf{Bước 7 (Ràng buộc \& Chuẩn hóa):} Khai báo tập Phụ thuộc hàm (FDs), chứng minh lược đồ đạt chuẩn 3NF và thiết lập các ràng buộc toàn vẹn (\textit{FK Constraints }) .
+    \item \textbf{Đầu ra (\textit{Output}):} Lược đồ Quan hệ Lô-gíc (\textit{Logical Schema}) hoàn chỉnh đạt chuẩn 3NF và hồ sơ ràng buộc toàn vẹn .
+\end{itemize}
+
 \input{chapter3/thanhvien1}
 \input{chapter3/thanhvien2}
-\input{chapter3/thanhvien1}
+\input{chapter3/thanhvien3}
+\input{chapter3/thanhvien4}
+
+
+
+
+
+
+
 
 
 
