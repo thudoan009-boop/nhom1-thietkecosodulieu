@@ -8,6 +8,7 @@
 \usepackage[T1]{fontenc}
 
 
+
 % Select text font (Đã được comment để tránh lỗi "Font not found")
 % \usepackage{sourceserifpro}
 
@@ -17,6 +18,9 @@
 
 % Select monospaced font
 %\usepackage{sourcecodepro}
+% Use the default TeX fonts bundled with the distribution instead of
+% external font packages that may not be installed in the current environment.
+>>>>>>> chapter3-thietkevatly
 
 % ---- Select math fonts ----
 
@@ -42,8 +46,11 @@
 
 % ---- Adjust page layout ----
 
-\usepackage[top=1in, left=1.3in, right=1.3in, bottom=1.2in, footskip=0.7in]{geometry}
-
+% Avoid an option clash when geometry is loaded by the document class or preamble.
+\makeatletter
+\@ifpackageloaded{geometry}{}{\RequirePackage{geometry}}
+\makeatother
+\geometry{top=1in, left=1.3in, right=1.3in, bottom=1.2in, footskip=0.7in}
 % ---- Adjust spacing ----
 
 % Set spacing between lines
