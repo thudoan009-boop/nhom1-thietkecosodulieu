@@ -1,22 +1,13 @@
-\documentclass[letterpaper,11pt]{book}
+\documentclass[letterpaper,11pt,leqno]{book}
+\usepackage{book}
+\usepackage{listings}
 \usepackage{xcolor}
 \usepackage[utf8]{inputenc}
 \usepackage[T5]{fontenc}
-\usepackage{microtype}
-
-
-\usepackage{booktabs}
-\usepackage{array}
-\usepackage{listings}
 \usepackage[vietnamese]{babel}
-\usepackage{longtable}
-\usepackage{amsmath}
-\usepackage{amssymb}
-% Keep pages from being stretched to an exact height.
-\raggedbottom
-
-% Disable font expansion for bitmap Vietnamese fonts used by pdfTeX.
+\usepackage{microtype}
 \microtypesetup{expansion=false}
+
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
@@ -59,10 +50,11 @@
 }
 
 \lstset{style=sqlstyle}
+% -------------------------------------------------------------------------
 \bibliographystyle{book}
-\usepackage{hyperref}
+
 % Enter book title to populate PDF metadata:
-\hypersetup{pdftitle={Minimalist LaTeX Template for Academic Books}}
+\hypersetup{pdftitle={Thiết Kế Cơ Sở Dữ Liệu - LivingDocs}}
 
 % Enter path to BibTeX file with references:
 \newcommand{\bib}{book.bib}
@@ -70,25 +62,19 @@
 % Enter path to PDF file with figures:
 \newcommand{\pdf}{figures.pdf}
 
-
-
-\pagestyle{plain}
-
-
-
-\pagestyle{plain}
-
 \begin{document}
 
 % Enter title:
-\title{Research Monographaskdfjhjk}
+\title{Thiết Kế Cơ Sở Dữ Liệu}
 
+% Enter subtitle (can be commented out):
+\subtitle{Đề Tài: LivingDocs}
 
 % Enter author:
-\author{Book Author}
+\author{Nhóm 1}
 
 % Enter date:
-\date{Month Year}
+\date{2026}
 
 \begin{titlepage}
 \maketitle
@@ -100,7 +86,6 @@
 
 % Enter book structure
 \chapter{Preface}
-
 \input{preface}
 
 \mainmatter
@@ -108,81 +93,20 @@
 \part{First half of the book}\label{p:first}
 
 \chapter{Introduction}\label{c:introduction}
-
 \input{chapter1}
 
 \chapter{Sections and content}\label{c:section}
-
 \input{chapter2}
 
+\part{Thiết kế \& Cài đặt}\label{p:second}
 
+\chapter{Thuật toán maping ER}\label{c:figures}
 
-\part{Thiết kế logic}\label{p:second}
-
-
-
-\chapter{thuật toán 2.2 maping ER}\label{c:figures}
-
-
-
-
-
-
-
-
-\part{Thiet Ke Vat Ly}\label{p:conclusion}
-
-
-\chapter{Thiết Kế Vật LÝ}\label{c:summary}
-
-\chapter{Thiết kế vật lý}\label{c:thietkevatly}
-\input{chapter5}
-
-
-
-\input{chapter6}
-
-\chapter{Extensions}\label{c:extensions}
-
-\input{chapter7}
-
-\part{Conclusion}\label{p:conclusion}
-
-\chapter{Summary}\label{c:summary}
-
-\input{chapter8}
+% Ép hiển thị thành Chương 2 trong phần này
+\setcounter{chapter}{1}
+\chapter{Phân hệ Workspace \& Extension (Thành viên 2)}\label{c:workspace_module}
+\input{chapter5/tv2}
 
 \chapter{Future research}\label{c:future}
-
-\input{chapter9}
-
-\appendix
-
-\part{Technical appendix}\label{p:appendix}
-
-\chapter{Generic technical topic}\label{a:appendix1}
-
-\input{appendixA}
-
-\chapter{Another technical topic}\label{a:appendix2}
-
-\input{appendixB}
-
-\chapter{Last technical topic}\label{a:appendix3}
-
-\input{appendixC}
-
-\backmatter
-
-\bibliography{\bib}
-
-\chapter{Acknowledgments}
-
-\input{acknowledgements}
-
-
-\chapter{Future research}\label{c:future}
-
-
 
 \end{document}
