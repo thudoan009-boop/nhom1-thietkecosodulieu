@@ -1,20 +1,18 @@
-CREATE TABLE repositories (
-    repository_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    workspace_id UNIQUEIDENTIFIER NOT NULL,
-    name VARCHAR(150) NOT NULL,
-    url VARCHAR(255) NOT NULL,
-    default_branch VARCHAR(100) DEFAULT 'main',
-    sync_status VARCHAR(20) NOT NULL DEFAULT 'SYNCING',
-    last_synced_at DATETIMEOFFSET NULL,
+CREATE TABLE role_permissions (
+    role_permission_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    role_id UNIQUEIDENTIFIER NOT NULL,
+    permission_id UNIQUEIDENTIFIER NOT NULL,
     created_at DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET(),
-    updated_at DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET(),
     
-    -- FOREIGN KEY nối đến workspaces
-    CONSTRAINT fk_repo_workspace FOREIGN KEY (workspace_id) 
-        REFERENCES workspaces(workspace_id) ON DELETE CASCADE,
+    -- Khóa ngoại tham chiếu
+    CONSTRAINT fk_rp_role FOREIGN KEY (role_id) 
+        REFERENCES roles(role_id) ON DELETE CASCADE,
+    CONSTRAINT fk_rp_permission FOREIGN KEY (permission_id) 
+        REFERENCES permissions(permission_id) ON DELETE CASCADE,
         
-    -- CHECK CONSTRAINT kiểm tra trạng thái đồng bộ
-    CONSTRAINT chk_repo_sync_status CHECK (sync_status IN ('SYNCING', 'SUCCESS', 'FAILED'))
+    -- Ràng buộc UNIQUE tổ hợp theo yêu cầu
+    CONSTRAINT uk_role_permission UNIQUE (role_id, permission_id)
 );
 
-CREATE INDEX idx_repositories_workspace_id ON repositories(workspace_id);
+CREATE INDEX idx_role_permissions_role_id ON role_permissions(role_id);
+CREATE INDEX idx_role_permissions_permission_id ON role_permissions(permission_id);

@@ -1,22 +1,4 @@
-<<<<<<< HEAD
-CREATE TABLE branches (
-    branch_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    repository_id UNIQUEIDENTIFIER NOT NULL,
-    branch_name VARCHAR(150) NOT NULL,
-    is_default BIT DEFAULT 0, -- Trong MSSQL, dùng BIT (0 = FALSE, 1 = TRUE) thay cho BOOLEAN
-    created_at DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET(),
-    updated_at DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET(),
-    
-    -- FOREIGN KEY nối đến repositories
-    CONSTRAINT fk_branch_repository FOREIGN KEY (repository_id) 
-        REFERENCES repositories(repository_id) ON DELETE CASCADE,
-        
-    -- UNIQUE CONSTRAINT tổ hợp
-    CONSTRAINT uk_repository_branch UNIQUE (repository_id, branch_name)
-);
 
-CREATE INDEX idx_branches_repository_id ON branches(repository_id);
-=======
 -- 1. BẢNG REVIEWS (Tiến trình đánh giá kỹ thuật của Staff)
 CREATE TABLE reviews (
     review_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
@@ -91,15 +73,7 @@ CREATE TABLE drift_alerts (
     CONSTRAINT chk_alerts_status CHECK (status IN ('OPEN', 'RESOLVED', 'IGNORED'))
 );
 
--- 6. BẢNG REPORTS (Báo cáo sức khỏe tài liệu & governance)
-CREATE TABLE reports (
-    report_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    workspace_id UNIQUEIDENTIFIER NOT NULL,
-    report_type VARCHAR(50) NOT NULL,
-    metric_data NVARCHAR(MAX) NOT NULL,
-    generated_at DATETIME2 NOT NULL DEFAULT GETDATE()
-);
-GO
+
 
 -- ============================================================
 -- KHAI BÁO CÁC KHÓA NGOẠI THAM CHIẾU LIÊN PHÂN HỆ (CROSS-DOMAIN FKs)
@@ -126,9 +100,34 @@ ALTER TABLE grounding_evidences ADD CONSTRAINT fk_evidences_version
 ALTER TABLE drift_alerts ADD CONSTRAINT fk_alerts_repository 
     FOREIGN KEY (repository_id) REFERENCES repositories(repository_id);
 
-ALTER TABLE reports ADD CONSTRAINT fk_reports_workspace 
-    FOREIGN KEY (workspace_id) REFERENCES workspaces(workspace_id);
+
 GO
 
--- ============================================================
->>>>>>> 148eee031243f58a97aabaf109c973e34a5d3db9
+
+CREATE TABLE workspace_members (
+    member_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    workspace_id UNIQUEIDENTIFIER NOT NULL,
+    user_id UNIQUEIDENTIFIER NOT NULL,
+    role_id UNIQUEIDENTIFIER NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+    joined_at DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET(),
+    created_at DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET(),
+    updated_at DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET(),
+    
+    -- Ràng buộc Khóa ngoại
+    CONSTRAINT fk_member_workspace FOREIGN KEY (workspace_id) 
+        REFERENCES workspaces(workspace_id) ON DELETE CASCADE,
+    CONSTRAINT fk_member_user FOREIGN KEY (user_id) 
+        REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_member_role FOREIGN KEY (role_id) 
+        REFERENCES roles(role_id) ON DELETE NO ACTION,
+        
+    -- Ràng buộc UNIQUE tổ hợp và CHECK trạng thái
+    CONSTRAINT uk_workspace_user UNIQUE (workspace_id, user_id),
+    CONSTRAINT chk_member_status CHECK (status IN ('ACTIVE', 'INACTIVE', 'REMOVED'))
+);
+
+CREATE INDEX idx_workspace_members_workspace_id ON workspace_members(workspace_id);
+CREATE INDEX idx_workspace_members_user_id ON workspace_members(user_id);
+CREATE INDEX idx_workspace_members_role_id ON workspace_members(role_id);
+
