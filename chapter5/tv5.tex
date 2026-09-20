@@ -1,20 +1,7 @@
-\section{nh Xạ Lược Đồ ER Phân Hệ Kiểm Duyệt, Bằng Chứng AI \& Giám Sát Hệ Thống (Governance, AI Evidence \& Observability Domain)}
+\subsection{nh Xạ Lược Đồ ER Phân Hệ Kiểm Duyệt, Bằng Chứng AI \& Giám Sát Hệ Thống (Governance, AI Evidence \& Observability Domain)}
 
-\noindent\rule{\linewidth}{0.5pt}
-
-
-
-\subsection{Cú pháp Rút gọn (Logical Schema Syntax)}
-\begin{itemize}
-    \item \texttt{reviews (\underline{review\_id} UUID PK, version\_id UUID FK, user\_id UUID FK, status VARCHAR(20), decision VARCHAR(20), summary\_notes TEXT, created\_at TIMESTAMP, updated\_at TIMESTAMP)}
-    \item \texttt{review\_comments (\underline{comment\_id} UUID PK, review\_id UUID FK, user\_id UUID FK, content TEXT, is\_resolved BOOLEAN, created\_at TIMESTAMP, updated\_at TIMESTAMP)}
-    \item \texttt{approvals (\underline{approval\_id} UUID PK, version\_id UUID FK, user\_id UUID FK, decision VARCHAR(20), rejection\_reason TEXT, approved\_at TIMESTAMP)}
-    \item \texttt{grounding\_evidences (\underline{evidence\_id} UUID PK, version\_id UUID FK, snippet\_content TEXT, purpose VARCHAR(30), created\_at TIMESTAMP)}
-    \item \texttt{drift\_alerts (\underline{alert\_id} UUID PK, evidence\_id UUID FK, repository\_id UUID FK, drift\_type VARCHAR(20), status VARCHAR(20), detected\_at TIMESTAMP)}
-  
-\end{itemize}
-
-\subsection{Mã DDL SQL Hoàn Chỉnh (\texttt{schema\_member\_5.sql})}
+\
+\subsubsection{Mã DDL SQL Hoàn Chỉnh (\texttt{schema\_member\_5.sql})}
 
 
 \begin{lstlisting}[language=SQL]

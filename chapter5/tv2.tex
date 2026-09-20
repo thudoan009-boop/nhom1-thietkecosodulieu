@@ -1,17 +1,8 @@
-\section{Ánh Xạ Lược Đồ ER Phân Hệ Không Gian Làm Việc \& Tích Hợp VCS (Workspace \& External VCS Domain)}
+\subsection{Ánh Xạ Lược Đồ ER Phân Hệ Không Gian Làm Việc \& Tích Hợp VCS (Workspace \& External VCS Domain)}
 
-\noindent\rule{\linewidth}{0.5pt}
 
-\subsection{Cú pháp Rút gọn (Logical Schema Syntax)}
-\begin{itemize}
-    \item \texttt{workspaces (workspace\_id UUID PK, name VARCHAR(150), description TEXT, status VARCHAR(20), created\_at DATETIMEOFFSET, updated\_at DATETIMEOFFSET, deleted\_at DATETIMEOFFSET)}
-    \item \texttt{github\_connections (connection\_id UUID PK, workspace\_id UUID FK, provider VARCHAR(50), account\_name VARCHAR(100), access\_token TEXT, sync\_status VARCHAR(20), created\_at DATETIME2, updated\_at DATETIME2)}
-    \item \texttt{github\_connection\_scopes (scope\_id UUID PK, connection\_id UUID FK, scope\_value VARCHAR(100), created\_at DATETIME2)}
-    \item \texttt{repositories (repository\_id UUID PK, workspace\_id UUID FK, name VARCHAR(150), url VARCHAR(255), default\_branch VARCHAR(50), created\_at DATETIME2, updated\_at DATETIME2)}
-    \item \texttt{branches (branch\_id UUID PK, repository\_id UUID FK, name VARCHAR(100), is\_protected BOOLEAN, created\_at DATETIME2)}
-\end{itemize}
 
-\subsection{Mã DDL SQL Hoàn Chỉnh (\texttt{schema\_member\_workspace.sql})}
+\subsubsection{Mã DDL SQL Hoàn Chỉnh (\texttt{schema\_member\_workspace.sql})}
 
 \begin{lstlisting}[language=SQL]
 -- 1. BANG WORKSPACES (Quan ly khong gian lam viec cua nguoi dung)

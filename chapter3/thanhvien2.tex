@@ -1,7 +1,7 @@
 \setcounter{subsection}{1} % Ép subsection tiếp theo thành số 2 (tức là 3.2)
-\section{Lược đồ Quan hệ Lô-gíc (Logical Schema) \& 3NF-Phân hệ Mã nguồn \& Cấu trúc Code}
+\subsection{Phân hệ Mã nguồn \& Cấu trúc Code}
 
-\subsection*{Khai báo Chi tiết Bảng }
+
 
 % Bảng repositories
 \noindent\textbf{Tên Bảng: repositories} \par\vspace{0.1cm}
@@ -222,56 +222,3 @@ created\_at & & & NOT NULL \\
 \end{tabular}
 \vspace{0.6cm}
 
-\subsection{Lược đồ Dạng Cú pháp Rút gọn}
-\begin{itemize}
-    \item \textbf{repositories} (repository\_id UUID PK NOT NULL, workspace\_id UUID FK NOT NULL, name  NOT NULL, url  NOT NULL, default\_branch  NOT NULL, sync\_status  NOT NULL, last\_synced\_at TIMESTAMP NULL, created\_at  NOT NULL, updated\_at  NOT NULL, UNIQUE(url)) 
-    \item \textbf{branches} (branch\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, branch\_name NOT NULL, is\_default NOT NULL, created\_at NOT NULL, updated\_at  NOT NULL, UNIQUE(repository\_id, branch\_name)) 
-    \item \textbf{commits} (commit\_id UUID PK NOT NULL, branch\_id UUID FK NOT NULL, user\_id UUID FK NULL, commit\_hash  NOT NULL, message TEXT NOT NULL, author\_name  NOT NULL, author\_email  NOT NULL, committed\_at NOT NULL, created\_at  NOT NULL, UNIQUE(commit\_hash)) 
-    \item \textbf{pull\_requests} (pr\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, pr\_number  NOT NULL, title  NOT NULL, description NOT NULL, source\_branch  NOT NULL, target\_branch VARCHAR(100) NOT NULL, status VARCHAR(50) NOT NULL, created\_at  NOT NULL, updated\_at  NOT NULL, merged\_at  NULL, UNIQUE(repository\_id, pr\_number)) 
-    \item \textbf{pull\_request\_labels} (label\_id UUID PK NOT NULL, pr\_id UUID FK NOT NULL, label\_name VARCHAR(50) NOT NULL, UNIQUE(pr\_id, label\_name)) 
-    \item \textbf{code\_diffs} (diff\_id UUID PK NOT NULL, commit\_id UUID FK NULL, pr\_id UUID FK NOT NULL, file\_path  NOT NULL, change\_type  NOT NULL, additions NOT NULL, deletions  NOT NULL, diff\_content TEXT NULL, created\_at  NOT NULL) 
-    \item \textbf{files} (file\_id UUID PK NOT NULL, repository\_id UUID FK NOT NULL, file\_path  NOT NULL, file\_type  NULL, status  NOT NULL, created\_at TIMESTAMP NOT NULL, updated\_at  NOT NULL, UNIQUE(repository\_id, file\_path)) 
-    \item \textbf{code\_entities} (entity\_id UUID PK NOT NULL, file\_id UUID FK NOT NULL, entity\_name NOT NULL, entity\_type VARCHAR(50) NOT NULL, signature  NULL, doc\_comment  NULL, start\_line  NOT NULL, end\_line  NOT NULL, created\_at  NOT NULL, updated\_at NOT NULL) 
-    \item \textbf{dependencies} (dependency\_id UUID PK NOT NULL, source\_entity\_id UUID FK NOT NULL, target\_entity\_id UUID FK NOT NULL, dependency\_type NOT NULL, created\_at NOT NULL, UNIQUE(source\_entity\_id, target\_entity\_id, dependency\_type))
-\end{itemize}
-
-
-\subsection{Báo cáo Chứng minh Chuẩn hóa 3NF}
-
-\subsubsection{Khai báo Tập Phụ thuộc Hàm (Functional Dependencies - FDs)}
-Xét bảng \textbf{repositories} có tập phụ thuộc hàm $F = \{f_1, f_2\}$ như sau:
-\begin{itemize}
-    \item $f_1$: repository\_id $\rightarrow$ workspace\_id, name, url, default\_branch, sync\_status, last\_synced\_at, created\_at, updated\_at
-    \item $f_2$: url $\rightarrow$ repository\_id (Khóa ứng viên duy nhất định danh đường dẫn kho chứa trên VCS)
-\end{itemize}
-
-Xét bảng \textbf{commits} có tập phụ thuộc hàm:
-\begin{itemize}
-    \item $f_3$: commit\_id $\rightarrow$ branch\_id, user\_id, commit\_hash, message, author\_name, author\_email, committed\_at, created\_at
-    \item $f_4$: commit\_hash $\rightarrow$ commit\_id (Khóa ứng viên duy nhất từ Git Hash)
-\end{itemize}
-
-\subsubsection{Đánh giá Cấp Chuẩn}
-\begin{enumerate}
-    \item \textbf{Đạt Chuẩn 1NF (First Normal Form):}
-    \begin{itemize}
-        \item Tất cả các cột trong các bảng của phân hệ đều chứa giá trị nguyên tố (Atomic Value).
-        \item Thuộc tính phức hợp \textit{AuthorInfo} (của Commit) đã được phẳng hóa thành \texttt{author\_name} và \texttt{author\_email}.
-        \item Thuộc tính phức hợp \textit{position} (của CodeEntity) đã được phẳng hóa thành \texttt{start\_line} và \texttt{end\_line}.
-        \item Thuộc tính đa trị \textit{labels} (của PullRequest) đã được tách triệt để sang bảng phụ \texttt{pull\_request\_labels}.
-    \end{itemize}
-    
-    \item \textbf{Đạt Chuẩn 2NF (Second Normal Form):}
-    \begin{itemize}
-        \item Các bảng trong lược đồ đều sử dụng Khóa chính đơn (Surrogate PK dạng UUID như \texttt{repository\_id}, \texttt{commit\_id}, \texttt{pr\_id},...), không sử dụng khóa chính phức hợp cho các thực thể gốc.
-        \item Do đó, mọi thuộc tính không khóa đều phụ thuộc hoàn toàn và trực tiếp vào toàn bộ khóa chính, hoàn toàn không tồn tại phụ thuộc một phần (Partial Dependency).
-    \end{itemize}
-    
-    \item \textbf{Đạt Chuẩn 3NF (Third Normal Form):}
-    \begin{itemize}
-        \item Mọi thuộc tính không khóa trong các bảng đều phụ thuộc trực tiếp vào Khóa chính (ví dụ trong bảng \texttt{commits}, các thông tin như \texttt{message}, \texttt{author\_name}, \texttt{committed\_at} phụ thuộc trực tiếp vào \texttt{commit\_id}).
-        \item Không tồn tại phụ thuộc bắc cầu $X \rightarrow Y \rightarrow Z$ giữa các thuộc tính không khóa.
-    \end{itemize}
-\end{enumerate}
-
-\noindent\textbf{Kết luận:} Lược đồ quan hệ phân hệ VCS \& Code Structure đạt tiêu chuẩn \textbf{3NF}, đảm bảo tính toàn vẹn dữ liệu, loại bỏ các dị thường (anomalies) khi thêm, sửa, xóa và tối ưu hóa hiệu suất lưu trữ cho hệ thống.

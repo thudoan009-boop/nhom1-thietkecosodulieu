@@ -1,75 +1,8 @@
-\section{Ánh Xạ Lược Đồ ER Phân Hệ Quản Trị Xác Thực \& Phân Quyền (Auth \& RBAC Domain)}
-
+\section{Ánh Xạ Lược Đồ ER }
+\subsection{Phân Hệ Quản Trị Xác Thực \& Phân Quyền (Auth \& RBAC Domain)}
 \noindent\rule{\linewidth}{0.5pt}
-\subsection{Cú pháp Rút gọn (Logical Schema Syntax)}
-\begin{itemize}
-\item \texttt{users}
-(\underline{\texttt{user\_id}} UUID PK,
-\texttt{email} VARCHAR(255),
-\texttt{password\_hash} VARCHAR(255),
-\texttt{first\_name} VARCHAR(100),
-\texttt{last\_name} VARCHAR(100),
-\texttt{status} VARCHAR(20),
-\texttt{created\_at} TIMESTAMP,
-\texttt{updated\_at} TIMESTAMP,
-\texttt{deleted\_at} TIMESTAMP)[cite: 1]
 
-\item \texttt{workspaces}
-(\underline{\texttt{workspace\_id}} UUID PK,
-\texttt{name} VARCHAR(150),
-\texttt{description} TEXT,
-\texttt{status} VARCHAR(20),
-\texttt{created\_at} TIMESTAMP,
-\texttt{updated\_at} TIMESTAMP,
-\texttt{deleted\_at} TIMESTAMP)[cite: 1]
-
-\item \texttt{roles}
-(\underline{\texttt{role\_id}} UUID PK,
-\texttt{role\_name} VARCHAR(50),
-\texttt{description} TEXT,
-\texttt{created\_at} TIMESTAMP,
-\texttt{updated\_at} TIMESTAMP)[cite: 1]
-
-\item \texttt{permissions}
-(\underline{\texttt{permission\_id}} UUID PK,
-\texttt{permission\_code} VARCHAR(50),
-\texttt{description} TEXT,
-\texttt{created\_at} TIMESTAMP)[cite: 1]
-
-\item \texttt{github\_connections}
-(\underline{\texttt{connection\_id}} UUID PK,
-\texttt{user\_id} UUID FK,
-\texttt{github\_user\_id} VARCHAR(50),
-\texttt{github\_username} VARCHAR(100),
-\texttt{access\_token} VARCHAR(500),
-\texttt{created\_at} TIMESTAMP,
-\texttt{updated\_at} TIMESTAMP)[cite: 1]
-
-\item \texttt{user\_notification\_preferences}
-(\underline{\texttt{preference\_id}} UUID PK,
-\texttt{user\_id} UUID FK,
-\texttt{channel} VARCHAR(20))[cite: 1]
-
-\item \texttt{github\_connection\_scopes}
-(\underline{\texttt{scope\_id}} UUID PK,
-\texttt{connection\_id} UUID FK,
-\texttt{scope\_value} VARCHAR(50))[cite: 1]
-
-\item \texttt{workspace\_members}
-(\underline{\texttt{membership\_id}} UUID PK,
-\texttt{user\_id} UUID FK,
-\texttt{workspace\_id} UUID FK,
-\texttt{role\_id} UUID FK,
-\texttt{joined\_at} TIMESTAMP,
-\texttt{status} VARCHAR(20))[cite: 1]
-
-\item \texttt{role\_permissions}
-(\underline{\texttt{role\_permission\_id}} UUID PK,
-\texttt{role\_id} UUID FK,
-\texttt{permission\_id} UUID FK,
-\texttt{granted\_at} TIMESTAMP)[cite: 1]
-\end{itemize}
-\subsection{Mã DDL SQL Hoàn Chỉnh (\texttt{schema\_member\_1.sql})}
+\subsubsection{Mã DDL SQL Hoàn Chỉnh (\texttt{schema\_member\_1.sql})}
 
 \begin{lstlisting}[language=SQL, breaklines=true, breakatwhitespace=true]
 

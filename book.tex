@@ -11,6 +11,15 @@
 \usepackage{xcolor}
 \usepackage[T5]{fontenc}
 \usepackage{microtype}
+\usepackage{ltablex}
+\usepackage{array}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\keepXColumns
 \microtypesetup{expansion=false}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -56,7 +65,8 @@
 \lstset{style=sqlstyle}
 
 \bibliographystyle{book}
-
+\setcounter{tocdepth}{0}
+\setcounter{tocdepth}{1}
 \hypersetup{pdftitle={Thiết Kế Cơ Sở Dữ Liệu - LivingDocs}}
 
 \newcommand{\bib}{book.bib}
