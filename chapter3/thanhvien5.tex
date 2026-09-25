@@ -1,11 +1,115 @@
-Sau khi áp dụng thành công \textbf{Thuật toán 2.2} (Ánh xạ mô hình ERD Quan niệm sang Lược đồ Quan hệ), toàn bộ thực thể, thuộc tính và mối kết hợp trong hệ thống đã được chuyển đổi hoàn chỉnh sang \textbf{Lược đồ ERD ở mức Lô-gíc (Logical ERD)}.
+\section*{ Phần 3:BÁO CÁO CHỨNG MINH CHUẨN HÓA 3NF }
+\subsection*{4.1. Bảng \texttt{users}}
 
-Đầu ra đạt được sau bước này bao gồm:
-\begin{itemize}
-    \item \textbf{Cấu trúc bảng chuẩn hóa:} Chuyển đổi toàn bộ thực thể và các mối kết hợp $M:N$ thành \textbf{30 bảng} dữ liệu độc lập với tên gọi tuân thủ chuẩn \texttt{snake\_case}.
-    \item \textbf{Xử lý thuộc tính phức hợp \& đa trị:} Giải quyết triệt để các thuộc tính phức hợp, thuộc tính đa trị và chuyển đổi các mối kết hợp 3 ngôi (như cụm \texttt{USER-WORKSPACE-ROLE}) thành các thực thể liên kết hợp lệ.
-    
-    \item \textbf{Đạt dạng chuẩn 3NF/BCNF:} Xác định tập phụ thuộc hàm (FDs) cho 4 phân hệ nghiệp vụ, chứng minh toàn bộ các bảng loại bỏ được rủi ro dư thừa dữ liệu và bất thường thao tác.
-\end{itemize}
+\noindent
+\begin{tabularx}{\textwidth}{@{} >{\bfseries}p{3.5cm} X @{}}
+\hline
+Phụ thuộc hàm (FD) & 
+\textbf{f1:} \texttt{user\_id} $\rightarrow$ \texttt{email}, \texttt{password\_hash}, \texttt{first\_name}, \texttt{last\_name}, \texttt{status}, \texttt{created\_at}, \texttt{updated\_at}, \texttt{deleted\_at} \newline
+\textbf{f2:} \texttt{email} $\rightarrow$ \texttt{user\_id} \\
+\hline
+Chuẩn 1NF & Mọi cột nguyên tố, FullName/NotificationPreferences đã tách. \\
+\hline
+Chuẩn 2NF & PK đơn (\texttt{user\_id}) không phụ thuộc một phần. \\
+\hline
+Chuẩn 3NF & Không thuộc tính không khóa nào xác định thuộc tính không khóa khác $\rightarrow$ đạt 3NF. \\
+\hline
+\end{tabularx}
 
+\vspace{0.5cm}
+
+% ---------------- 4.2 ---------------- %
+\subsection*{4.2. Bảng \texttt{commits} (Đã sửa theo Task 3)}
+
+\noindent
+\begin{tabularx}{\textwidth}{@{} >{\bfseries}p{3.5cm} X @{}}
+\hline
+Phụ thuộc hàm (FD) & 
+\textbf{f1:} \texttt{commit\_id} $\rightarrow$ \texttt{repository\_id}, \texttt{commit\_hash}, \texttt{author\_name}, \texttt{author\_email}, \texttt{message}, \texttt{committed\_at}, \texttt{created\_at} \\
+\hline
+Chuẩn 1NF & AuthorInfo đã phẳng hóa; mọi giá trị nguyên tố. \\
+\hline
+Chuẩn 2NF & PK đơn \texttt{commit\_id} (UUID) $\rightarrow$ \texttt{repository\_id}, \texttt{commit\_hash}... đều phụ thuộc đầy đủ vào \texttt{commit\_id}, không có phụ thuộc một phần. \\
+\hline
+Chuẩn 3NF & \texttt{author\_name} và \texttt{author\_email} không xác định lẫn nhau hay xác định \texttt{repository\_id} hay \texttt{message} một cách bắc cầu $\rightarrow$ không có phụ thuộc bắc cầu. Bảng đạt 3NF. \\
+\hline
+\textit{Lưu ý} & Sau khi bỏ \texttt{branch\_id} / \texttt{author\_user\_id} / \texttt{pr\_id}, bảng chỉ còn đúng 1 FK định danh (\texttt{repository\_id}) $\rightarrow$ cấu trúc phụ thuộc hàm càng đơn giản, càng dễ chứng minh 3NF hơn bản trước. \\
+\hline
+\end{tabularx}
+
+\vspace{0.5cm}
+
+% ---------------- 4.3 ---------------- %
+\subsection*{4.3. Bảng \texttt{workspace\_members} (3 ngôi, có thuộc tính riêng)}
+
+\noindent
+\begin{tabularx}{\textwidth}{@{} >{\bfseries}p{3.5cm} X @{}}
+\hline
+Phụ thuộc hàm (FD) & 
+\textbf{f1:} \texttt{membership\_id} $\rightarrow$ \texttt{user\_id}, \texttt{workspace\_id}, \texttt{role\_id}, \texttt{joined\_at}, \texttt{status} \\
+\hline
+Ràng buộc nghiệp vụ & (\texttt{user\_id}, \texttt{workspace\_id}) $\rightarrow$ \texttt{role\_id}, ép buộc bằng \texttt{UNIQUE(user\_id, workspace\_id)}. \\
+\hline
+Chuẩn 1NF - 3NF & Surrogate PK (\texttt{membership\_id}) khiến mọi thuộc tính phụ thuộc đầy đủ và không bắc cầu $\rightarrow$ đạt 3NF. \\
+\hline
+\end{tabularx}
+
+\vspace{0.5cm}
+
+% ---------------- 4.4 ---------------- %
+\subsection*{4.4. Bảng \texttt{dependencies} (đệ quy CodeEntity)}
+
+\noindent
+\begin{tabularx}{\textwidth}{@{} >{\bfseries}p{3.5cm} X @{}}
+\hline
+Phụ thuộc hàm (FD) & 
+\textbf{f1:} \texttt{dependency\_id} $\rightarrow$ \texttt{dependent\_entity\_id}, \texttt{target\_entity\_id}, \texttt{dependency\_type} \\
+\hline
+Chuẩn 1NF - 3NF & PK đơn \texttt{dependency\_id}, \texttt{CHECK} loại trừ tự tham chiếu, \texttt{dependency\_type} chỉ phụ thuộc qua \texttt{dependency\_id}, không bắc cầu $\rightarrow$ đạt 3NF. \\
+\hline
+\end{tabularx}
+
+\vspace{0.5cm}
+
+% ---------------- 4.5 ---------------- %
+\subsection*{4.5. Bảng \texttt{grounding\_evidence\_code\_entities} (có thuộc tính đo lường)}
+
+\noindent
+\begin{tabularx}{\textwidth}{@{} >{\bfseries}p{3.5cm} X @{}}
+\hline
+Phụ thuộc hàm (FD) & 
+\textbf{f1:} \texttt{link\_id} $\rightarrow$ \texttt{evidence\_id}, \texttt{code\_entity\_id}, \texttt{similarity\_score}, \texttt{match\_type} \\
+\hline
+Chuẩn 1NF - 3NF & PK đơn \texttt{link\_id}; \texttt{similarity\_score}/\texttt{match\_type} không xác định lẫn nhau hay xác định \texttt{evidence\_id}/\texttt{code\_entity\_id} $\rightarrow$ đạt 3NF. \\
+\hline
+\end{tabularx}
+
+\vspace{0.5cm}
+
+% ---------------- 4.6 ---------------- %
+\subsection*{4.6. Nhóm 3 bảng trung gian mới: \texttt{branch\_commit}, \texttt{pull\_request\_commit}, \texttt{commit\_parent}}
+
+\noindent
+\begin{tabularx}{\textwidth}{@{} >{\bfseries}p{3.5cm} X @{}}
+\hline
+Đặc điểm cấu trúc & 
+Cả 3 bảng đều theo đúng khuôn mẫu đã chứng minh ở mục 4.3/4.4: Surrogate PK riêng (\texttt{link\_id}), chỉ chứa 2 cột FK (không có thuộc tính mô tả riêng nào khác). \\
+\hline
+Ràng buộc & Với riêng \texttt{commit\_parent}, ràng buộc \texttt{CHECK(commit\_id $\neq$ parent\_commit\_id)} loại bỏ trường hợp tự tham chiếu vô nghĩa. \\
+\hline
+Chuẩn 1NF - 3NF & Không tồn tại thuộc tính không khóa để xét phụ thuộc bắc cầu, tự động đạt 2NF và 3NF. \\
+\hline
+\end{tabularx}
+
+\vspace{0.8cm}
+
+% ---------------- 4.7 ---------------- %
+\subsection*{4.7. Kết luận chung}
+
+Áp dụng cùng lập luận cho toàn bộ 35 bảng: khóa chính đơn, thuộc tính phức hợp/đa trị đã xử lý ở Bước 6, mọi mối kết hợp M:N/3-ngôi/đệ quy đều hiện thực bằng bảng trung gian Surrogate PK độc lập $\rightarrow$ \textbf{không tồn tại phụ thuộc một phần (loại trừ 2NF) và không tồn tại phụ thuộc bắc cầu (loại trừ 3NF).}
+
+\vspace{0.3cm}
+\noindent\textbf{Kết luận:} Toàn bộ lược đồ quan hệ của phân hệ Living Docs (35 bảng, đã đồng bộ với Task 2 \& Task 3 phiên bản mới nhất) đạt tiêu chuẩn 3NF, đảm bảo tính toàn vẹn dữ liệu và tối ưu hóa lưu trữ.
+
+\end{document}
 
