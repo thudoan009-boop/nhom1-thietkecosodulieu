@@ -1,23 +1,9 @@
-\section{ Ánh xạ Thực thể, Mối kết hợp \& Phẳng hóa Thuộc tính (Thuật toán 2.2) }
+\section*{1. Chuyển đổi Thực thể mạnh thành Bảng chính (Bước 1)}
 
-
-\begingroup
-\setlength{\tabcolsep}{4pt}
-\small
-
-% =========================================================
-% BẢNG 1: THỰC THỂ MẠNH -> BẢNG CHÍNH
-% =========================================================
-\subsection*{1. Chuyển đổi Thực thể mạnh thành Bảng chính}
-
-\begin{longtable}{|c|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}p{0.28\textwidth}|>{\raggedright\arraybackslash}p{0.38\textwidth}|}
+\begin{longtable}{|c|p{3cm}|p{3.5cm}|p{5.5cm}|}
+\caption{Chuyển đổi Thực thể mạnh thành Bảng chính} \\
 \hline
-\textbf{STT} & \textbf{Thực thể (ERD)} & \textbf{Bảng CSDL (snake\_case)} & \textbf{Ghi chú thiết kế} \\
-\hline
-\endfirsthead
-\hline
-\textbf{STT} & \textbf{Thực thể (ERD)} & \textbf{Bảng CSDL (snake\_case)} & \textbf{Ghi chú thiết kế} \\
-\hline
+\textbf{STT} & \textbf{Thực thể (ERD)} & \textbf{Bảng CSDL (snake\_case)} & \textbf{Ghi chú thiết kế} \\ \hline
 \endhead
 
 1 & User & \texttt{users} & Khóa chính (PK): \texttt{user\_id} (UUID) \\ \hline
@@ -29,25 +15,17 @@
 7 & Document & \texttt{documents} & Khóa chính (PK): \texttt{document\_id} (UUID) \\ \hline
 \end{longtable}
 
+\section*{2. Chuyển đổi Thực thể yếu thành Bảng phụ (Bước 2)}
 
-% =========================================================
-% BẢNG 2: THỰC THỂ YẾU -> BẢNG PHỤ
-% =========================================================
-\subsection*{2. Chuyển đổi Thực thể yếu thành Bảng phụ}
-
-\begin{longtable}{|c|>{\raggedright\arraybackslash}p{0.24\textwidth}|>{\raggedright\arraybackslash}p{0.26\textwidth}|>{\raggedright\arraybackslash}p{0.38\textwidth}|}
+\begin{longtable}{|c|p{3.8cm}|p{3.2cm}|p{5.5cm}|}
+\caption{Chuyển đổi Thực thể yếu thành Bảng phụ} \\
 \hline
-\textbf{STT} & \textbf{Bảng phụ (Thực thể yếu)} & \textbf{Bảng cha trực tiếp} & \textbf{Khóa ngoại (FK) \& Ràng buộc bổ sung} \\
-\hline
-\endfirsthead
-\hline
-\textbf{STT} & \textbf{Bảng phụ (Thực thể yếu)} & \textbf{Bảng cha trực tiếp} & \textbf{Khóa ngoại (FK) \& Ràng buộc bổ sung} \\
-\hline
+\textbf{STT} & \textbf{Bảng phụ (Thực thể yếu)} & \textbf{Bảng cha trực tiếp} & \textbf{Khóa ngoại (FK) \& Ràng buộc bổ sung} \\ \hline
 \endhead
 
-1 & \texttt{github\allowbreak\_connections} & \texttt{users} & \texttt{user\_id} (FK, UNIQUE) \\ \hline
+1 & \texttt{github\_connections} & \texttt{users} & \texttt{user\_id} (FK, UNIQUE) \\ \hline
 2 & \texttt{branches} & \texttt{repositories} & \texttt{repository\_id} (FK) \\ \hline
-3 & \texttt{commits} & \texttt{branches} & \texttt{branch\_id} (FK); FK bổ sung: \texttt{author\_user\_id} $\rightarrow$ \texttt{users}, \texttt{pr\_id} $\rightarrow$ \texttt{pull\_requests} \\ \hline
+3 & \texttt{commits} & \texttt{repositories} & \texttt{repository\_id} (FK) --- phụ thuộc repositories; Branch-Commit và PullRequest-Commit là N:N qua bảng trung gian; không có FK tới User \\ \hline
 4 & \texttt{pull\_requests} & \texttt{repositories} & \texttt{repository\_id} (FK) \\ \hline
 5 & \texttt{code\_diffs} & \texttt{commits} & \texttt{commit\_id} (FK) \\ \hline
 6 & \texttt{files} & \texttt{repositories} & \texttt{repository\_id} (FK) \\ \hline
@@ -63,236 +41,179 @@
 16 & \texttt{drift\_alerts} & \texttt{grounding\_evidences} & \texttt{evidence\_id} (FK) \\ \hline
 \end{longtable}
 
+\section*{3. Chuyển đổi Mối kết hợp M:N thành Bảng trung gian (Bước 5)}
 
-% =========================================================
-% BẢNG 3: MỐI QUAN HỆ 1:1 VÀ 1:N -> CHÈN FK
-% =========================================================
-\subsection*{3. Ánh xạ Quan hệ 1:1 và 1:N (Chèn Khóa ngoại FK)}
-
-\begin{longtable}{|c|>{\raggedright\arraybackslash}p{0.26\textwidth}|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}p{0.24\textwidth}|>{\raggedright\arraybackslash}p{0.18\textwidth}|}
+\begin{longtable}{|c|p{4cm}|p{2.5cm}|p{3.2cm}|p{3.8cm}|}
+\caption{Chuyển đổi Mối kết hợp M:N thành Bảng trung gian} \\
 \hline
-\textbf{STT} & \textbf{Bảng chứa FK (Phía N/Phụ)} & \textbf{Cột FK được chèn} & \textbf{Bảng đích (Phía 1/Chính)} & \textbf{Loại quan hệ} \\
-\hline
-\endfirsthead
-\hline
-\textbf{STT} & \textbf{Bảng chứa FK (Phía N/Phụ)} & \textbf{Cột FK được chèn} & \textbf{Bảng đích (Phía 1/Chính)} & \textbf{Loại quan hệ} \\
-\hline
+\textbf{STT} & \textbf{Bảng trung gian} & \textbf{Mối kết hợp gốc} & \textbf{Danh sách các Khóa ngoại (FK)} & \textbf{Ghi chú} \\ \hline
 \endhead
 
-1 & \texttt{github\_connections} & \texttt{user\_id} & \texttt{users} & 1:1 (UNIQUE) \\ \hline
-2 & \texttt{repositories} & \texttt{workspace\_id} & \texttt{workspaces} & 1:N \\ \hline
-3 & \texttt{branches} & \texttt{repository\_id} & \texttt{repositories} & 1:N \\ \hline
-4 & \texttt{commits} & \texttt{branch\_id} & \texttt{branches} & 1:N \\ \hline
-5 & \texttt{commits} & \texttt{author\_user\_id} & \texttt{users} & 1:N \\ \hline
-6 & \texttt{commits} & \texttt{pr\_id} & \texttt{pull\_requests} & 1:N (Nullable) \\ \hline
-7 & \texttt{pull\_requests} & \texttt{repository\_id} & \texttt{repositories} & 1:N \\ \hline
-8 & \texttt{code\_diffs} & \texttt{commit\_id} & \texttt{commits} & 1:N \\ \hline
-9 & \texttt{files} & \texttt{repository\_id} & \texttt{repositories} & 1:N \\ \hline
-10 & \texttt{code\_entities} & \texttt{file\_id} & \texttt{files} & 1:N \\ \hline
-11 & \texttt{templates} & \texttt{workspace\_id} & \texttt{workspaces} & 1:N \\ \hline
-12 & \texttt{template\_sections} & \texttt{template\_id} & \texttt{templates} & 1:N \\ \hline
-13 & \texttt{placeholders} & \texttt{section\_id} & \texttt{template\_sections} & 1:N \\ \hline
-14 & \texttt{documents} & \texttt{workspace\_id} & \texttt{workspaces} & 1:N \\ \hline
-15 & \texttt{documents} & \texttt{author\_user\_id} & \texttt{users} & 1:N \\ \hline
-16 & \texttt{document\_versions} & \texttt{document\_id} & \texttt{documents} & 1:N \\ \hline
-17 & \texttt{change\_logs} & \texttt{version\_id} & \texttt{document\_versions} & 1:N \\ \hline
-18 & \texttt{reviews} & \texttt{version\_id} & \texttt{document\_versions} & 1:N \\ \hline
-19 & \texttt{reviews} & \texttt{reviewer\_user\_id} & \texttt{users} & 1:N \\ \hline
-20 & \texttt{review\_comments} & \texttt{review\_id} & \texttt{reviews} & 1:N \\ \hline
-21 & \texttt{approvals} & \texttt{version\_id} & \texttt{document\_versions} & 1:N \\ \hline
-22 & \texttt{approvals} & \texttt{approver\_user\_id} & \texttt{users} & 1:N \\ \hline
-23 & \texttt{grounding\_evidences} & \texttt{version\_id} & \texttt{document\_versions} & 1:N \\ \hline
-24 & \texttt{drift\_alerts} & \texttt{evidence\_id} & \texttt{grounding\_evidences} & 1:N \\ \hline
-\end{longtable}
-
-
-% =========================================================
-% BẢNG 4: MỐI KẾT HỢP M:N -> BẢNG TRUNG GIAN
-% =========================================================
-\subsection*{4. Chuyển đổi Mối kết hợp $M:N$ thành Bảng trung gian}
-
-\begin{longtable}{|c|>{\raggedright\arraybackslash}p{0.24\textwidth}|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}p{0.26\textwidth}|>{\raggedright\arraybackslash}p{0.18\textwidth}|}
-\hline
-\textbf{STT} & \textbf{Bảng trung gian} & \textbf{Mối kết hợp gốc} & \textbf{Danh sách các Khóa ngoại (FK)} & \textbf{Ghi chú} \\
-\hline
-\endfirsthead
-\hline
-\textbf{STT} & \textbf{Bảng trung gian} & \textbf{Mối kết hợp gốc} & \textbf{Danh sách các Khóa ngoại (FK)} & \textbf{Ghi chú} \\
-\hline
-\endhead
-
-1 & \texttt{workspace\_members} & \textit{participates} & \texttt{user\_id}, \texttt{workspace\_id}, \texttt{role\_id} & Quan hệ 3 ngôi ($M:N:1$) \\ \hline
-2 & \texttt{role\_permissions} & \textit{contains} & \texttt{role\_id}, \texttt{permission\_id} & Quan hệ $M:N$ \\ \hline
-3 & \texttt{commit\_file} & \textit{modifies} & \texttt{commit\_id}, \texttt{file\_id} & Quan hệ $M:N$ \\ \hline
+1 & \texttt{workspace\_members} & \textit{participates} & \texttt{user\_id}, \texttt{workspace\_id}, \texttt{role\_id} & Quan hệ 3 ngôi (M:N:1) \\ \hline
+2 & \texttt{role\_permissions} & \textit{contains} & \texttt{role\_id}, \texttt{permission\_id} & Quan hệ M:N \\ \hline
+3 & \texttt{commit\_file} & \textit{modifies} & \texttt{commit\_id}, \texttt{file\_id} & Quan hệ M:N \\ \hline
 4 & \texttt{dependencies} & \textit{depends\_on} & \texttt{dependent\_entity\_id}, \texttt{target\_entity\_id} & Đệ quy trỏ về \texttt{code\_entities} \\ \hline
-5 & \texttt{template\_mappings} & \textit{maps\_to} & \texttt{placeholder\_id}, \texttt{code\_entity\_id} & Quan hệ $M:N$ \\ \hline
-6 & \texttt{grounding\_evidence\allowbreak\_code\_entities} & \textit{references\_code} & \texttt{evidence\_id}, \texttt{code\_entity\_id} & Quan hệ $M:N$ \\ \hline
+5 & \texttt{template\_mappings} & \textit{maps\_to} & \texttt{placeholder\_id}, \texttt{code\_entity\_id} & Quan hệ M:N \\ \hline
+6 & \texttt{grounding\_evidence\_code\_entities} & \textit{references\_code} & \texttt{evidence\_id}, \texttt{code\_entity\_id} & Quan hệ M:N \\ \hline
+7 & \texttt{branch\_commit} & \textit{includes} & \texttt{branch\_id}, \texttt{commit\_id} & Quan hệ N:N --- một commit thuộc nhiều branch \\ \hline
+8 & \texttt{pull\_request\_commit} & \textit{includes} & \texttt{pr\_id}, \texttt{commit\_id} & Quan hệ N:N --- một commit thuộc nhiều PR \\ \hline
+9 & \texttt{commit\_parent} & \textit{has\_parent} & \texttt{commit\_id}, \texttt{parent\_commit\_id} & Đệ quy trỏ về \texttt{commits} (merge commit nhiều cha) \\ \hline
 \end{longtable}
 
+\section*{4. Xử lý Thuộc tính đặc biệt (Phức hợp \& Đa trị) (Bước 6)}
 
-
-% =========================================================
-% BẢNG 5: THUỘC TÍNH ĐẶC BIỆT (ĐÃ XỬ LÝ CHỐNG TRÀN LỀ)
-% =========================================================
-\subsection*{5. Xử lý Thuộc tính đặc biệt (Phức hợp \& Đa trị)}
-
-\begin{longtable}{|c|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}p{0.27\textwidth}|>{\raggedright\arraybackslash}p{0.21\textwidth}|>{\raggedright\arraybackslash}p{0.28\textwidth}|}
+\begin{longtable}{|c|p{2.2cm}|p{3.5cm}|p{3.8cm}|p{4cm}|}
+\caption{Xử lý Thuộc tính đặc biệt (Phức hợp \& Đa trị)} \\
 \hline
-\textbf{STT} & \textbf{Loại thuộc tính} & \textbf{Thuộc tính gốc (ERD)} & \textbf{Giải pháp chuyển đổi} & \textbf{Cột / Bảng kết quả} \\
-\hline
-\endfirsthead
-\hline
-\textbf{STT} & \textbf{Loại thuộc tính} & \textbf{Thuộc tính gốc (ERD)} & \textbf{Giải pháp chuyển đổi} & \textbf{Cột / Bảng kết quả} \\
-\hline
+\textbf{STT} & \textbf{Loại thuộc tính} & \textbf{Thuộc tính gốc (ERD)} & \textbf{Giải pháp chuyển đổi} & \textbf{Cột / Bảng kết quả} \\ \hline
 \endhead
 
-1 & Phức hợp & \texttt{User.\allowbreak FullName} & Phẳng hóa thành các cột & \texttt{first\_name}, \texttt{last\_name} trong \texttt{users} \\ \hline
-2 & Phức hợp & \texttt{Commit.\allowbreak AuthorInfo} & Phẳng hóa thành các cột & \texttt{author\_name}, \texttt{author\_email} trong \texttt{commits} \\ \hline
-3 & Phức hợp & \texttt{Code\allowbreak Entity.\allowbreak position} & Phẳng hóa thành các cột & \texttt{start\_line}, \texttt{end\_line} trong \texttt{code\_entities} \\ \hline
-4 & Đa trị & \texttt{User.\allowbreak Noti\allowbreak fication\allowbreak Preferences} & Tách thành bảng phụ chứa FK & Bảng \texttt{user\_notification\allowbreak\_preferences} \\ \hline
-5 & Đa trị & \texttt{GitHub\allowbreak Connection.\allowbreak scopes} & Tách thành bảng phụ chứa FK & Bảng \texttt{github\_connection\allowbreak\_scopes} \\ \hline
-6 & Đa trị & \texttt{Pull\allowbreak Request.\allowbreak labels} & Tách thành bảng phụ chứa FK & Bảng \texttt{pull\_request\allowbreak\_labels} \\ \hline
+1 & Phức hợp & \texttt{User.FullName} & Phẳng hóa thành các cột & \texttt{first\_name}, \texttt{last\_name} trong \texttt{users} \\ \hline
+2 & Phức hợp & \texttt{Commit.AuthorInfo} & Phẳng hóa thành các cột & \texttt{author\_name}, \texttt{author\_email} trong \texttt{commits} \\ \hline
+3 & Phức hợp & \texttt{CodeEntity.position} & Phẳng hóa thành các cột & \texttt{start\_line}, \texttt{end\_line} trong \texttt{code\_entities} \\ \hline
+4 & Đa trị & \texttt{User.NotificationPreferences} & Tách thành bảng phụ chứa FK & Bảng \texttt{user\_notification\_preferences} \\ \hline
+5 & Đa trị & \texttt{GitHubConnection.scopes} & Tách thành bảng phụ chứa FK & Bảng \texttt{github\_connection\_scopes} \\ \hline
+6 & Đa trị & \texttt{PullRequest.labels} & Tách thành bảng phụ chứa FK & Bảng \texttt{pull\_request\_labels} \\ \hline
 \end{longtable}
-% ==========================================
-\section{ Lược đồ Quan hệ Lô-gíc (Logical Schema) }
-\subsection{Phân hệ Quản trị \& Xác thực}
+\section*{2. Phần 2: Lược đồ Quan hệ Lô-gíc (Logical Schema)}
+\subsection*{2.1. Khai báo Chi tiết Bảng}
 
+\textbf{A. Nhóm Quản trị \& Kết nối}
 
-\paragraph{1. Bảng \texttt{users}} (Bảng chính - Thực thể mạnh: User)
+\textbf{Bảng: users}\\
+Bảng chính (Thực thể mạnh: User)
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|c|l|}
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
-\texttt{user\_id} & UUID & PK & NOT NULL \\ \hline
-\texttt{email} & - & Unique & NOT NULL \\ \hline
-\texttt{password\_hash} & - & - & NULL \\ \hline
-\texttt{first\_name} & - & - & NULL \\ \hline
-\texttt{last\_name} & - & - & NULL \\ \hline
-\texttt{status} & - & - & NOT NULL \\ \hline
-\texttt{created\_at} & - & - & NOT NULL \\ \hline
-\texttt{updated\_at} & - & - & NOT NULL \\ \hline
-\texttt{deleted\_at} & - & - & NULL \\ \hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+user\_id & UUID & PK & NOT NULL \\ \hline
+email & & Unique & NOT NULL \\ \hline
+password\_hash & & & NULL \\ \hline
+first\_name & & & NULL \\ \hline
+last\_name & & & NULL \\ \hline
+status & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
+deleted\_at & & & NULL \\ \hline
 \end{tabular}
 \end{table}
 
-\paragraph{2. Bảng \texttt{workspaces}} (Bảng chính - Thực thể mạnh: Workspace)
+\textbf{Bảng: workspaces}\\
+Bảng chính (Thực thể mạnh: Workspace)
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|c|l|}
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
-\texttt{workspace\_id} & UUID & PK & NOT NULL \\ \hline
-\texttt{name} & - & - & NOT NULL \\ \hline
-\texttt{description} & - & - & NULL \\ \hline
-\texttt{status} & - & - & NOT NULL \\ \hline
-\texttt{created\_at} & - & - & NOT NULL \\ \hline
-\texttt{updated\_at} & - & - & NOT NULL \\ \hline
-\texttt{deleted\_at} & - & - & NULL \\ \hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+workspace\_id & UUID & PK & NOT NULL \\ \hline
+name & & & NOT NULL \\ \hline
+description & & & NULL \\ \hline
+status & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
+deleted\_at & & & NULL \\ \hline
 \end{tabular}
 \end{table}
 
-\paragraph{3. Bảng \texttt{roles}} (Bảng chính - Thực thể mạnh: Role)
+\textbf{Bảng: roles}\\
+Bảng chính (Thực thể mạnh: Role)
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|c|l|}
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
-\texttt{role\_id} & UUID & PK & NOT NULL \\ \hline
-\texttt{role\_name} & - & - & NOT NULL \\ \hline
-\texttt{description} & - & - & NULL \\ \hline
-\texttt{created\_at} & - & - & NOT NULL \\ \hline
-\texttt{updated\_at} & - & - & NOT NULL \\ \hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+role\_id & UUID & PK & NOT NULL \\ \hline
+role\_name & & & NOT NULL \\ \hline
+description & & & NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
 \end{table}
 
-\paragraph{4. Bảng \texttt{permissions}} (Bảng chính - Thực thể mạnh: Permission)
+\textbf{Bảng: permissions}\\
+Bảng chính (Thực thể mạnh: Permission)
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|c|l|}
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
-\texttt{permission\_id} & UUID & PK & NOT NULL \\ \hline
-\texttt{permission\_code} & - & Unique & NOT NULL \\ \hline
-\texttt{description} & - & - & NULL \\ \hline
-\texttt{created\_at} & - & - & NOT NULL \\ \hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+permission\_id & UUID & PK & NOT NULL \\ \hline
+permission\_code & & Unique & NOT NULL \\ \hline
+description & & & NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
 \end{tabular}
 \end{table}
 
-\paragraph{5. Bảng \texttt{github\_connections}} (Bảng phụ - Thực thể yếu phụ thuộc User, Surrogate PK UUID)
+\textbf{Bảng: github\_connections}\\
+Bảng phụ (Thực thể yếu – phụ thuộc User)
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|c|l|}
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
-\texttt{connection\_id} & UUID & PK & NOT NULL \\ \hline
-\texttt{user\_id} & - & FK, Unique & NOT NULL \\ \hline
-\texttt{github\_user\_id} & - & - & NOT NULL \\ \hline
-\texttt{github\_username} & - & - & NOT NULL \\ \hline
-\texttt{access\_token} & - & - & NOT NULL \\ \hline
-\texttt{created\_at} & - & - & NOT NULL \\ \hline
-\texttt{updated\_at} & - & - & NOT NULL \\ \hline
-\multicolumn{4}{|l|}{\textbf{Ràng buộc bổ sung:} \texttt{UNIQUE (user\_id)}} \\ \hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+connection\_id & UUID & PK & NOT NULL \\ \hline
+user\_id & & FK, Unique & NOT NULL \\ \hline
+github\_user\_id & & & NOT NULL \\ \hline
+github\_username & & & NOT NULL \\ \hline
+access\_token & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
 \end{table}
 
-\paragraph{6. Bảng \texttt{user\_notification\_preferences}} (Bảng phụ đa trị từ \texttt{NotificationPreferences} của User)
+\textbf{Bảng: user\_notification\_preferences}\\
+Bảng phụ đa trị
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|c|l|}
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
-\texttt{preference\_id} & UUID & PK & NOT NULL \\ \hline
-\texttt{user\_id} & - & FK & NOT NULL \\ \hline
-\texttt{channel} & - & - & NOT NULL \\ \hline
-\multicolumn{4}{|l|}{\textbf{Ràng buộc bổ sung:} \texttt{UNIQUE (user\_id, channel)}} \\
-\multicolumn{4}{|l|}{\textit{Một người dùng chỉ có tối đa 1 bản ghi cho mỗi kênh.}} \\ \hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+preference\_id & UUID & PK & NOT NULL \\ \hline
+user\_id & & FK & NOT NULL \\ \hline
+channel & & & NOT NULL \\ \hline
 \end{tabular}
 \end{table}
 
-\paragraph{7. Bảng \texttt{github\_connection\_scopes}} (Bảng phụ đa trị từ \texttt{scopes} của GitHubConnection)
+\textbf{Bảng: github\_connection\_scopes}\\
+Bảng phụ đa trị
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|c|l|}
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
-\texttt{scope\_id} & UUID & PK & NOT NULL \\ \hline
-\texttt{connection\_id} & - & FK & NOT NULL \\ \hline
-\texttt{scope\_value} & - & - & NOT NULL \\ \hline
-\multicolumn{4}{|l|}{\textbf{Ràng buộc bổ sung:} \texttt{UNIQUE (connection\_id, scope\_value)}} \\
-\multicolumn{4}{|l|}{\textit{Đảm bảo tài khoản OAuth không lưu lặp lại cùng một quyền scope.}} \\ \hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+scope\_id & UUID & PK & NOT NULL \\ \hline
+connection\_id & & FK & NOT NULL \\ \hline
+scope\_value & & & NOT NULL \\ \hline
 \end{tabular}
 \end{table}
 
-\paragraph{8. Bảng \texttt{workspace\_members}} (Bảng trung gian mối kết hợp 3 ngôi User–Workspace–Role, tỷ lệ M:N:1)
+\textbf{Bảng: workspace\_members}\\
+Bảng trung gian
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|c|l|}
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
-\texttt{membership\_id} & UUID & PK & NOT NULL \\ \hline
-\texttt{user\_id} & - & FK & NOT NULL \\ \hline
-\texttt{workspace\_id} & - & FK & NOT NULL \\ \hline
-\texttt{role\_id} & - & FK & NOT NULL \\ \hline
-\texttt{joined\_at} & - & - & NOT NULL \\ \hline
-\texttt{status} & - & - & NOT NULL \\ \hline
-\multicolumn{4}{|l|}{\textbf{Ràng buộc bổ sung:} \texttt{UNIQUE (user\_id, workspace\_id)}} \\
-\multicolumn{4}{|l|}{\textit{Đảm bảo mỗi User chỉ giữ đúng 1 Role trong 1 Workspace (Scoped RBAC).}} \\ \hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+membership\_id & UUID & PK & NOT NULL \\ \hline
+user\_id & & FK & NOT NULL \\ \hline
+workspace\_id & & FK & NOT NULL \\ \hline
+role\_id & & FK & NOT NULL \\ \hline
+joined\_at & & & NOT NULL \\ \hline
+status & & & NOT NULL \\ \hline
 \end{tabular}
 \end{table}
 
-\paragraph{9. Bảng \texttt{role\_permissions}} (Bảng trung gian mối kết hợp Role–Permission, tỷ lệ M:N)
+\textbf{Bảng: role\_permissions}\\
+Bảng trung gian
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|c|l|}
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ Liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\ \hline
-\texttt{role\_permission\_id} & UUID & PK & NOT NULL \\ \hline
-\texttt{role\_id} & - & FK & NOT NULL \\ \hline
-\texttt{permission\_id} & - & FK & NOT NULL \\ \hline
-\texttt{granted\_at} & - & - & NOT NULL \\ \hline
-\multicolumn{4}{|l|}{\textbf{Ràng buộc bổ sung:} \texttt{UNIQUE (role\_id, permission\_id)}} \\
-\multicolumn{4}{|l|}{\textit{Ngăn chặn gán trùng lặp quyền cho một vai trò (RBAC).}} \\ \hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+role\_permission\_id & UUID & PK & NOT NULL \\ \hline
+role\_id & & FK & NOT NULL \\ \hline
+permission\_id & & FK & NOT NULL \\ \hline
+granted\_at & & & NOT NULL \\ \hline
 \end{tabular}
 \end{table}
-

@@ -1,185 +1,126 @@
-\setcounter{subsection}{1} 
-\subsection{Phân hệ Mẫu \& Tài liệu Cốt lõi}
+\subsubsection{Nhóm Khuôn mẫu Tài liệu}
 
-\subsubsection{Bảng templates}
-
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\textbf{Bảng: templates}\\
+Bảng chính (Thực thể mạnh: Template)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{template\_id} & PK & not null \\
-\hline
-\texttt{workspace\_id} & FK & not null \\
-\hline
-\texttt{name} & & not null \\
-\hline
-\texttt{description} & & null \\
-\hline
-\texttt{content\_structure} & & not null \\
-\hline
-\texttt{creator\_type} & & not null \\
-\hline
-\texttt{status} & & not null \\
-\hline
-\texttt{created\_at} & & not null \\
-\hline
-\texttt{updated\_at} & & not null \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+template\_id & UUID & PK & NOT NULL \\ \hline
+workspace\_id & & FK & NOT NULL \\ \hline
+name & & & NOT NULL \\ \hline
+description & & & NULL \\ \hline
+content\_structure & & & NULL \\ \hline
+creator\_type & & & NOT NULL \\ \hline
+status & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
+\end{table}
 
-
-\subsubsection{Bảng template\_sections}
-
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\textbf{Bảng: template\_sections}\\
+Bảng phụ (Thực thể yếu – phụ thuộc Template)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{section\_id} & PK & not null \\
-\hline
-\texttt{template\_id} & FK & not null \\
-\hline
-\texttt{heading\_title} & & not null \\
-\hline
-\texttt{order\_index} & & not null \\
-\hline
-\texttt{prompt\_instruction} & & null \\
-\hline
-\texttt{created\_at} & & not null \\
-\hline
-\texttt{updated\_at} & & not null \\
-\hline
-\multicolumn{3}{|l|}{\textbf{Ràng buộc bổ sung: } UNIQUE(\texttt{template\_id}, \texttt{order\_index})} \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+section\_id & UUID & PK & NOT NULL \\ \hline
+template\_id & & FK & NOT NULL \\ \hline
+heading\_title & & & NOT NULL \\ \hline
+order\_index & & & NOT NULL \\ \hline
+prompt\_instruction & & & NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
+\end{table}
 
-
-\subsubsection{Bảng placeholders}
-
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\textbf{Bảng: placeholders}\\
+Bảng phụ (Thực thể yếu – phụ thuộc TemplateSection)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{placeholder\_id} & PK & not null \\
-\hline
-\texttt{section\_id} & FK & not null \\
-\hline
-\texttt{variable\_name} & & not null \\
-\hline
-\texttt{expected\_data\_type} & & not null \\
-\hline
-\texttt{description} & & null \\
-\hline
-\texttt{is\_required} & & not null \\
-\hline
-\texttt{created\_at} & & not null \\
-\hline
-\texttt{updated\_at} & & not null \\
-\hline
-\multicolumn{3}{|l|}{\textbf{Ràng buộc bổ sung: } UNIQUE(\texttt{section\_id}, \texttt{variable\_name})} \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+placeholder\_id & UUID & PK & NOT NULL \\ \hline
+section\_id & & FK & NOT NULL \\ \hline
+variable\_name & & & NOT NULL \\ \hline
+expected\_data\_type & & & NOT NULL \\ \hline
+description & & & NULL \\ \hline
+is\_required & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
+\end{table}
 
-
-\subsubsection{Bảng template\_mappings}
-
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\textbf{Bảng: template\_mappings}\\
+Bảng trung gian
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{mapping\_id} & PK & not null \\
-\hline
-\texttt{placeholder\_id} & FK & not null \\
-\hline
-\texttt{entity\_id} & FK & not null \\
-\hline
-\texttt{extraction\_rule} & & null \\
-\hline
-\texttt{is\_active} & & not null \\
-\hline
-\multicolumn{3}{|l|}{\textbf{Ràng buộc bổ sung: } UNIQUE(\texttt{placeholder\_id}, \texttt{entity\_id})} \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+mapping\_id & UUID & PK & NOT NULL \\ \hline
+placeholder\_id & & FK & NOT NULL \\ \hline
+code\_entity\_id & & FK & NOT NULL \\ \hline
+extraction\_rule & & & NULL \\ \hline
+is\_active & & & NOT NULL \\ \hline
 \end{tabular}
-
-
-\subsubsection{Bảng documents}
-
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\end{table}
+\textbf{Bảng: documents}\\
+Bảng chính (Thực thể mạnh: Document)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{document\_id} & PK & not null \\
-\hline
-\texttt{workspace\_id} & FK & not null \\
-\hline
-\texttt{user\_id} & FK & not null \\
-\hline
-\texttt{title} & & not null \\
-\hline
-\texttt{document\_type} & & not null \\
-\hline
-\texttt{status} & & not null \\
-\hline
-\texttt{created\_at} & & not null \\
-\hline
-\texttt{updated\_at} & & not null \\
-\hline
-\texttt{deleted\_at} & & null \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+document\_id & UUID & PK & NOT NULL \\ \hline
+workspace\_id & & FK & NOT NULL \\ \hline
+author\_user\_id & & FK & NOT NULL \\ \hline
+title & & & NOT NULL \\ \hline
+document\_type & & & NOT NULL \\ \hline
+status & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
+deleted\_at & & & NULL \\ \hline
 \end{tabular}
+\end{table}
 
-
-\subsubsection{Bảng document\_versions}
-
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\textbf{Bảng: document\_versions}\\
+Bảng phụ (Thực thể yếu – phụ thuộc Document)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{version\_id} & PK & not null \\
-\hline
-\texttt{document\_id} & FK & not null \\
-\hline
-\texttt{version\_number} & & not null \\
-\hline
-\texttt{content} & & not null \\
-\hline
-\texttt{change\_summary} & & null \\
-\hline
-\texttt{status} & & not null \\
-\hline
-\texttt{ticketed\_codes} & & null \\
-\hline
-\texttt{created\_at} & & not null \\
-\hline
-\texttt{updated\_at} & & not null \\
-\hline
-\multicolumn{3}{|l|}{\textbf{Ràng buộc bổ sung: } UNIQUE(\texttt{document\_id}, \texttt{version\_number})} \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+version\_id & UUID & PK & NOT NULL \\ \hline
+document\_id & & FK & NOT NULL \\ \hline
+version\_number & & & NOT NULL \\ \hline
+content & & & NULL \\ \hline
+change\_summary & & & NULL \\ \hline
+status & & & NOT NULL \\ \hline
+ticket\_codes & & & NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
+\end{table}
 
-
-\subsubsection{Bảng change\_logs}
-
-\begin{tabular}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\textbf{Bảng: change\_logs}\\
+Bảng phụ (Thực thể yếu – phụ thuộc Document Version)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{log\_id} & PK & not null \\
-\hline
-\texttt{version\_id} & FK & not null \\
-\hline
-\texttt{change\_type} & & not null \\
-\hline
-\texttt{change\_description} & & not null \\
-\hline
-\texttt{diff\_content} & & null \\
-\hline
-\texttt{created\_at} & & not null \\
-\hline
-\texttt{updated\_at} & & not null \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+log\_id & UUID & PK & NOT NULL \\ \hline
+version\_id & & FK & NOT NULL \\ \hline
+change\_type & & & NOT NULL \\ \hline
+change\_description & & & NULL \\ \hline
+diff\_content & & & NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
-
-
-
+\end{table}
 
 

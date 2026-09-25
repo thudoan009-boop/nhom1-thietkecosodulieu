@@ -1,274 +1,394 @@
 \section{Mô hình hóa Mối kết hợp \& Bản số Dữ liệu}
 
+% Fallback when the document preamble does not load colortbl.
+\providecommand{\rowcolor}[1]{}
+
 \begingroup
 \setlength{\tabcolsep}{3.5pt} % Thu nhỏ khoảng đệm giữa các cột
 \small % Cỡ chữ vừa vặn giúp bảng đẹp và cân đối
 
 \begin{longtable}{|
->{\raggedright\arraybackslash}p{0.24\textwidth}|
->{\raggedright\arraybackslash}p{0.25\textwidth}|
->{\raggedright\arraybackslash}p{0.17\textwidth}|
->{\raggedright\arraybackslash}p{0.34\textwidth}|}
-\hline
+>{\raggedright\arraybackslash}p{0.30\textwidth}|
+>{\raggedright\arraybackslash}p{0.22\textwidth}|
+>{\raggedright\arraybackslash}p{0.44\textwidth}|}
 
-\textbf{Mối quan hệ \& Phân loại thực thể} &
-\textbf{Bản số \& Mức tham gia} &
-\textbf{Thuộc tính mối quan hệ} &
-\textbf{Mô tả nghiệp vụ} \\
+% ===== HEADER ĐẦU TRANG =====
+\hline
+\rowcolor{gray!20}
+\textbf{Mối quan hệ \& Tỷ lệ bản số} & \textbf{Thuộc tính mối quan hệ} & \textbf{Mô tả nghiệp vụ} \\
 \hline
 \endfirsthead
 
+% ===== HEADER TRANG SAU =====
 \hline
-\textbf{Mối quan hệ \& Phân loại thực thể} &
-\textbf{Bản số \& Mức tham gia} &
-\textbf{Thuộc tính mối quan hệ} &
-\textbf{Mô tả nghiệp vụ} \\
+\rowcolor{gray!20}
+\textbf{Mối quan hệ \& Tỷ lệ bản số} & \textbf{Thuộc tính mối quan hệ} & \textbf{Mô tả nghiệp vụ} \\
 \hline
 \endhead
 
-\textbf{User — Workspace — Role} (\texttt{<participates>}) \newline
-\textit{Mối kết hợp 3 ngôi:} User (Mạnh), Workspace (Mạnh), Role (Mạnh) &
-\textbf{Tỷ lệ:} M:N:1 \newline
-\textbf{Bản số:} User (0..*), Workspace (1..*), Role (0..*) \newline
-\textbf{Tham gia:} User (Partial 0), Workspace (Total 1), Role (Partial 0) &
-\texttt{joined\allowbreak\_at}, \texttt{status} &
-Ghi nhận sự tham gia của Người dùng vào Workspace. Trong từng Workspace, mỗi user bắt buộc gán đúng một Role (Scoped RBAC). Một user có thể thuộc nhiều Workspace với vai trò độc lập. \\ \hline
+\hline
+\endfoot
 
-\textbf{Role — Permission} (\texttt{<contains>}) \newline
-Role (Mạnh) $\leftrightarrow$ Permission (Mạnh) &
-\textbf{Tỷ lệ:} M:N \newline
-\textbf{Bản số:} Role (0..*) $\leftrightarrow$ Permission (0..*) \newline
-\textbf{Tham gia:} Role (Partial) $\leftrightarrow$ Permission (Partial) &
-\texttt{granted\allowbreak\_at} &
-Một vai trò chứa tập hợp nhiều quyền; một quyền hạn có thể thuộc về nhiều vai trò khác nhau. \\ \hline
+% =========================================================
+\rowcolor{gray!10}
+\multicolumn{3}{|l|}{\textbf{A. Nhóm Quản trị \& Kết nối (Auth \& Workspace Domain)}} \\
+\hline
 
-\textbf{User — Github\allowbreak\_Connection} (\texttt{<connects>}) \newline
-User (Mạnh) $\leftrightarrow$ Github\_Connection (Phụ thuộc User) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} User (0..*), Github\allowbreak\_Connection (1..1) \newline
-\textbf{Tham gia:} User (Partial), Github\allowbreak\_Connection (Total) &
-Không có &
-Ghi nhận việc User ủy quyền tài khoản GitHub qua OAuth2, lưu \texttt{access\_token} và scopes để đồng bộ repo, commit, PR, webhook. \\ \hline
+\textbf{User --- Workspace --- Role}\newline
+\texttt{<participates>}\newline
+\textit{Loại:} 3 ngôi (Mạnh - Mạnh - Mạnh)\newline
+\textbf{Tỷ lệ:} M : N : 1
+& 
+\texttt{joined\_at},\newline \texttt{status}
+& 
+Ghi nhận sự tham gia của User vào Workspace. Mỗi User trong 1 Workspace bắt buộc được gán đúng 1 Role xác định (Scoped RBAC). Một User có thể tham gia nhiều Workspace với vai trò độc lập.
+\\ \hline
 
-\textbf{Workspace — Repository} (\texttt{<owns>}) \newline
-Workspace (Mạnh) $\leftrightarrow$ Repository (Mạnh) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Workspace (1..1) $\leftrightarrow$ Repository (0..*) \newline
-\textbf{Tham gia:} Workspace (Partial), Repository (Total) &
-Không có &
-Một Workspace quản lý nhiều Repository; mỗi Repository thuộc quyền sở hữu của một Workspace. \\ \hline
+\textbf{Role --- contains --- Permission}\newline
+\texttt{<contains>}\newline
+\textit{Loại:} Role (Mạnh) $\leftrightarrow$ Permission (Mạnh)\newline
+\textbf{Tỷ lệ:} M : N
+& 
+\texttt{granted\_at}
+& 
+Một Role chứa nhiều Permission; một Permission có thể thuộc nhiều Role khác nhau.
+\\ \hline
 
-\textbf{Repository — Branch} (\texttt{<has\_branch>}) \newline
-Repository (Mạnh) $\leftrightarrow$ Branch (Yếu - Phụ thuộc Repo) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Repository (1..1) $\leftrightarrow$ Branch (1..*) \newline
-\textbf{Tham gia:} Repository (Total), Branch (Total) &
-Không có &
-Một kho chứa mã nguồn có ít nhất một nhánh mặc định; mỗi nhánh bắt buộc nằm trong duy nhất một kho chứa. \\ \hline
+\textbf{User --- connects --- Github\_Connection}\newline
+\textit{Loại:} User (Mạnh) $\leftrightarrow$ Github\_Connection (Phụ thuộc User)\newline
+\textbf{Tỷ lệ:} 1 : 1
+& 
+Không có
+& 
+User ủy quyền và liên kết tài khoản cá nhân với GitHub qua OAuth2. Lưu \texttt{access\_token} và \texttt{scopes} phục vụ đồng bộ repository, commit, Pull Request, webhook.
+\\ \hline
 
-\textbf{Branch — Commit} (\texttt{<contains\_commit>}) \newline
-Branch (Yếu) $\leftrightarrow$ Commit (Yếu - Phụ thuộc Branch/Repo) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Branch (0..*) $\leftrightarrow$ Commit (1..1) \newline
-\textbf{Tham gia:} Branch (Partial), Commit (Total) &
-Không có &
-Một nhánh chứa nhiều lượt commit; mỗi commit thuộc về đúng một nhánh phát triển. \\ \hline
+% =========================================================
+\rowcolor{gray!10}
+\multicolumn{3}{|l|}{\textbf{B. Nhóm Mã nguồn \& Cấu trúc Code (VCS \& Code Domain)}} \\
+\hline
 
-\textbf{User — Commit} (\texttt{<makes\_commit>}) \newline
-User (Mạnh) $\leftrightarrow$ Commit (Yếu) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} User (0..*) $\leftrightarrow$ Commit (1..1) \newline
-\textbf{Tham gia:} User (Partial), Commit (Total) &
-Không có &
-Một người dùng thực hiện nhiều commit; mỗi commit được tạo bởi đúng một người dùng. \\ \hline
+\textbf{Workspace --- owns --- Repository}\newline
+\textit{Loại:} Workspace (Mạnh) $\leftrightarrow$ Repository (Mạnh)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có \newline(\texttt{workspace\_id} FK NOT NULL)
+& 
+Một Workspace quản lý nhiều Repository; mỗi Repository thuộc quyền sở hữu của đúng một Workspace.
+\\ \hline
 
-\textbf{Repository — Pull\allowbreak Request} (\texttt{<receives\_pr>}) \newline
-Repository (Mạnh) $\leftrightarrow$ PullRequest (Yếu - Phụ thuộc Repo) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Repository (0..*) $\leftrightarrow$ PullRequest (1..1) \newline
-\textbf{Tham gia:} Repository (Partial), PullRequest (Total) &
-Không có &
-Một Repository chứa nhiều Yêu cầu hợp nhất (PR); mỗi PR gửi về đúng một kho chứa. \\ \hline
+\textbf{Github\_Connection --- syncs --- Repository}\newline
+\textit{Loại:} Github\_Connection (Phụ thuộc User) $\leftrightarrow$ Repository (Mạnh)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có \newline(\texttt{github\_connection\_id} FK Nullable)
+& 
+Một kết nối GitHub có thể dùng để đồng bộ nhiều Repository trong Workspace; một Repository gắn với tối đa 1 kết nối đang hoạt động (có thể rỗng nếu bị thu hồi).
+\\ \hline
 
-\textbf{Commit — Code\allowbreak Diff} (\texttt{<generates\_diff>}) \newline
-Commit (Yếu) $\leftrightarrow$ CodeDiff (Yếu - Phụ thuộc Commit/PR) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Commit (1..*) $\leftrightarrow$ CodeDiff (1..1) \newline
-\textbf{Tham gia:} Commit (Total), CodeDiff (Total) &
-Không có &
-Một Commit sinh ra một hoặc nhiều bản ghi khác biệt code (Diff); mỗi bản ghi diff thuộc về duy nhất một commit. \\ \hline
+\textbf{Repository --- has\_branch --- Branch}\newline
+\textit{Loại:} Repository (Mạnh) $\leftrightarrow$ Branch (Yếu -- phụ thuộc Repository)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có \newline(\texttt{repository\_id} FK NOT NULL)
+& 
+Một Repository có ít nhất một nhánh mặc định; mỗi Branch bắt buộc thuộc đúng một Repository.
+\\ \hline
 
-\textbf{Pull\allowbreak Request — Commit} (\texttt{<includes\_commit>}) \newline
-PullRequest (Yếu) $\leftrightarrow$ Commit (Yếu) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} PullRequest (1..*) $\leftrightarrow$ Commit (1..1) \newline
-\textbf{Tham gia:} PullRequest (Total), Commit (Partial) &
-Không có &
-Một Yêu cầu hợp nhất (PR) tổng hợp danh sách gồm một hoặc nhiều commit; mỗi commit thuộc về đúng một PR. \\ \hline
+\textbf{Repository --- contains\_commit --- Commit}\newline
+\textit{Loại:} Repository (Mạnh) $\leftrightarrow$ Commit (Yếu -- phụ thuộc Repository)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có \newline(\texttt{repository\_id} FK NOT NULL)
+& 
+Đảm bảo mọi commit (kể cả commit mồ côi không còn trên branch nào) vẫn xác định được thuộc Repository nào.
+\\ \hline
 
-\textbf{Commit — File} (\texttt{<modifies>}) \newline
-Commit (Yếu) $\leftrightarrow$ File (Yếu - Phụ thuộc Repo) &
-\textbf{Tỷ lệ:} M:N \newline
-\textbf{Bản số:} Commit (1..*) $\leftrightarrow$ File (0..*) \newline
-\textbf{Tham gia:} Commit (Total), File (Partial) &
-\texttt{change\allowbreak\_type}, \newline
-\texttt{lines\allowbreak\_added}, \newline
-\texttt{lines\allowbreak\_deleted} &
-Một Commit tác động chỉnh sửa ít nhất một File; một File có thể chịu sự biến đổi qua nhiều lượt Commit. \\ \hline
+\textbf{Repository --- receives\_pr --- PullRequest}\newline
+\textit{Loại:} Repository (Mạnh) $\leftrightarrow$ PullRequest (Yếu -- phụ thuộc Repository)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có \newline(\texttt{repository\_id} FK NOT NULL)
+& 
+Một Repository chứa nhiều Pull Request; mỗi PR gửi về đúng một Repository.
+\\ \hline
 
-\textbf{Repository — File} (\texttt{<contains\_file>}) \newline
-Repository (Mạnh) $\leftrightarrow$ File (Yếu - Phụ thuộc Repo) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Repository (0..*) $\leftrightarrow$ File (1..1) \newline
-\textbf{Tham gia:} Repository (Partial), File (Total) &
-Không có &
-Một Repository quản lý cấu trúc cây thư mục chứa nhiều File mã nguồn; mỗi File thuộc một kho chứa duy nhất. \\ \hline
+\textbf{Branch --- includes --- Commit}\newline
+\textit{Loại:} Branch (Yếu) $\leftrightarrow$ Commit (Yếu)\newline
+\textbf{Tỷ lệ:} N : N
+& 
+Bảng trung gian \texttt{branch\_commit}
+& 
+Một Branch tham chiếu tới nhiều Commit; một Commit có thể được nhiều Branch cùng chứa hoặc không thuộc branch nào (dangling commit).
+\\ \hline
 
-\textbf{File — Code\allowbreak Entity} (\texttt{<parses\_into>}) \newline
-File (Yếu) $\leftrightarrow$ CodeEntity (Yếu - Phụ thuộc File) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} File (0..*) $\leftrightarrow$ Code\allowbreak Entity (1..1) \newline
-\textbf{Tham gia:} File (Partial), Code\allowbreak Entity (Total) &
-Không có &
-Một File code qua bóc tách AST thu được nhiều thực thể code (Class, Function); mỗi thực thể code nằm trọn trong đúng một File. \\ \hline
+\textbf{Commit --- has\_parent --- Commit}\newline
+\textit{Loại:} Commit (Yếu) $\leftrightarrow$ Commit (Yếu) --- Tự quan hệ\newline
+\textbf{Tỷ lệ:} N : N (child $\leftrightarrow$ parent)
+& 
+Bảng trung gian \texttt{commit\_parent}
+& 
+Một commit có thể có 0 cha (gốc), 1 cha (thường) hoặc nhiều cha (merge commit); một commit có thể là cha của nhiều commit con.
+\\ \hline
 
-\textbf{Code\allowbreak Entity — Code\allowbreak Entity} (\texttt{<depends\_on>}) \newline
-\textit{Đệ quy:} CodeEntity (Yếu) $\leftrightarrow$ CodeEntity (Yếu) &
-\textbf{Tỷ lệ:} M:N \newline
-\textbf{Bản số:} Phụ thuộc (0..*), Được phụ thuộc (0..*) \newline
-\textbf{Tham gia:} Cả 2 phía Partial &
-\texttt{dependency\allowbreak\_type} &
-Xác định mối quan hệ phụ thuộc (gọi hàm, kế thừa, import) giữa các đơn vị code trong hệ thống. \\ \hline
+\textbf{PullRequest --- references --- Branch}\newline
+\textit{Loại:} PullRequest (Yếu) $\leftrightarrow$ Branch (Yếu) --- 2 vai trò (source / target)\newline
+\textbf{Tỷ lệ:} 2 $\times$ (1 : N)
+& 
+\texttt{source\_branch\_id},\newline
+\texttt{target\_branch\_id} (FKs, Nullable)
+& 
+Mỗi PR tham chiếu một nhánh nguồn (source) và một nhánh đích (target); một Branch có thể là nguồn hoặc đích của nhiều PR khác nhau.
+\\ \hline
 
-\textbf{Workspace — Template} (\texttt{<defines>}) \newline
-Workspace (Mạnh) $\leftrightarrow$ Template (Mạnh) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Workspace (0..*) $\leftrightarrow$ Template (1..1) \newline
-\textbf{Tham gia:} Workspace (Partial), Template (Total) &
-Không có &
-Một Workspace định nghĩa nhiều khuôn mẫu tài liệu; mỗi mẫu tài liệu thuộc sở hữu của một Workspace. \\ \hline
+\textbf{PullRequest --- includes --- Commit}\newline
+\textit{Loại:} PullRequest (Yếu) $\leftrightarrow$ Commit (Yếu)\newline
+\textbf{Tỷ lệ:} N : N
+& 
+Bảng trung gian \texttt{pull\_request\_commit}
+& 
+Một PR tổng hợp một hoặc nhiều commit; một commit có thể xuất hiện trong nhiều PR khác nhau.
+\\ \hline
 
-\textbf{Template — Template\allowbreak Section} (\texttt{<has\_section>}) \newline
-Template (Mạnh) $\leftrightarrow$ TemplateSection (Yếu - Phụ thuộc Template) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Template (1..*) $\leftrightarrow$ Template\allowbreak Section (1..1) \newline
-\textbf{Tham gia:} Template (Total), Template\allowbreak Section (Total) &
-Không có &
-Một Template cấu thành từ ít nhất một Section dàn ý; mỗi Section nằm trên đúng một Template. \\ \hline
+\textbf{User --- authors / merges --- PullRequest}\newline
+\textit{Loại:} User (Mạnh) $\leftrightarrow$ PullRequest (Yếu) --- 2 vai trò (author / merged\_by)\newline
+\textbf{Tỷ lệ:} 2 $\times$ (1 : N)
+& 
+\texttt{author\_user\_id} (FK, NOT NULL),\newline
+\texttt{merged\_by\_user\_id} (FK, Nullable)
+& 
+Mỗi PR bắt buộc có đúng một tác giả; PR chỉ có người merge sau khi đã được hoàn tất phê duyệt và merge vào nhánh chính.
+\\ \hline
 
-\textbf{Template\allowbreak Section — Placeholder} (\texttt{<contains\_placeholder>}) \newline
-TemplateSection (Yếu) $\leftrightarrow$ Placeholder (Yếu - Phụ thuộc Section) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Template\allowbreak Section (0..*) $\leftrightarrow$ Placeholder (1..1) \newline
-\textbf{Tham gia:} Template\allowbreak Section (Partial), Placeholder (Total) &
-Không có &
-Mỗi mục trong mẫu tài liệu chứa nhiều biến chèn tự động. Khi xóa Section, các Placeholder nằm trong đó bị xóa theo. \\ \hline
+\textbf{User --- commits}\newline
+\textit{Loại:} Không dùng FK toàn vẹn CSDL\newline
+\textbf{Tỷ lệ:} Trích xuất Git metadata
+& 
+\texttt{author\_name},\newline \texttt{author\_email}
+& 
+Thông tin tác giả commit lưu trực tiếp dạng Text từ Git metadata; việc đối chiếu với User đăng ký hệ thống là xử lý nghiệp vụ riêng.
+\\ \hline
 
-\textbf{Placeholder — Code\allowbreak Entity} (\texttt{<maps\_to>}) \newline
-Placeholder (Yếu) $\leftrightarrow$ CodeEntity (Yếu) &
-\textbf{Tỷ lệ:} M:N \newline
-\textbf{Bản số:} Placeholder (0..*) $\leftrightarrow$ Code\allowbreak Entity (0..*) \newline
-\textbf{Tham gia:} Placeholder (Partial), Code\allowbreak Entity (Partial) &
-\texttt{extraction\allowbreak\_rule}, \newline
-\texttt{is\allowbreak\_active} &
-Ánh xạ chỉ thị cho AI biết lấy thông tin từ thành phần code nào để điền vào biến trong mẫu. \\ \hline
+\textbf{Commit --- generates\_diff --- CodeDiff}\newline
+\textit{Loại:} Commit (Yếu) $\leftrightarrow$ CodeDiff (Yếu -- phụ thuộc Commit)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Một Commit sinh ra một hoặc nhiều bản ghi CodeDiff; mỗi CodeDiff thuộc về duy nhất một Commit.
+\\ \hline
 
-\textbf{Workspace — Document} (\texttt{<manages>}) \newline
-Workspace (Mạnh) $\leftrightarrow$ Document (Mạnh) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Workspace (0..*) $\leftrightarrow$ Document (1..1) \newline
-\textbf{Tham gia:} Workspace (Partial), Document (Total) &
-Không có &
-Workspace quản lý danh mục tài liệu gốc của dự án; một tài liệu thuộc về đúng một Workspace. \\ \hline
+\textbf{Commit --- modifies --- File}\newline
+\texttt{<modifies>}\newline
+\textit{Loại:} Commit (Yếu) $\leftrightarrow$ File (Yếu -- phụ thuộc Repository)\newline
+\textbf{Tỷ lệ:} M : N
+& 
+\texttt{change\_type},\newline
+\texttt{lines\_added},\newline
+\texttt{lines\_deleted}
+& 
+Một Commit chỉnh sửa ít nhất một File; một File có thể được sửa đổi qua nhiều Commit (hoặc chưa từng bị sửa).
+\\ \hline
 
-\textbf{User — Document} (\texttt{<authors>}) \newline
-User (Mạnh) $\leftrightarrow$ Document (Mạnh) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} User (0..*) $\leftrightarrow$ Document (1..1) \newline
-\textbf{Tham gia:} User (Partial), Document (Total) &
-Không có &
-Người dùng đứng tên tác giả khởi tạo tài liệu; mỗi tài liệu có một tác giả duy nhất. \\ \hline
+\textbf{Repository --- contains\_file --- File}\newline
+\textit{Loại:} Repository (Mạnh) $\leftrightarrow$ File (Yếu -- phụ thuộc Repository)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Một Repository quản lý cây thư mục chứa nhiều File; mỗi File thuộc một Repository duy nhất.
+\\ \hline
 
-\textbf{Document — Document\allowbreak Version} (\texttt{<has\_version>}) \newline
-Document (Mạnh) $\leftrightarrow$ DocumentVersion (Yếu - Phụ thuộc Document) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Document (1..*) $\leftrightarrow$ Document\allowbreak Version (1..1) \newline
-\textbf{Tham gia:} Document (Total), Document\allowbreak Version (Total) &
-Không có &
-Một tài liệu chính thức chứa ít nhất một phiên bản nội dung; mỗi phiên bản đại diện cho một mốc chỉnh sửa. \\ \hline
+\textbf{File --- parses\_into --- CodeEntity}\newline
+\textit{Loại:} File (Yếu) $\leftrightarrow$ CodeEntity (Yếu -- phụ thuộc File)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Một File qua bóc tách AST thu được nhiều CodeEntity (Class, Function...); mỗi CodeEntity nằm trọn trong đúng một File.
+\\ \hline
 
-\textbf{Document\allowbreak Version — Change\allowbreak Log} (\texttt{<tracks\_change>}) \newline
-DocumentVersion (Yếu) $\leftrightarrow$ ChangeLog (Yếu - Phụ thuộc DocVersion) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Document\allowbreak Version (0..*) $\leftrightarrow$ ChangeLog (1..1) \newline
-\textbf{Tham gia:} Document\allowbreak Version (Partial), ChangeLog (Total) &
-Không có &
-Mỗi phiên bản tài liệu có thể ghi nhận nhiều lượt nhật ký biến động nội dung chi tiết. \\ \hline
+\textbf{CodeEntity --- depends\_on --- CodeEntity}\newline
+\texttt{<depends\_on>}\newline
+\textit{Loại:} CodeEntity (Yếu) $\leftrightarrow$ CodeEntity (Yếu) --- Tự quan hệ\newline
+\textbf{Tỷ lệ:} M : N
+& 
+\texttt{dependency\_type} (import, function\_call, inherits)
+& 
+Xác định quan hệ phụ thuộc (gọi hàm, kế thừa, import) giữa các CodeEntity trong hệ thống.
+\\ \hline
 
-\textbf{Document\allowbreak Version — Review} (\texttt{<has\_review>}) \newline
-DocumentVersion (Yếu) $\leftrightarrow$ Review (Yếu - Phụ thuộc DocVersion) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Document\allowbreak Version (0..*) $\leftrightarrow$ Review (1..1) \newline
-\textbf{Tham gia:} Document\allowbreak Version (Partial), Review (Total) &
-Không có &
-Một phiên bản tài liệu có thể nhận 0 hoặc nhiều lượt đánh giá kỹ thuật; mỗi lượt đánh giá thuộc về duy nhất một phiên bản. \\ \hline
+% =========================================================
+\rowcolor{gray!10}
+\multicolumn{3}{|l|}{\textbf{C. Nhóm Khuôn mẫu Tài liệu (Template Engine Domain)}} \\
+\hline
 
-\textbf{User — Review} (\texttt{<performs\_review>}) \newline
-User (Mạnh) $\leftrightarrow$ Review (Yếu) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} User (0..*) $\leftrightarrow$ Review (1..1) \newline
-\textbf{Tham gia:} User (Partial), Review (Total) &
-Không có &
-Một người dùng có thể thực hiện 0 hoặc nhiều lượt đánh giá; mỗi lượt review do đúng một người dùng chịu trách nhiệm. \\ \hline
+\textbf{Workspace --- defines --- Template}\newline
+\textit{Loại:} Workspace (Mạnh) $\leftrightarrow$ Template (Mạnh)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Một Workspace định nghĩa nhiều Template; mỗi Template thuộc sở hữu của một Workspace.
+\\ \hline
 
-\textbf{Review — Review\allowbreak Comment} (\texttt{<contains\_comment>}) \newline
-Review (Sự kiện/Yếu) $\leftrightarrow$ ReviewComment (Yếu - Phụ thuộc Review) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Review (0..*) $\leftrightarrow$ Review\allowbreak Comment (1..1) \newline
-\textbf{Tham gia:} Review (Partial), Review\allowbreak Comment (Total) &
-Không có &
-Một phiên kiểm duyệt kỹ thuật chứa nhiều bình luận góp ý chi tiết; mỗi bình luận gắn chặt với một lượt review. \\ \hline
+\textbf{Template --- has\_section --- TemplateSection}\newline
+\textit{Loại:} Template (Mạnh) $\leftrightarrow$ TemplateSection (Yếu -- phụ thuộc Template)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Một Template cấu thành từ ít nhất một Section; mỗi Section nằm trên đúng một Template.
+\\ \hline
 
-\textbf{Document\allowbreak Version — Approval} (\texttt{<requires\_approval>}) \newline
-DocumentVersion (Yếu) $\leftrightarrow$ Approval (Yếu - Phụ thuộc DocVersion) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Document\allowbreak Version (0..*) $\leftrightarrow$ Approval (1..1) \newline
-\textbf{Tham gia:} Document\allowbreak Version (Partial), Approval (Total) &
-Không có &
-Một phiên bản tài liệu có thể có 0 hoặc nhiều lượt phê duyệt; mỗi lượt phê duyệt bắt buộc thuộc về đúng một phiên bản. \\ \hline
+\textbf{TemplateSection --- contains\_placeholder --- Placeholder}\newline
+\textit{Loại:} TemplateSection (Yếu) $\leftrightarrow$ Placeholder (Yếu -- phụ thuộc Section)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Mỗi Section chứa nhiều Placeholder (biến chèn tự động). Khi xoá Section, toàn bộ Placeholder trong đó bị xoá theo (cascade).
+\\ \hline
 
-\textbf{User — Approval} (\texttt{<grants\_approval>}) \newline
-User (Mạnh) $\leftrightarrow$ Approval (Yếu) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} User (0..*) $\leftrightarrow$ Approval (1..1) \newline
-\textbf{Tham gia:} User (Partial), Approval (Total) &
-Không có &
-Một Manager có thể thực hiện 0 hoặc nhiều đợt phê duyệt; mỗi bản ghi phê duyệt do đúng một Manager ra quyết định. \\ \hline
+\textbf{Placeholder --- maps\_to --- CodeEntity}\newline
+\textit{Loại:} Placeholder (Yếu) $\leftrightarrow$ CodeEntity (Yếu) qua \textbf{TemplateMapping}\newline
+\textbf{Tỷ lệ:} M : N
+& 
+\texttt{extraction\_rule},\newline
+\texttt{is\_active}\newline
+(trên TemplateMapping)
+& 
+Mỗi bản ghi TemplateMapping chỉ định cho AI biết lấy thông tin từ CodeEntity nào để điền vào Placeholder tương ứng trong Template.
+\\ \hline
 
-\textbf{Document\allowbreak Version — Ground\allowbreak ing\allowbreak Evidence} (\texttt{<has\_evidence>}) \newline
-DocumentVersion (Yếu) $\leftrightarrow$ GroundingEvidence (Yếu - Phụ thuộc DocVersion) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Document\allowbreak Version (0..*) $\leftrightarrow$ Grounding\allowbreak Evidence (1..1) \newline
-\textbf{Tham gia:} Document\allowbreak Version (Partial), Grounding\allowbreak Evidence (Total) &
-Không có &
-Phiên bản tài liệu lưu trữ bảng minh chứng đối soát nguồn gốc code để chống ảo giác (hallucination) của AI. \\ \hline
+% =========================================================
+\rowcolor{gray!10}
+\multicolumn{3}{|l|}{\textbf{D. Nhóm Tài liệu \& Vòng đời Dữ liệu (Documentation Domain)}} \\
+\hline
 
-\textbf{Ground\allowbreak ing\allowbreak Evidence — Code\allowbreak Entity} (\texttt{<references\_code>}) \newline
-GroundingEvidence (Yếu) $\leftrightarrow$ CodeEntity (Yếu) &
-\textbf{Tỷ lệ:} M:N \newline
-\textbf{Bản số:} Grounding\allowbreak Evidence (0..*) $\leftrightarrow$ Code\allowbreak Entity (0..*) \newline
-\textbf{Tham gia:} Grounding\allowbreak Evidence (Partial), Code\allowbreak Entity (Partial) &
-\texttt{similarity\allowbreak\_score}, \newline
-\texttt{match\allowbreak\_type} &
-Minh chứng AI liên kết trực tiếp với các đơn vị code cụ thể trong hệ thống để phục vụ đối soát sai lệch. \\ \hline
+\textbf{Workspace --- manages --- Document}\newline
+\textit{Loại:} Workspace (Mạnh) $\leftrightarrow$ Document (Mạnh)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Workspace quản lý danh mục Document gốc của dự án; mỗi Document thuộc đúng một Workspace.
+\\ \hline
 
-\textbf{Ground\allowbreak ing\allowbreak Evidence — Drift\allowbreak Alert} (\texttt{<detects>}) \newline
-GroundingEvidence (Yếu) $\leftrightarrow$ DriftAlert (Thực thể sự kiện) &
-\textbf{Tỷ lệ:} 1:N \newline
-\textbf{Bản số:} Grounding\allowbreak Evidence (0..*) $\leftrightarrow$ DriftAlert (1..1) \newline
-\textbf{Tham gia:} Grounding\allowbreak Evidence (Partial), DriftAlert (Total) &
-Không có &
-Minh chứng đối soát khi phát hiện sự bất đồng giữa tài liệu và mã nguồn mới sẽ kích hoạt cảnh báo sai lệch (Drift Alert). \\ \hline
+\textbf{User --- authors --- Document}\newline
+\textit{Loại:} User (Mạnh) $\leftrightarrow$ Document (Mạnh)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+User đứng tên tác giả khởi tạo Document; mỗi Document có một tác giả duy nhất.
+\\ \hline
+
+\textbf{Document --- has\_version --- DocumentVersion}\newline
+\textit{Loại:} Document (Mạnh) $\leftrightarrow$ DocumentVersion (Yếu -- phụ thuộc Document)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Một Document chứa ít nhất một DocumentVersion; mỗi phiên bản đại diện cho một mốc chỉnh sửa của Document gốc.
+\\ \hline
+
+\textbf{DocumentVersion --- tracks\_change --- ChangeLog}\newline
+\textit{Loại:} DocumentVersion (Yếu) $\leftrightarrow$ ChangeLog (Yếu -- phụ thuộc Version)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Mỗi DocumentVersion có thể ghi nhận nhiều lượt ChangeLog chi tiết.
+\\ \hline
+
+% =========================================================
+\rowcolor{gray!10}
+\multicolumn{3}{|l|}{\textbf{E. Nhóm Kiểm duyệt \& Phê duyệt (Review \& Governance Domain)}} \\
+\hline
+
+\textbf{DocumentVersion --- has\_review --- Review}\newline
+\textit{Loại:} DocumentVersion (Yếu) $\leftrightarrow$ Review (Yếu -- phụ thuộc Version)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Thuộc tính thực thể Review:\newline
+\texttt{status}, \texttt{decision},\newline
+\texttt{summary\_notes}, \texttt{created\_at}
+& 
+Một DocumentVersion có thể nhận 0 hoặc nhiều lượt Review; mỗi Review bắt buộc thuộc về đúng một DocumentVersion.
+\\ \hline
+
+\textbf{User --- performs\_review --- Review}\newline
+\textit{Loại:} User (Mạnh) $\leftrightarrow$ Review (Yếu)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Một User có thể thực hiện 0 hoặc nhiều Review; mỗi Review do đúng một User chịu trách nhiệm.
+\\ \hline
+
+\textbf{Review --- contains\_comment --- ReviewComment}\newline
+\textit{Loại:} Review (Sự kiện) $\leftrightarrow$ ReviewComment (Yếu -- phụ thuộc Review)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Một Review chứa nhiều ReviewComment; mỗi comment gắn chặt với một Review.
+\\ \hline
+
+\textbf{DocumentVersion --- requires\_approval --- Approval}\newline
+\textit{Loại:} DocumentVersion (Yếu) $\leftrightarrow$ Approval (Yếu -- phụ thuộc Version)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Thuộc tính thực thể Approval:\newline
+\texttt{decision}, \texttt{rejection\_reason},\newline
+\texttt{approved\_at}
+& 
+Một DocumentVersion có thể có 0 hoặc nhiều lượt Approval; mỗi Approval bắt buộc thuộc đúng một DocumentVersion.
+\\ \hline
+
+\textbf{User --- grants\_approval --- Approval}\newline
+\textit{Loại:} User (Mạnh) $\leftrightarrow$ Approval (Yếu)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Một User (Manager) có thể thực hiện 0 hoặc nhiều Approval; mỗi bản ghi Approval do đúng một User ra quyết định.
+\\ \hline
+
+% =========================================================
+\rowcolor{gray!10}
+\multicolumn{3}{|l|}{\textbf{F. Nhóm AI Evidence \& Giám sát (Observability Domain)}} \\
+\hline
+
+\textbf{DocumentVersion --- has\_evidence --- GroundingEvidence}\newline
+\textit{Loại:} DocumentVersion (Yếu) $\leftrightarrow$ GroundingEvidence (Yếu)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+DocumentVersion lưu trữ bảng minh chứng đối soát nguồn gốc code để chống hallucination của AI.
+\\ \hline
+
+\textbf{GroundingEvidence --- references\_code --- CodeEntity}\newline
+\texttt{<references\_code>}\newline
+\textit{Loại:} GroundingEvidence (Yếu) $\leftrightarrow$ CodeEntity (Yếu)\newline
+\textbf{Tỷ lệ:} M : N
+& 
+\texttt{similarity\_score},\newline
+\texttt{match\_type}
+& 
+Minh chứng AI liên kết trực tiếp với các CodeEntity cụ thể để phục vụ đối soát sai lệch.
+\\ \hline
+
+\textbf{GroundingEvidence --- detects --- DriftAlert}\newline
+\textit{Loại:} GroundingEvidence (Yếu) $\leftrightarrow$ DriftAlert (Sự kiện)\newline
+\textbf{Tỷ lệ:} 1 : N
+& 
+Không có
+& 
+Khi GroundingEvidence phát hiện bất đồng giữa tài liệu và mã nguồn mới, hệ thống kích hoạt một DriftAlert.
+\\ \hline
 
 \end{longtable}
 \endgroup

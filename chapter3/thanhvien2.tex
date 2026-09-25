@@ -1,224 +1,214 @@
-\setcounter{subsection}{1} % Ép subsection tiếp theo thành số 2 (tức là 3.2)
-\subsection{Phân hệ Mã nguồn \& Cấu trúc Code}
+\subsubsection{Nhóm Mã nguồn \& Cấu trúc Code}
 
-
-
-% Bảng repositories
-\noindent\textbf{Tên Bảng: repositories} \par\vspace{0.1cm}
-\begin{tabular}{|l|l|c|c|}
+\textbf{Bảng: repositories}\\
+Bảng chính (Thực thể mạnh: Repository)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
-\hline
-repository\_id & UUID & PK & NOT NULL \\
-\hline
-workspace\_id &  & FK & NOT NULL \\
-\hline
-name & & & NOT NULL \\
-\hline
-url & & Unique & NOT NULL \\
-\hline
-default\_branch & & & NOT NULL \\
-\hline
-sync\_status & & & NOT NULL \\
-\hline
-last\_synced\_at & & & NULL \\
-\hline
-created\_at & & & NOT NULL \\
-\hline
-updated\_at & & & NOT NULL \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+repository\_id & UUID & PK & NOT NULL \\ \hline
+workspace\_id & & FK & NOT NULL \\ \hline
+github\_connection\_id & & FK & NULL \\ \hline
+name & & & NOT NULL \\ \hline
+url & & & NOT NULL \\ \hline
+default\_branch & & & NULL \\ \hline
+sync\_status & & & NOT NULL \\ \hline
+last\_synced\_at & & & NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
-\vspace{0.4cm}
+\end{table}
 
-% Bảng branches
-\noindent\textbf{Tên Bảng: branches} \par\vspace{0.1cm}
-\begin{tabular}{|l|l|c|c|}
+\textbf{Bảng: branches}\\
+Bảng phụ (Thực thể yếu – phụ thuộc Repository)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
-\hline
-branch\_id & UUID & PK & NOT NULL \\
-\hline
-repository\_id &  & FK & NOT NULL \\
-\hline
-branch\_name & & & NOT NULL \\
-\hline
-is\_default & & & NOT NULL \\
-\hline
-created\_at & & & NOT NULL \\
-\hline
-updated\_at & & & NOT NULL \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+branch\_id & UUID & PK & NOT NULL \\ \hline
+repository\_id & & FK & NOT NULL \\ \hline
+branch\_name & & & NOT NULL \\ \hline
+is\_default & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
-\vspace{0.4cm}
+\end{table}
 
-% Bảng commits
-\noindent\textbf{Tên Bảng: commits} \par\vspace{0.1cm}
-\begin{tabular}{|l|l|c|c|}
+\textbf{Bảng: commits}\\
+Bảng phụ (Thực thể yếu – phụ thuộc Repository)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
-\hline
-commit\_id & UUID & PK & NOT NULL \\
-\hline
-branch\_id &  & FK & NOT NULL \\
-\hline
-user\_id &  & FK & NULL \\
-\hline
-commit\_hash & & Unique & NOT NULL \\
-\hline
-message & & & NOT NULL \\
-\hline
-author\_name & & & NOT NULL \\
-\hline
-author\_email & & & NOT NULL \\
-\hline
-committed\_at & & & NOT NULL \\
-\hline
-created\_at & & & NOT NULL \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+commit\_id & UUID & PK & NOT NULL \\ \hline
+repository\_id & & FK & NOT NULL \\ \hline
+commit\_hash & & & NOT NULL \\ \hline
+author\_name & & & NOT NULL \\ \hline
+author\_email & & & NOT NULL \\ \hline
+message & & & NULL \\ \hline
+committed\_at & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
 \end{tabular}
-\vspace{0.4cm}
+\end{table}
 
-% Bảng pull_requests
-\noindent\textbf{Tên Bảng: pull\_requests} \par\vspace{0.1cm}
-\begin{tabular}{|l|l|c|c|}
+\textbf{Bảng: pull\_requests}\\
+Bảng phụ (Thực thể yếu – phụ thuộc Repository)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
-\hline
-pr\_id & UUID & PK & NOT NULL \\
-\hline
-repository\_id &  & FK & NOT NULL \\
-\hline
-pr\_number & & & NOT NULL \\
-\hline
-title & & & NOT NULL \\
-\hline
-description & & & NOT NULL \\
-\hline
-source\_branch & & & NOT NULL \\
-\hline
-target\_branch & & & NOT NULL \\
-\hline
-status & & & NOT NULL \\
-\hline
-created\_at & & & NOT NULL \\
-\hline
-updated\_at & & & NOT NULL \\
-\hline
-merged\_at & & & NULL \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+pr\_id & UUID & PK & NOT NULL \\ \hline
+repository\_id & & FK & NOT NULL \\ \hline
+pr\_number & & & NOT NULL \\ \hline
+title & & & NOT NULL \\ \hline
+description & & & NULL \\ \hline
+source\_branch & & & NOT NULL \\ \hline
+target\_branch & & & NOT NULL \\ \hline
+status & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
+merged\_at & & & NULL \\ \hline
 \end{tabular}
-\vspace{0.4cm}
+\end{table}
 
-% Bảng pull_request_labels
-\noindent\textbf{Tên Bảng: pull\_request\_labels} \par\vspace{0.1cm}
-\begin{tabular}{|l|l|c|c|}
+\textbf{Bảng: pull\_request\_labels}\\
+Bảng phụ đa trị
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
-\hline
-label\_id & UUID & PK & NOT NULL \\
-\hline
-pr\_id & & FK & NOT NULL \\
-\hline
-label\_name & & & NOT NULL \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+label\_id & UUID & PK & NOT NULL \\ \hline
+pr\_id & & FK & NOT NULL \\ \hline
+label\_value & & & NOT NULL \\ \hline
 \end{tabular}
-\vspace{0.4cm}
+\end{table}
 
-% Bảng code_diffs
-\noindent\textbf{Tên Bảng: code\_diffs} \par\vspace{0.1cm}
-\begin{tabular}{|l|l|c|c|}
+\textbf{Bảng: code\_diffs}\\
+Bảng phụ (Thực thể yếu – phụ thuộc Commit)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
-\hline
-diff\_id & UUID & PK & NOT NULL \\
-\hline
-commit\_id &  & FK & NULL \\
-\hline
-pr\_id &  & FK & NOT NULL \\
-\hline
-file\_path & & & NOT NULL \\
-\hline
-change\_type & & & NOT NULL \\
-\hline
-additions & & & NOT NULL \\
-\hline
-deletions & & & NOT NULL \\
-\hline
-diff\_content & & & NULL \\
-\hline
-created\_at & & & NOT NULL \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+diff\_id & UUID & PK & NOT NULL \\ \hline
+commit\_id & & FK & NOT NULL \\ \hline
+file\_path & & & NOT NULL \\ \hline
+change\_type & & & NOT NULL \\ \hline
+additions & & & NOT NULL \\ \hline
+deletions & & & NOT NULL \\ \hline
+diff\_content & & & NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
 \end{tabular}
-\vspace{0.4cm}
+\end{table}
 
-% Bảng files
-\noindent\textbf{Tên Bảng: files} \par\vspace{0.1cm}
-\begin{tabular}{|l|l|c|c|}
+\textbf{Bảng: commit\_file}\\
+Bảng trung gian
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
-\hline
-file\_id & UUID & PK & NOT NULL \\
-\hline
-repository\_id &  & FK & NOT NULL \\
-\hline
-file\_path & & & NOT NULL \\
-\hline
-file\_type & & & NULL \\
-\hline
-status & & & NOT NULL \\
-\hline
-created\_at & & & NOT NULL \\
-\hline
-updated\_at & & & NOT NULL \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+change\_id & UUID & PK & NOT NULL \\ \hline
+commit\_id & & FK & NOT NULL \\ \hline
+file\_id & & FK & NOT NULL \\ \hline
+change\_type & & & NOT NULL \\ \hline
+lines\_added & & & NOT NULL \\ \hline
+lines\_deleted & & & NOT NULL \\ \hline
 \end{tabular}
-\vspace{0.4cm}
+\end{table}
 
-% Bảng code_entities
-\noindent\textbf{Tên Bảng: code\_entities} \par\vspace{0.1cm}
-\begin{tabular}{|l|l|c|c|}
+\textbf{Bảng: files}\\
+Bảng phụ (Thực thể yếu – phụ thuộc Repository)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
-\hline
-entity\_id & UUID & PK & NOT NULL \\
-\hline
-file\_id &  & FK & NOT NULL \\
-\hline
-entity\_name & & & NOT NULL \\
-\hline
-entity\_type & & & NOT NULL \\
-\hline
-signature & & & NULL \\
-\hline
-doc\_comment & & & NULL \\
-\hline
-start\_line & & & NOT NULL \\
-\hline
-end\_line & & & NOT NULL \\
-\hline
-created\_at & & & NOT NULL \\
-\hline
-updated\_at & & & NOT NULL \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+file\_id & UUID & PK & NOT NULL \\ \hline
+repository\_id & & FK & NOT NULL \\ \hline
+file\_path & & & NOT NULL \\ \hline
+file\_type & & & NULL \\ \hline
+status & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
-\vspace{0.4cm}
+\end{table}
 
-% Bảng dependencies
-\noindent\textbf{Tên Bảng: dependencies} \par\vspace{0.1cm}
-\begin{tabular}{|l|l|c|c|}
+\textbf{Bảng: code\_entities}\\
+Bảng phụ (Thực thể yếu – phụ thuộc File)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên Cột} & \textbf{Kiểu Dữ liệu} & \textbf{Khóa} & \textbf{Ràng Buộc} \\
-\hline
-dependency\_id & UUID & PK & NOT NULL \\
-\hline
-source\_entity\_id &  & FK & NOT NULL \\
-\hline
-target\_entity\_id &  & FK & NOT NULL \\
-\hline
-dependency\_type & & & NOT NULL \\
-\hline
-created\_at & & & NOT NULL \\
-\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+entity\_id & UUID & PK & NOT NULL \\ \hline
+file\_id & & FK & NOT NULL \\ \hline
+entity\_name & & & NOT NULL \\ \hline
+entity\_type & & & NOT NULL \\ \hline
+signature & & & NULL \\ \hline
+doc\_comment & & & NULL \\ \hline
+start\_line & & & NOT NULL \\ \hline
+end\_line & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+updated\_at & & & NOT NULL \\ \hline
 \end{tabular}
-\vspace{0.6cm}
+\end{table}
+
+\textbf{Bảng: dependencies}\\
+Bảng trung gian đệ quy
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+dependency\_id & UUID & PK & NOT NULL \\ \hline
+dependent\_entity\_id & & FK & NOT NULL \\ \hline
+target\_entity\_id & & FK & NOT NULL \\ \hline
+dependency\_type & & & NOT NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Bảng: branch\_commit}\\
+Bảng trung gian
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+link\_id & UUID & PK & NOT NULL \\ \hline
+branch\_id & & FK & NOT NULL \\ \hline
+commit\_id & & FK & NOT NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Bảng: pull\_request\_commit}\\
+Bảng trung gian
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+link\_id & UUID & PK & NOT NULL \\ \hline
+pr\_id & & FK & NOT NULL \\ \hline
+commit\_id & & FK & NOT NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Bảng: commit\_parent}\\
+Bảng trung gian đệ quy
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+link\_id & UUID & PK & NOT NULL \\ \hline
+commit\_id & & FK & NOT NULL \\ \hline
+parent\_commit\_id & & FK & NOT NULL \\ \hline
+\end{tabular}
+\end{table}
 

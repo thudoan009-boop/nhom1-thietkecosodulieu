@@ -1,134 +1,47 @@
 \setcounter{subsection}{1} 
 \subsection{ Phân hệ minh chứng AI \& Giám sát }
-\subsubsection{Bảng review}
 
-\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\textbf{Bảng: grounding\_evidences}\\
+Bảng phụ (Thực thể yếu – phụ thuộc DocumentVersion)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{review\_id} & PK & not null \\
-\hline
-\texttt{version\_id} & FK & not null \\
-\hline
-\texttt{user\_id} & FK & not null \\
-\hline
-\texttt{status} & & not null \\
-\hline
-\texttt{decision} & & null \\
-\hline
-\texttt{summary\_notes} & & null \\
-\hline
-\texttt{created\_at} & & not null \\
-\hline
-\texttt{updated\_at} & & not null \\
-\hline
-\end{longtable}
-\vspace{-0.3cm}
-\noindent UNIQUE (version\_id, user\_id) Một người dùng chỉ được phép có tối đa 1 bản review cho mỗi phiên bản
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+evidence\_id & UUID & PK & NOT NULL \\ \hline
+version\_id & & FK & NOT NULL \\ \hline
+snippet\_content & & & NULL \\ \hline
+purpose & & & NOT NULL \\ \hline
+created\_at & & & NOT NULL \\ \hline
+\end{tabular}
+\end{table}
 
+\textbf{Bảng: grounding\_evidence\_code\_entities}\\
+Bảng trung gian
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+link\_id & UUID & PK & NOT NULL \\ \hline
+evidence\_id & & FK & NOT NULL \\ \hline
+code\_entity\_id & & FK & NOT NULL \\ \hline
+similarity\_score & & & NULL \\ \hline
+match\_type & & & NULL \\ \hline
+\end{tabular}
+\end{table}
 
-\subsubsection{Bảng review\_comments}
-
-\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\textbf{Bảng: drift\_alerts}\\
+Bảng phụ / sự kiện (phụ thuộc GroundingEvidence)
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{comment\_id} & PK & not null \\
-\hline
-\texttt{review\_id} & FK & not null \\
-\hline
-\texttt{content} & & not null \\
-\hline
-\texttt{is\_resolved} & & not null, default false \\
-\hline
-\texttt{created\_at} & & not null \\
-\hline
-\texttt{update\_at} & & not null \\
-\hline
-\end{longtable}
-
-
-\subsubsection{Bảng grounding\_evidences}
-
-\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
-\hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{evidence\_id} & PK & not null \\
-\hline
-\texttt{version\_id} & FK & not null \\
-\hline
-\texttt{snippet\_content} & & not null \\
-\hline
-\texttt{purpose} & & null \\
-\hline
-\texttt{created\_at} & & not null \\
-\hline
-\end{longtable}
-
-
-\subsubsection{Bảng approvals}
-
-\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
-\hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{approval\_id} & PK & not null \\
-\hline
-\texttt{version\_id} & FK & not null \\
-\hline
-\texttt{user\_id} & FK & not null \\
-\hline
-\texttt{decision} & & not null \\
-\hline
-\texttt{rejection\_reason} & & null \\
-\hline
-\texttt{approved\_at} & & null \\
-\hline
-\end{longtable}
-\vspace{-0.3cm}
-\noindent UNIQUE (version\_id, user\_id) Một người dùng chỉ nên có tối đa 1 bản ghi phê duyệt cho mỗi phiên bản.
-\
-
-
-\subsubsection{Bảng drift\_alerts}
-
-\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
-\hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{alert\_id} & PK & not null \\
-\hline
-\texttt{evidence\_id} & FK & not null \\
-\hline
-\texttt{drift\_type} & & not null \\
-\hline
-\texttt{status} & & not null \\
-\hline
-\texttt{detected\_at} & & not null \\
-\hline
-\end{longtable}
-\vspace{-0.3cm}
-\noindent UNIQUE (evidence\_id, drift\_type) Một loại drift chỉ nên có tối đa 1 cảnh báo cho mỗi bằng chứng.
-
-\subsubsection{Bảng grounding\_evidence\_code\_entities}
-
-\begin{longtable}{|p{0.28\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
-\hline
-\textbf{Tên cột} & \textbf{Khóa} & \textbf{Ràng buộc} \\
-\hline
-\texttt{link\_id} & PK & not null \\
-\hline
-\texttt{evidence\_id} & FK & not null \\
-\hline
-\texttt{entity\_id} & FK & not null \\
-\hline
-\texttt{similarity\_score} & & not null \\
-\hline
-\texttt{match\_type} & & not null \\
-\hline
-\end{longtable}
-\vspace{-0.3cm}
-\noindent UNIQUE (evidence\_id, entity\_id) Một bằng chứng chỉ nên liên kết với một thực thể duy nhất.
-
-
+\textbf{Cột} & \textbf{Kiểu} & \textbf{Khóa} & \textbf{Ràng buộc} \\ \hline
+alert\_id & UUID & PK & NOT NULL \\ \hline
+evidence\_id & & FK & NOT NULL \\ \hline
+drift\_type & & & NOT NULL \\ \hline
+status & & & NOT NULL \\ \hline
+detected\_at & & & NOT NULL \\ \hline
+\end{tabular}
+\end{table}
