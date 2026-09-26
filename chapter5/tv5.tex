@@ -1,496 +1,240 @@
-\section{Fill Data}
-\label{sec:fill-data}
+\chapter{Các Truy vấn Hệ thống Demo}
 
-Sau khi hoàn thành việc xây dựng lược đồ vật lý, dữ liệu mẫu được nạp vào
-các bảng nhằm kiểm tra khả năng hoạt động và tính nhất quán của cơ sở dữ liệu.
-Script Fill Data sử dụng các bảng tạm để sinh và ánh xạ UUID giữa các thực thể,
-sau đó thực hiện chèn dữ liệu theo đúng các mối quan hệ khóa chính và khóa ngoại.
-Việc nạp dữ liệu giúp kiểm thử cấu trúc cơ sở dữ liệu và tạo cơ sở cho các bước
-truy vấn, kiểm tra và đánh giá hệ thống ở các giai đoạn tiếp theo.
+Dưới đây là danh sách các truy vấn SQL minh họa cho các tính năng của hệ thống.
+
+\section{Truy vấn Phân quyền (RBAC): Danh sách Người dùng và Vai trò trong Workspace}
+Hiển thị nhân sự đang tham gia vào các không gian làm việc và chức danh của họ.
 
 \begin{lstlisting}[language=SQL]
-SET NOCOUNT ON;
-BEGIN TRAN;
+SELECT 
+    w.name AS WorkspaceName,
+    u.first_name + ' ' + u.last_name AS FullName,
+    u.email,
+    r.role_name AS Role,
+    wm.status AS MemberStatus
+FROM workspaces w
+JOIN workspace_members wm ON w.workspace_id = wm.workspace_id
+JOIN users u ON wm.user_id = u.user_id
+JOIN roles r ON wm.role_id = r.role_id
+ORDER BY w.name, r.role_name;
+\end{lstlisting}
 
--- =========================================================================
--- BƯỚC 1: TẠO 35 BẢNG TẠM CHỨA UUID CHO TỪNG BẢNG ĐỂ DỄ DÀNG MAP DỮ LIỆU
--- =========================================================================
-CREATE TABLE #Users (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Roles (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Perms (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #RolePerms (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Workspaces (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #WsMembers (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #GitConns (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #GitScopes (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Repos (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Branches (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #PRs (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #PRLabels (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Commits (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Files (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #CodeDiffs (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Entities (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Deps (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Templates (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Sections (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Placeholders (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Mappings (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Docs (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #DocVers (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Evidences (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Reviews (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #ReviewCmts (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Approvals (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #ChangeLogs (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Drifts (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #Notifs (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #CommitFiles (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #EvidenceEntities (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #BranchCommits (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #PRCommits (idx INT, id UNIQUEIDENTIFIER);
-CREATE TABLE #CommitParents (idx INT, id UNIQUEIDENTIFIER);
+\section{Truy vấn Phân quyền: Kiểm tra chi tiết Quyền hạn (Permissions) của một Vai trò}
+Demo cách hệ thống biết Developer hay Manager được phép làm gì.
 
--- =========================================================================
--- BƯỚC 2: VÒNG LẶP SINH SỐ LƯỢNG UUID CHÍNH XÁC (TỐI ĐA 60 DÒNG)
--- =========================================================================
-DECLARE @i INT = 1;
-WHILE @i <= 60 
-BEGIN
-    IF @i <= 12 INSERT INTO #Users VALUES (@i, NEWID());
-    IF @i <= 5  INSERT INTO #Roles VALUES (@i, NEWID());
-    IF @i <= 15 INSERT INTO #Perms VALUES (@i, NEWID());
-    IF @i <= 35 INSERT INTO #RolePerms VALUES (@i, NEWID());
-    IF @i <= 3  INSERT INTO #Workspaces VALUES (@i, NEWID());
-    IF @i <= 20 INSERT INTO #WsMembers VALUES (@i, NEWID());
-    IF @i <= 4  INSERT INTO #GitConns VALUES (@i, NEWID());
-    IF @i <= 12 INSERT INTO #GitScopes VALUES (@i, NEWID());
-    IF @i <= 5  INSERT INTO #Repos VALUES (@i, NEWID());
-    IF @i <= 12 INSERT INTO #Branches VALUES (@i, NEWID());
-    IF @i <= 8  INSERT INTO #PRs VALUES (@i, NEWID());
-    IF @i <= 15 INSERT INTO #PRLabels VALUES (@i, NEWID());
-    IF @i <= 30 INSERT INTO #Commits VALUES (@i, NEWID());
-    IF @i <= 40 INSERT INTO #Files VALUES (@i, NEWID());
-    IF @i <= 15 INSERT INTO #CodeDiffs VALUES (@i, NEWID());
-    IF @i <= 50 INSERT INTO #Entities VALUES (@i, NEWID());
-    IF @i <= 60 INSERT INTO #Deps VALUES (@i, NEWID());
-    IF @i <= 4  INSERT INTO #Templates VALUES (@i, NEWID());
-    IF @i <= 20 INSERT INTO #Sections VALUES (@i, NEWID());
-    IF @i <= 20 INSERT INTO #Placeholders VALUES (@i, NEWID());
-    IF @i <= 30 INSERT INTO #Mappings VALUES (@i, NEWID());
-    IF @i <= 8  INSERT INTO #Docs VALUES (@i, NEWID());
-    IF @i <= 20 INSERT INTO #DocVers VALUES (@i, NEWID());
-    IF @i <= 30 INSERT INTO #Evidences VALUES (@i, NEWID());
-    IF @i <= 12 INSERT INTO #Reviews VALUES (@i, NEWID());
-    IF @i <= 25 INSERT INTO #ReviewCmts VALUES (@i, NEWID());
-    IF @i <= 8  INSERT INTO #Approvals VALUES (@i, NEWID());
-    IF @i <= 30 INSERT INTO #ChangeLogs VALUES (@i, NEWID());
-    IF @i <= 8  INSERT INTO #Drifts VALUES (@i, NEWID());
-    IF @i <= 12 INSERT INTO #Notifs VALUES (@i, NEWID());
-    
-    -- 5 bảng mới thêm
-    IF @i <= 40 INSERT INTO #CommitFiles VALUES (@i, NEWID());
-    IF @i <= 35 INSERT INTO #EvidenceEntities VALUES (@i, NEWID());
-    IF @i <= 38 INSERT INTO #BranchCommits VALUES (@i, NEWID());
-    IF @i <= 24 INSERT INTO #PRCommits VALUES (@i, NEWID());
-    IF @i <= 28 INSERT INTO #CommitParents VALUES (@i, NEWID());
-    
-    SET @i = @i + 1;
-END
+\begin{lstlisting}[language=SQL]
+SELECT 
+    r.role_name,
+    p.permission_code,
+    p.description
+FROM roles r
+JOIN role_permissions rp ON r.role_id = rp.role_id
+JOIN permissions p ON rp.permission_id = p.permission_id
+WHERE r.role_name = 'developer'
+ORDER BY p.permission_code;
+\end{lstlisting}
 
--- =========================================================================
--- BƯỚC 3: BƠM DỮ LIỆU SIÊU THỰC TẾ VÀO 35 BẢNG VẬT LÝ
--- =========================================================================
+\section{Truy vấn Quản lý Repo: Thống kê số lượng Nhánh (Branch) theo từng Repository}
+Hiển thị tổng quan các kho lưu trữ mã nguồn.
 
--- 1. users (12)
-INSERT INTO users (user_id, email, first_name, last_name, status)
-SELECT id, 
-       CHOOSE(idx, 'dai.le@abc.com', 'anh.nguyen@abc.com', 'minh.hoang@abc.com', 
-       'lan.tran@abc.com', 'tuan.pham@abc.com', 'hoa.vo@abc.com', 
-       'nam.bui@abc.com', 'linh.do@abc.com', 'khoa.ngo@abc.com', 
-       'mai.huynh@abc.com', 'quang.dinh@abc.com', 'thao.le@abc.com'),
-       CHOOSE(idx, N'Đại', N'Anh', N'Minh', N'Lan', N'Tuấn', N'Hoa', 
-       N'Nam', N'Linh', N'Khoa', N'Mai', N'Quang', N'Thảo'),
-       CHOOSE(idx, N'Lê', N'Nguyễn', N'Hoàng', N'Trần', N'Phạm', N'Võ', 
-       N'Bùi', N'Đỗ', N'Ngô', N'Huỳnh', N'Đinh', N'Lê'),
-       'ACTIVE'
-FROM #Users;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    r.name AS RepositoryName,
+    r.default_branch,
+    COUNT(b.branch_id) AS TotalBranches
+FROM repositories r
+LEFT JOIN branches b ON r.repository_id = b.repository_id
+GROUP BY r.name, r.default_branch;
+\end{lstlisting}
 
--- 2. roles (5)
-INSERT INTO roles (role_id, role_name)
-SELECT id, CHOOSE(idx, 'ADMIN', 'MANAGER', 'TECH_LEAD', 'STAFF', 'DEVELOPER')
-FROM #Roles;
+\section{Truy vấn Git Workflow: Chi tiết các Commit nằm trong một Pull Request}
+Sử dụng bảng trung gian \texttt{pull\_request\_commits} để truy xuất lịch sử đẩy code.
 
--- 3. permissions (15)
-INSERT INTO permissions (permission_id, permission_name)
-SELECT id, CHOOSE(idx,
-    'USER_CREATE', 'USER_READ', 'USER_UPDATE', 'USER_DELETE',
-    'DOCUMENT_CREATE', 'DOCUMENT_READ', 'DOCUMENT_UPDATE', 'DOCUMENT_DELETE',
-    'DOCUMENT_REVIEW', 'DOCUMENT_APPROVE', 'DOCUMENT_PUBLISH',
-    'REPOSITORY_READ', 'REPOSITORY_WRITE', 'SYSTEM_CONFIG', 'AUDIT_READ')
-FROM #Perms;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    pr.pr_number,
+    pr.title AS PR_Title,
+    c.commit_hash,
+    c.author_name,
+    c.message AS CommitMessage,
+    c.committed_at
+FROM pull_requests pr
+JOIN pull_request_commits prc ON pr.pr_id = prc.pr_id
+JOIN commits c ON prc.commit_id = c.commit_id
+WHERE pr.status = 'MERGED'
+ORDER BY pr.pr_number, c.committed_at DESC;
+\end{lstlisting}
 
--- 4. role_permissions (35)
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT r.id, p.id
-FROM #RolePerms rp
-JOIN #Roles r ON r.idx = ((rp.idx - 1) % 5) + 1
-JOIN #Perms p ON p.idx = ((rp.idx - 1) % 15) + 1;
+\section{Truy vấn Git Workflow: Phân tích Dòng code thay đổi (Code Diff)}
+Demo việc hệ thống lưu trữ sự khác biệt mã nguồn khi lập trình viên sửa file.
 
--- 5. workspaces (3)
-INSERT INTO workspaces (workspace_id, name, description, status)
-SELECT id,
-       CHOOSE(idx, 'LivingDocs Core', 'LivingDocs Mobile', 'LivingDocs AI'),
-       CHOOSE(idx,
-              'Core engineering workspace',
-              'Mobile engineering workspace',
-              'AI research and development workspace'),
-       'ACTIVE'
-FROM #Workspaces;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    c.commit_hash,
+    f.file_path,
+    cd.change_type,
+    cd.additions,
+    cd.deletions,
+    cd.diff_content
+FROM commits c
+JOIN code_diffs cd ON c.commit_id = cd.commit_id
+JOIN files f ON cd.file_id = f.file_id
+WHERE cd.change_type = 'MODIFIED';
+\end{lstlisting}
 
--- 6. workspace_members (20)
-INSERT INTO workspace_members (workspace_member_id, workspace_id, user_id, role_id, status)
-SELECT wm.id,
-       w.id,
-       u.id,
-       r.id,
-       'ACTIVE'
-FROM #WsMembers wm
-JOIN #Workspaces w ON w.idx = ((wm.idx - 1) % 3) + 1
-JOIN #Users u ON u.idx = ((wm.idx - 1) % 12) + 1
-JOIN #Roles r ON r.idx = ((wm.idx - 1) % 5) + 1;
+\section{Truy vấn Cây cú pháp (AST): Danh sách Thực thể mã nguồn (Code Entities)}
+Hiển thị các hàm, lớp, biến được hệ thống bóc tách từ file source code.
 
--- 7. github_connections (4)
-INSERT INTO github_connections (connection_id, workspace_id, github_username, status)
-SELECT gc.id,
-       w.id,
-       CHOOSE(gc.idx, 'dai-le', 'anh-nguyen', 'minh-hoang', 'linh-do'),
-       'CONNECTED'
-FROM #GitConns gc
-JOIN #Workspaces w ON w.idx = ((gc.idx - 1) % 3) + 1;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    f.file_path,
+    ce.entity_name,
+    ce.entity_type,
+    ce.signature,
+    ce.start_line,
+    ce.end_line
+FROM files f
+JOIN code_entities ce ON f.file_id = ce.file_id
+ORDER BY f.file_path, ce.start_line;
+\end{lstlisting}
 
--- 8. github_scopes (12)
-INSERT INTO github_scopes (scope_id, connection_id, scope_name)
-SELECT gs.id,
-       gc.id,
-       CHOOSE(((gs.idx - 1) % 4) + 1,
-              'repo',
-              'read:user',
-              'workflow',
-              'write:repo')
-FROM #GitScopes gs
-JOIN #GitConns gc ON gc.idx = ((gs.idx - 1) % 4) + 1;
+\section{Truy vấn Đệ quy AST: Sự phụ thuộc giữa các đoạn code (Dependencies)}
+Tìm xem hàm A đang gọi đến hoặc phụ thuộc vào hàm B nào.
 
--- 9. repositories (5)
-INSERT INTO repositories (repository_id, connection_id, repository_name, full_name, status)
-SELECT r.id,
-       gc.id,
-       CHOOSE(r.idx,
-              'livingdocs-core',
-              'livingdocs-api',
-              'livingdocs-web',
-              'livingdocs-ai',
-              'livingdocs-docs'),
-       CHOOSE(r.idx,
-              'abc/livingdocs-core',
-              'abc/livingdocs-api',
-              'abc/livingdocs-web',
-              'abc/livingdocs-ai',
-              'abc/livingdocs-docs'),
-       'ACTIVE'
-FROM #Repos r
-JOIN #GitConns gc ON gc.idx = ((r.idx - 1) % 4) + 1;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    src.entity_name AS SourceEntity,
+    src.entity_type AS SourceType,
+    d.dependency_type,
+    tgt.entity_name AS TargetEntity,
+    tgt.entity_type AS TargetType
+FROM dependencies d
+JOIN code_entities src ON d.source_entity_id = src.code_entity_id
+JOIN code_entities tgt ON d.target_entity_id = tgt.code_entity_id
+WHERE d.dependency_type = 'REFERENCES';
+\end{lstlisting}
 
--- 10. branches (12)
-INSERT INTO branches (branch_id, repository_id, branch_name, is_default)
-SELECT b.id,
-       r.id,
-       CHOOSE(((b.idx - 1) % 4) + 1,
-              'main',
-              'develop',
-              'feature/ai-docs',
-              'feature/template-engine'),
-       CASE WHEN ((b.idx - 1) % 4) = 0 THEN 1 ELSE 0 END
-FROM #Branches b
-JOIN #Repos r ON r.idx = ((b.idx - 1) % 5) + 1;
+\section{Truy vấn Sinh tài liệu: Cấu trúc của một Biểu mẫu (Template)}
+Demo các phân đoạn và điểm giữ chỗ (Placeholder) được định nghĩa bởi Manager.
 
--- 11. pull_requests (8)
-INSERT INTO pull_requests (pull_request_id, repository_id, author_user_id, title, status)
-SELECT pr.id,
-       r.id,
-       u.id,
-       'Update documentation for module ' + CAST(pr.idx AS VARCHAR),
-       CHOOSE(((pr.idx - 1) % 3) + 1, 'OPEN', 'MERGED', 'CLOSED')
-FROM #PRs pr
-JOIN #Repos r ON r.idx = ((pr.idx - 1) % 5) + 1
-JOIN #Users u ON u.idx = ((pr.idx - 1) % 12) + 1;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    t.name AS TemplateName,
+    ts.order_index,
+    ts.heading_title,
+    p.variable_name,
+    p.expected_data_type
+FROM templates t
+JOIN template_sections ts ON t.template_id = ts.template_id
+LEFT JOIN placeholders p ON ts.section_id = p.section_id
+ORDER BY t.name, ts.order_index;
+\end{lstlisting}
 
--- 12. pull_request_labels (15)
-INSERT INTO pull_request_labels (label_id, pull_request_id, label_name)
-SELECT pl.id,
-       pr.id,
-       CHOOSE(((pl.idx - 1) % 5) + 1,
-              'documentation',
-              'feature',
-              'bug',
-              'refactor',
-              'ai-generated')
-FROM #PRLabels pl
-JOIN #PRs pr ON pr.idx = ((pl.idx - 1) % 8) + 1;
+\section{Truy vấn Automation: Cách Placeholder map với Source Code}
+Chứng minh tính tự động hóa: Điểm điền tài liệu nào đang map với hàm code nào.
 
--- 13. commits (30)
-INSERT INTO commits (commit_id, repository_id, branch_id, author_user_id, commit_hash, message)
-SELECT c.id,
-       r.id,
-       b.id,
-       u.id,
-       RIGHT('0000000000000000000000000000000000000000' + 
-             CONVERT(VARCHAR(40), ABS(CHECKSUM(NEWID()))), 40),
-       'Update module and synchronize documentation'
-FROM #Commits c
-JOIN #Repos r ON r.idx = ((c.idx - 1) % 5) + 1
-JOIN #Branches b ON b.idx = ((c.idx - 1) % 12) + 1
-JOIN #Users u ON u.idx = ((c.idx - 1) % 12) + 1;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    p.variable_name AS Placeholder,
+    tm.extraction_rule,
+    ce.entity_name AS MappedCodeEntity,
+    ce.signature AS CodeSignature
+FROM template_mappings tm
+JOIN placeholders p ON tm.placeholder_id = p.placeholder_id
+JOIN code_entities ce ON tm.code_entity_id = ce.code_entity_id
+WHERE tm.is_active = 1;
+\end{lstlisting}
 
--- 14. files (40)
-INSERT INTO files (file_id, repository_id, file_path, language)
-SELECT f.id,
-       r.id,
-       CHOOSE(((f.idx - 1) % 8) + 1,
-              'src/main.py',
-              'src/document.py',
-              'src/parser.py',
-              'src/template.py',
-              'src/repository.py',
-              'src/service.py',
-              'src/controller.py',
-              'src/utils.py'),
-       CHOOSE(((f.idx - 1) % 5) + 1,
-              'PYTHON',
-              'JAVA',
-              'JAVASCRIPT',
-              'TYPESCRIPT',
-              'SQL')
-FROM #Files f
-JOIN #Repos r ON r.idx = ((f.idx - 1) % 5) + 1;
+\section{Truy vấn Vòng đời Tài liệu: Các Phiên bản của một Tài liệu}
+Xem lịch sử cập nhật version của một file tài liệu.
 
--- 15. code_diffs (15)
-INSERT INTO code_diffs (diff_id, commit_id, file_id, old_content, new_content)
-SELECT cd.id,
-       c.id,
-       f.id,
-       'old implementation',
-       'new implementation with updated documentation'
-FROM #CodeDiffs cd
-JOIN #Commits c ON c.idx = ((cd.idx - 1) % 30) + 1
-JOIN #Files f ON f.idx = ((cd.idx - 1) % 40) + 1;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    d.title AS DocumentTitle,
+    d.document_type,
+    dv.version_number,
+    dv.status AS VersionStatus,
+    dv.created_at
+FROM documents d
+JOIN document_versions dv ON d.document_id = dv.document_id
+ORDER BY d.title, dv.created_at DESC;
+\end{lstlisting}
 
--- 16. code_entities (50)
-INSERT INTO code_entities (code_entity_id, file_id, entity_name, entity_type, signature, start_line, end_line)
-SELECT ce.id,
-       f.id,
-       'Function_' + CAST(ce.idx AS VARCHAR),
-       CHOOSE(((ce.idx - 1) % 3) + 1,
-              'FUNCTION',
-              'CLASS',
-              'VARIABLE'),
-       'def func_' + CAST(ce.idx AS VARCHAR) + '():',
-       ce.idx * 10,
-       ce.idx * 10 + 5
-FROM #Entities ce
-JOIN #Files f ON f.idx = ((ce.idx - 1) % 40) + 1;
+\section{Truy vấn Review: Đọc các Comment góp ý trên Tài liệu}
+Kiểm tra xem Technical Lead hoặc Manager đã nhận xét gì về tài liệu.
 
--- 17. dependencies (60)
-INSERT INTO dependencies (dependency_id, source_entity_id, target_entity_id, dependency_type)
-SELECT d.id,
-       ce_src.id,
-       ce_tgt.id,
-       'REFERENCES'
-FROM #Deps d
-JOIN #Entities ce_src ON ce_src.idx = ((d.idx - 1) % 50) + 1
-JOIN #Entities ce_tgt ON ce_tgt.idx = (((d.idx - 1) + 7) % 50) + 1;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    dv.version_number,
+    u.first_name + ' ' + u.last_name AS Reviewer,
+    r.decision AS ReviewDecision,
+    rc.content AS CommentContent,
+    rc.is_resolved
+FROM document_versions dv
+JOIN reviews r ON dv.version_id = r.version_id
+JOIN review_comments rc ON r.review_id = rc.review_id
+JOIN users u ON rc.user_id = u.user_id;
+\end{lstlisting}
 
--- 18. templates (4)
-INSERT INTO templates (template_id, workspace_id, name, creator_type, status)
-SELECT t.id,
-       w.id,
-       CHOOSE(t.idx,
-              'SRS Template',
-              'API Blueprint',
-              'User Guide',
-              'Database Schema'),
-       'SYSTEM',
-       'ACTIVE'
-FROM #Templates t
-JOIN #Workspaces w ON w.idx = ((t.idx - 1) % 3) + 1;
+\section{Truy vấn Workflow Phê duyệt: Lịch sử Approval}
+Truy xuất ai đã chốt duyệt phiên bản tài liệu cuối cùng.
 
--- 19. template_sections (20)
-INSERT INTO template_sections (section_id, template_id, heading_title, order_index)
-SELECT ts.id,
-       t.id,
-       'Section ' + CAST(ts.idx AS VARCHAR),
-       ts.idx
-FROM #Sections ts
-JOIN #Templates t ON t.idx = ((ts.idx - 1) % 4) + 1;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    dv.version_number,
+    u.first_name + ' ' + u.last_name AS Approver,
+    a.decision,
+    a.rejection_reason,
+    a.approved_at
+FROM document_versions dv
+JOIN approvals a ON dv.version_id = a.version_id
+JOIN users u ON a.user_id = u.user_id;
+\end{lstlisting}
 
--- 20. placeholders (20)
-INSERT INTO placeholders (placeholder_id, section_id, variable_name, expected_data_type)
-SELECT p.id,
-       ts.id,
-       'param_' + CAST(p.idx AS VARCHAR),
-       'STRING'
-FROM #Placeholders p
-JOIN #Sections ts ON ts.idx = p.idx;
+\section{Truy vấn Grounding: Dẫn chứng mã nguồn của Tài liệu}
+Chứng minh tài liệu không bịa đặt (hallucination) nhờ bằng chứng gốc.
 
--- 21. template_mappings (30)
-INSERT INTO template_mappings (mapping_id, placeholder_id, code_entity_id, extraction_rule)
-SELECT tm.id,
-       p.id,
-       ce.id,
-       'EXTRACT_DOCSTRING'
-FROM #Mappings tm
-JOIN #Placeholders p ON p.idx = ((tm.idx - 1) % 20) + 1
-JOIN #Entities ce ON ce.idx = (((tm.idx - 1) + 13) % 50) + 1;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    dv.version_number,
+    ge.purpose,
+    ge.snippet_content,
+    ce.entity_name AS SourceCodeEntity,
+    f.file_path
+FROM document_versions dv
+JOIN grounding_evidences ge ON dv.version_id = ge.version_id
+LEFT JOIN grounding_evidence_code_entities gece ON ge.evidence_id = gece.evidence_id
+LEFT JOIN code_entities ce ON gece.code_entity_id = ce.code_entity_id
+LEFT JOIN files f ON ce.file_id = f.file_id;
+\end{lstlisting}
 
--- 22. documents (8)
-INSERT INTO documents (document_id, workspace_id, author_user_id, title, document_type, status)
-SELECT d.id,
-       w.id,
-       u.id,
-       'Tài liệu Kỹ thuật ' + CAST(d.idx AS VARCHAR),
-       'TECH_DESIGN',
-       'PUBLISHED'
-FROM #Docs d
-JOIN #Workspaces w ON w.idx = ((d.idx - 1) % 3) + 1
-JOIN #Users u ON u.idx = ((d.idx - 1) % 12) + 1;
+\section{Truy vấn Cảnh báo Trôi dạt (Drift Alert): Các sai lệch chưa xử lý}
+Hiển thị các cảnh báo khi code mới sửa làm tài liệu cũ bị sai lệch.
 
--- 23. document_versions (20)
-INSERT INTO document_versions (version_id, document_id, version_number, content, status)
-SELECT dv.id,
-       d.id,
-       'v1.' + CAST(dv.idx AS VARCHAR),
-       N'Nội dung tài liệu...',
-       'PUBLISHED'
-FROM #DocVers dv
-JOIN #Docs d ON d.idx = ((dv.idx - 1) % 8) + 1;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    r.name AS Repository,
+    da.drift_type,
+    da.status AS AlertStatus,
+    da.detected_at,
+    ge.snippet_content AS OldDocumentedCode
+FROM drift_alerts da
+JOIN repositories r ON da.repository_id = r.repository_id
+JOIN grounding_evidences ge ON da.evidence_id = ge.evidence_id
+WHERE da.status = 'OPEN'
+ORDER BY da.detected_at DESC;
+\end{lstlisting}
 
--- 24. grounding_evidences (30)
-INSERT INTO grounding_evidences (evidence_id, version_id, code_entity_id, snippet_content, purpose)
-SELECT ge.id,
-       dv.id,
-       ce.id,
-       'Code snippet...',
-       'CODE_REFERENCE'
-FROM #Evidences ge
-JOIN #DocVers dv ON dv.idx = ((ge.idx - 1) % 20) + 1
-JOIN #Entities ce ON ce.idx = ((ge.idx - 1) % 50) + 1;
+\section{Truy vấn Audit: Nhật ký thay đổi hệ thống (Change Log)}
+Truy xuất toàn bộ lịch sử biến động để audit hệ thống.
 
--- 25. reviews (12)
-INSERT INTO reviews (review_id, version_id, user_id, status, decision)
-SELECT r.id,
-       dv.id,
-       u.id,
-       'COMPLETED',
-       'APPROVED'
-FROM #Reviews r
-JOIN #DocVers dv ON dv.idx = ((r.idx - 1) % 20) + 1
-JOIN #Users u ON u.idx = ((r.idx - 1) % 12) + 1;
-
--- 26. review_comments (25)
-INSERT INTO review_comments (comment_id, review_id, user_id, content, is_resolved)
-SELECT rc.id,
-       r.id,
-       u.id,
-       N'Đoạn này cần viết rõ hơn',
-       1
-FROM #ReviewCmts rc
-JOIN #Reviews r ON r.idx = ((rc.idx - 1) % 12) + 1
-JOIN #Users u ON u.idx = ((rc.idx - 1) % 12) + 1;
-
--- 27. approvals (8)
-INSERT INTO approvals (approval_id, version_id, user_id, decision)
-SELECT a.id,
-       dv.id,
-       u.id,
-       'APPROVED'
-FROM #Approvals a
-JOIN #DocVers dv ON dv.idx = ((a.idx - 1) % 20) + 1
-JOIN #Users u ON u.idx = ((a.idx - 1) % 12) + 1;
-
--- 28. change_logs (30)
-INSERT INTO change_logs (log_id, version_id, change_description)
-SELECT cl.id,
-       dv.id,
-       'Auto update from code diff'
-FROM #ChangeLogs cl
-JOIN #DocVers dv ON dv.idx = ((cl.idx - 1) % 20) + 1;
-
--- 29. drift_alerts (8)
-INSERT INTO drift_alerts (alert_id, evidence_id, repository_id, drift_type, status)
-SELECT da.id,
-       ge.id,
-       r.id,
-       'SIGNATURE',
-       'OPEN'
-FROM #Drifts da
-JOIN #Evidences ge ON ge.idx = ((da.idx - 1) % 30) + 1
-JOIN #Repos r ON r.idx = ((da.idx - 1) % 5) + 1;
-
--- 30. user_notification_preferences (12)
-INSERT INTO user_notification_preferences (preference_id, user_id, channel)
-SELECT un.id,
-       u.id,
-       'EMAIL'
-FROM #Notifs un
-JOIN #Users u ON u.idx = un.idx;
-
--- 31. commit_files (40)
-INSERT INTO commit_files (commit_id, file_id)
-SELECT cf.id,
-       c.id,
-       f.id
-FROM #CommitFiles cf
-JOIN #Commits c ON c.idx = ((cf.idx - 1) % 30) + 1
-JOIN #Files f ON f.idx = (((cf.idx - 1) + 11) % 40) + 1;
-
--- 32. grounding_evidence_code_entities (35)
-INSERT INTO grounding_evidence_code_entities (evidence_id, code_entity_id)
-SELECT ece.id,
-       e.id,
-       ce.id
-FROM #EvidenceEntities ece
-JOIN #Evidences e ON e.idx = ((ece.idx - 1) % 30) + 1
-JOIN #Entities ce ON ce.idx = (((ece.idx - 1) + 17) % 50) + 1;
-
--- 33. branch_commits (38)
-INSERT INTO branch_commits (branch_id, commit_id)
-SELECT bc.id,
-       b.id,
-       c.id
-FROM #BranchCommits bc
-JOIN #Branches b ON b.idx = ((bc.idx - 1) % 12) + 1
-JOIN #Commits c ON c.idx = (((bc.idx - 1) + 5) % 30) + 1;
-
--- 34. pull_request_commits (24)
-INSERT INTO pull_request_commits (pr_id, commit_id)
-SELECT prc.id,
-       pr.id,
-       c.id
-FROM #PRCommits prc
-JOIN #PRs pr ON pr.idx = ((prc.idx - 1) % 8) + 1
-JOIN #Commits c ON c.idx = (((prc.idx - 1) + 9) % 30) + 1;
-
--- 35. commit_parents (28)
-INSERT INTO commit_parents (commit_id, parent_commit_id)
-SELECT cp.id,
-       c1.id,
-       c2.id
-FROM #CommitParents cp
-JOIN #Commits c1 ON c1.idx = cp.idx + 2 -- Commit con
-JOIN #Commits c2 ON c2.idx = cp.idx;     -- Commit cha
-
-COMMIT TRAN;
-
--- DỌN DẸP BẢNG TẠM CHỐNG RÁC DB
-DROP TABLE #Roles, #Users, #Perms, #RolePerms, #Workspaces, #WsMembers, #GitConns, #GitScopes, #Repos, #Branches, #PRs, #PRLabels, #Commits, #Files, #CodeDiffs, #Entities, #Deps, #Templates, #Sections, #Placeholders, #Mappings, #Docs, #DocVers, #Evidences, #Reviews, #ReviewCmts, #Approvals, #ChangeLogs, #Drifts, #Notifs, #CommitFiles, #EvidenceEntities, #BranchCommits, #PRCommits, #CommitParents;
+\begin{lstlisting}[language=SQL]
+SELECT 
+    dv.version_number,
+    cl.change_description,
+    cl.diff_content,
+    cl.created_at
+FROM change_logs cl
+JOIN document_versions dv ON cl.version_id = dv.version_id
+ORDER BY cl.created_at DESC;
 \end{lstlisting}
